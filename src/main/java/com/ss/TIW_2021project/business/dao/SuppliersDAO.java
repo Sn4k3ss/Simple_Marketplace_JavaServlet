@@ -3,6 +3,7 @@ package com.ss.TIW_2021project.business.dao;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
+import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,9 +21,10 @@ public class SuppliersDAO {
      * Instantiates a new Suppliers DAO.
      *
      * @throws UnavailableException the unavailable exception
+     * @param servletContext
      */
-    public SuppliersDAO() throws UnavailableException {
-        connection = ConnectionFactory.getConnection();
+    public SuppliersDAO(ServletContext servletContext) throws UnavailableException {
+        connection = ConnectionFactory.getConnection(servletContext);
     }
 
 

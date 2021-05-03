@@ -1,9 +1,9 @@
 package com.ss.TIW_2021project.business.dao;
 
-import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
+import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +16,8 @@ public class ProductsDAO {
 
     private Connection connection;
 
-    public ProductsDAO() throws UnavailableException {
-        connection = ConnectionFactory.getConnection();
+    public ProductsDAO(ServletContext servletContext) throws UnavailableException {
+        connection = ConnectionFactory.getConnection(servletContext);
     }
 
 

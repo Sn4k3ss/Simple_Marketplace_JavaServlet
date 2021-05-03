@@ -34,7 +34,7 @@ public class SessionChecker implements Filter {
         if (process((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            res.sendRedirect("login.html");
+            res.sendRedirect("login");
         }
 
     }

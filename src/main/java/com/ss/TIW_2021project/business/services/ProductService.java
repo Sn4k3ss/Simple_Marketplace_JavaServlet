@@ -4,6 +4,7 @@ import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
+import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,15 +12,16 @@ import java.util.List;
 
 public class ProductService {
 
+    private ServletContext servletContext;
 
-
-
-
+    public ProductService(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 
 
     public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws UnavailableException, SQLException {
 
-        ProductsDAO productsDAO = new ProductsDAO();
+        ProductsDAO productsDAO = new ProductsDAO(servletContext);
 
         List<SupplierProduct> products = productsDAO.getProductsBySupplier(idSupplier);
 
