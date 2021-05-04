@@ -1,5 +1,7 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.User;
+import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -23,6 +25,11 @@ public class HomeController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        User user = (User) req.getSession(false).getAttribute("user");
+
+        ProductService productService = new ProductService(getServletContext());
+        productService.getLastUserProducts(user.getId());
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

@@ -55,4 +55,26 @@ public class ProductService {
 
         return retrievedProducts;
     }
+
+    /**
+     * Gets the 5 most recent seen {@link List<Product> products} by the user.
+     *
+     * If there aren't at least 5 products then 5 products from a random category are returned
+     *
+     * @param userId the user id
+     * @return the last last products seen by the user.
+     */
+    public List<Product> getLastUserProducts(Integer userId) throws UnavailableException {
+
+        ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
+        List<Product> mostRecentProducts = productsDAO.getLastUserProduct();
+
+        if (mostRecentProducts.size() < 5)
+            return productsDAO.getRandomDiscountedProducts();
+        else
+            return mostRecentProducts;
+
+
+
+    }
 }

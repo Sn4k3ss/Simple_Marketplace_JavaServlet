@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
@@ -11,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class ProductsDAO {
 
@@ -92,5 +95,48 @@ public class ProductsDAO {
         catalogue.setSupplierProductList(productsList);
         return catalogue;
 
+    }
+
+    /**
+     * Gets last 5 user products seen ordered chronologically.
+     *
+     * @return the last 5 user product
+     */
+    public List<Product> getLastUserProduct() {
+        //TODO
+        return new ArrayList<>(Collections.emptyList());
+    }
+
+    /**
+     * Gets 5 random products from a random category.
+     *
+     *
+     *
+     * @return the random products
+     */
+    public List<Product> getRandomDiscountedProducts() {
+
+        Integer categoryId;
+        List<Product> randomDiscountedProducts = new ArrayList<>();
+
+        //FIXME
+        //How many categories are there?
+        //Here is hard-coded but it'll be better to access db to get the correct number
+        //categoryId = new Random().nextInt(13);
+
+
+        //TODO
+        //Just for now the category is fixed to the first category due to lack of products in database
+        //The randomness in the products will be implemented later
+
+        categoryId = 1;
+
+        //query da fare
+        //richiesta una join tra il catalogo e la categoria
+        //facendo si che però non sia abbiano prodotti uguali
+
+
+
+        return null;
     }
 }

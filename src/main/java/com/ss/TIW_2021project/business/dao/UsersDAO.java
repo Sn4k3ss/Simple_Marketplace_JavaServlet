@@ -35,6 +35,7 @@ public class UsersDAO {
 
                 while (result.next()) {
                     userRetrieved = new User();
+                    userRetrieved.setId(result.getInt("userId"));
                     userRetrieved.setEmail(result.getString("email"));
                     userRetrieved.setPassword(result.getString("password"));
                     userRetrieved.setName(result.getString("name"));
