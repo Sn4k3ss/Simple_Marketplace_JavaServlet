@@ -3,6 +3,7 @@ package com.ss.TIW_2021project.web.filter;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,18 +31,25 @@ public class SessionChecker implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
+        String contextPath = servletContext.getContextPath();
 
-        if (process((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse)) {
+
+        if (process(req,res)) {
+
+            //HttpServlet servlet = application.resolveControllerForRequest(req);
+
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            res.sendRedirect("login");
+            res.sendRedirect(contextPath + "/index.html");
         }
+
+
 
     }
 
     /**
      *
-     *
+     * Process the request and check user's session
      *
      * @param request
      * @param response
@@ -55,12 +63,9 @@ public class SessionChecker implements Filter {
         HttpSession session = request.getSession();
 
         boolean loggedIn = !session.isNew() && session != null && session.getAttribute("user") != null;
-        boolean loginRequest = request.getRequestURI().equals("/login.html");
+        boolean loginRequest = request.getRequestURI().equals("/index.html");
 
-        if(loggedIn || loginRequest)
-            return true;
-        else
-            return false;
+        return loggedIn || loginRequest;
     }
 
     @Override

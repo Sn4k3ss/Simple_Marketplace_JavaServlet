@@ -28,14 +28,17 @@ public class UsersService {
     public User checkCredentials(String email, String password) throws UnavailableException, SQLException {
 
         UsersDAO usersDao = new UsersDAO(servletContext);
-        User userRetrieved = usersDao.getUsers(email, password);
+        User userRetrieved = usersDao.getUser(email, password);
 
-        if (email.equals(userRetrieved.getEmail()) && password.equals(userRetrieved.getPassword()))
-            return userRetrieved;
-        else
-            return null;
+        if (userRetrieved != null) {
 
+            if (email.equals(userRetrieved.getEmail()) && password.equals(userRetrieved.getPassword()))
+                return userRetrieved;
+            else
+                return null;
+        }
 
+        return null;
     }
 
 

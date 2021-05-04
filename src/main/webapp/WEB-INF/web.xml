@@ -6,10 +6,6 @@
 
     <display-name>TIW_2021project</display-name>
 
-    <welcome-file-list>
-        <welcome-file>login.html</welcome-file>
-    </welcome-file-list>
-
 
     <context-param>
         <param-name>dbUrl</param-name>
@@ -23,6 +19,10 @@
         <param-name>dbPassword</param-name>
         <param-value>intellij1234</param-value>
     </context-param>
+    <context-param>
+        <param-name>dbDriver</param-name>
+        <param-value>com.mysql.jdbc.Driver</param-value>
+    </context-param>
 
 
     <filter>
@@ -32,8 +32,6 @@
 
     <filter-mapping>
         <filter-name>SessionChecker</filter-name>
-        <url-pattern>/home.html</url-pattern>
-        <url-pattern>/</url-pattern>
         <url-pattern>/home</url-pattern>
     </filter-mapping>
 
@@ -41,5 +39,10 @@
     Dato che senza aver fatto il login l'utente non può fare nulla si è deciso di applicare il filtro
     per ogni richiesta proveniente dal web browser
     -->
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
 
 </web-app>

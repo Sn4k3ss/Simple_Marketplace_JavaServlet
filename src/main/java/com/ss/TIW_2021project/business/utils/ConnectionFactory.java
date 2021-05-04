@@ -22,10 +22,12 @@ public class ConnectionFactory {
             String URL = servletContext.getInitParameter("dbUrl");
             String USER = servletContext.getInitParameter("dbUser");
             String PASSWORD = servletContext.getInitParameter("dbPassword");
+            String driver = servletContext.getInitParameter("dbDriver");
+            Class.forName(driver);	// Per verificare che il driver sia stato caricato
 
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new UnavailableException("Couldn't get db connection");
         }
         return connection;

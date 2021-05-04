@@ -21,7 +21,7 @@ public class UsersDAO {
     }
 
 
-    public User getUsers(String email, String password) throws SQLException, UnavailableException {
+    public User getUser(String email, String password) throws SQLException, UnavailableException {
 
         User userRetrieved = null;
 

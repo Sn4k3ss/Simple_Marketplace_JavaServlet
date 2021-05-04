@@ -14,9 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/login")
+@WebServlet(
+        name = "LoginController",
+        description = "This is my first annotated servlet",
+        value = "/login"
+)
 public class LoginController extends HttpServlet {
 
     private ITemplateEngine templateEngine;
@@ -30,7 +35,7 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         UsersService test = new UsersService(getServletContext());
-        List<User> users;
+        List<User> users = new ArrayList<>();
         try {
             users = test.getAllUsers();
         } catch (SQLException exception) {
@@ -38,8 +43,10 @@ public class LoginController extends HttpServlet {
         }
 
 
+
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        templateEngine.process("login", webContext, resp.getWriter());
+        webContext.setVariable("users", users);
+        templateEngine.process("index", webContext, resp.getWriter());
 
     }
 
@@ -100,6 +107,6 @@ public class LoginController extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
         webContext.setVariable("errorMessage", errorMessage);
-        templateEngine.process("login", webContext, response.getWriter());
+        templateEngine.process("../../index.html", webContext, response.getWriter());
     }
 }
