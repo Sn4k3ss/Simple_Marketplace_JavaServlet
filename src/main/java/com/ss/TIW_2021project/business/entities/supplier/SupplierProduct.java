@@ -5,6 +5,7 @@ import com.ss.TIW_2021project.business.entities.Product;
 public class SupplierProduct extends Product {
 
     private Integer supplierId = null;
+    private String supplierName = null;
     private Float price = null;
     private Integer isAvailable= null;
 
@@ -15,6 +16,14 @@ public class SupplierProduct extends Product {
 
     public void setSupplierId(Integer supplierId) {
         this.supplierId = supplierId;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public Float getPrice() {

@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.entities.Product;
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.ServletContext;
@@ -33,8 +34,26 @@ public class ProductService {
 
     public List<Product> getProductUnderX(Float maxAmount) {
 
-        //TODO connessione alla base di dati e recupero prodotti con target maxAmount
+        //TODO
 
         return null;
+    }
+
+    /**
+     * Return a list of {@link List<Product> SupplierProduct} that contains the given {@link String keyword} in {@link Product#name} or {@link Product#description}
+     *
+     * @param keyword the keyword that needs to be in name or description
+     * @return a list of relevant products
+     * @throws UnavailableException can't get the products
+     */
+    public List<SupplierProduct> getRelevantProducts(String keyword) throws UnavailableException {
+
+        ProductsDAO productsDAO = new ProductsDAO(servletContext);
+        List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
+
+        retrievedProducts.removeIf(
+                supplierProduct -> (!supplierProduct.getDescription().contains(keyword) && !supplierProduct.getSupplierName().contains(keyword) ));
+
+        return retrievedProducts;
     }
 }

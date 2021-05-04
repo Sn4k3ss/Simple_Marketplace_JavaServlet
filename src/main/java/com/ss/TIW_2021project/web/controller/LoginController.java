@@ -33,21 +33,9 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        UsersService test = new UsersService(getServletContext());
-        List<User> users = new ArrayList<>();
-        try {
-            users = test.getAllUsers();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-
-
-
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        webContext.setVariable("users", users);
-        templateEngine.process("index", webContext, resp.getWriter());
-
+        ServletContext servletContext = getServletContext();
+        final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
+        templateEngine.process("../../index.html", webContext, resp.getWriter());
     }
 
     @Override
@@ -100,7 +88,9 @@ public class LoginController extends HttpServlet {
         }
 
         req.getSession().setAttribute("user", user);
-        resp.sendRedirect("home");
+
+        String path = getServletContext().getContextPath() + "/home";
+        resp.sendRedirect(path);
     }
 
     private void invalidCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {

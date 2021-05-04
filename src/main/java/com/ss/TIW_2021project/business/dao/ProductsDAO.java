@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
@@ -25,7 +26,7 @@ public class ProductsDAO {
 
         List<SupplierProduct> productsList = new ArrayList<>();
 
-        String query = "SELECT * FROM productsCatalogue WHERE idSupplier = ? ";
+        String query = "SELECT * FROM productsCatalogue WHERE supplierId = ? ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, idSupplier);
@@ -33,14 +34,63 @@ public class ProductsDAO {
                 SupplierProduct supplierProduct = null;
                 while (result.next()) {
                     supplierProduct = new SupplierProduct();
-                    supplierProduct.setSupplierId(result.getInt("idSupplier"));
-                    supplierProduct.setIdProduct(result.getInt("idProduct"));
-                    supplierProduct.setPrice(result.getFloat("cost"));
+                    supplierProduct.setSupplierId(result.getInt("supplierId"));
+                    supplierProduct.setIdProduct(result.getInt("productId"));
+                    supplierProduct.setPrice(result.getFloat("productCost"));
                     productsList.add(supplierProduct);
                 }
             }
         }
 
         return productsList;
+    }
+
+    /**
+     * Returns the entire catalogue
+     *
+     * @return catalogue containing every product in the marketplace
+     */
+    public ProductsCatalogue getCatalogue() {
+
+        List<SupplierProduct> productsList = new ArrayList<>();
+
+        String query = "SELECT " +
+                "products.productId," +
+                "products.productName," +
+                "products.productDescription," +
+                "productsCategory.categoryName," +
+                "productsCatalogue.supplierId," +
+                "suppliers.supplierName," +
+                "productsCatalogue.productCost " +
+                "FROM products " +
+                "JOIN productsCatalogue ON products.productId=productsCatalogue.productId " +
+                "JOIN productsCategory ON products.categoryId= productsCategory.categoryId " +
+                "JOIN suppliers ON productsCatalogue.supplierId=suppliers.supplierId;";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+
+            try (ResultSet result = preparedStatement.executeQuery();) {
+                SupplierProduct supplierProduct = null;
+                while (result.next()) {
+                    supplierProduct = new SupplierProduct();
+                    supplierProduct.setIdProduct(result.getInt("productId"));
+                    supplierProduct.setName(result.getString("productName"));
+                    supplierProduct.setDescription(result.getString("productDescription"));
+                    supplierProduct.setCategory(result.getString("categoryName"));
+                    supplierProduct.setSupplierId(result.getInt("supplierId"));
+                    supplierProduct.setSupplierName(result.getString("supplierName"));
+                    supplierProduct.setPrice(result.getFloat("productCost"));
+
+                    productsList.add(supplierProduct);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        ProductsCatalogue catalogue = new ProductsCatalogue();
+        catalogue.setSupplierProductList(productsList);
+        return catalogue;
+
     }
 }

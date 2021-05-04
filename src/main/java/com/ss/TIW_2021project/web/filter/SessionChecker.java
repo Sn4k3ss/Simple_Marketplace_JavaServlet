@@ -35,9 +35,6 @@ public class SessionChecker implements Filter {
 
 
         if (process(req,res)) {
-
-            //HttpServlet servlet = application.resolveControllerForRequest(req);
-
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
             res.sendRedirect(contextPath + "/index.html");

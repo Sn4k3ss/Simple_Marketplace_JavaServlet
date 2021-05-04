@@ -33,6 +33,9 @@
     <filter-mapping>
         <filter-name>SessionChecker</filter-name>
         <url-pattern>/home</url-pattern>
+        <url-pattern>/cart</url-pattern>
+        <url-pattern>/orders</url-pattern>
+        <url-pattern>/searchProducts</url-pattern>
     </filter-mapping>
 
     <!--

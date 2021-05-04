@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Marketplace App</title>
+
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+</head>
+
+<body>
+
+<h1>Welcome to Our Company <span th:text="${session.user.name}">NomeProva</span></h1>
+<h2>Web Site Main Ingredients:</h2>
+
+<p>Pages (HTML)</p>
+<p>Style Sheets (CSS)</p>
+<p>Computer Code (JavaScript)</p>
+<p>Live Data (Files and Databases)</p>
+
+
+<div class="topnav">
+  <a th:href="@{/home}">Home</a>
+  <a th:href="@{/cart}">Home</a>
+  <a th:href="@{/orders}">Orders</a>
+</div>
+
+</body>
+</html>

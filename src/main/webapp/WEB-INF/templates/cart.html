@@ -12,25 +12,20 @@
 
 <body>
 
-<h1>Welcome to our marketplace <span th:text="${session.user.name}">Amadeus</span></h1>
-<h2>Primo menu (riempito con cose a caso</h2>
 
-<p>riga 1</p>
-<p>riga 2</p>
+<h1>Ecco il tuo carrello<span th:text="${session.user.name}">NomeProva</span></h1>
+<h2>Prodotti nel carrello:</h2>
+
+<p>Non c'è nulla</p>
+<p>Proprio nulla</p>
+
 
 
 <div class="topnav">
-  <p>Link veloci</p>
   <a th:href="@{/home}">Home</a>
-  <a th:href="@{/cart}">Cart</a>
+  <a th:href="@{/cart}">Home</a>
   <a th:href="@{/orders}">Orders</a>
 </div>
-
-<form action="searchProducts" method="POST">
-  <p>Cosa vuoi cercare di bello? </p>
-  <input type="text" name="keyword" >
-  <input type="submit" value="vai!">
-</form>
 
 </body>
 </html>

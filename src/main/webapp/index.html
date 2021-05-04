@@ -8,33 +8,12 @@
 
 <form action="login" method="POST">
 
-    Username: <input type="text" name="email" value="e">
+    Username: <input type="text" name="email" value="sangeniti.ss@gmail.com">
     <br>
-    Password: <input type="password" name="password" value="e">
+    Password: <input type="password" name="password"  value="password1234">
     <br>
     <input type="submit" value="Login">
 </form>
-
-<h2>Users</h2>
-
-
-<table th:if="${not #lists.isEmpty(users)}">
-    <thead>
-        <tr>
-            <th>username</th>
-            <th>password</th>
-            <th>link</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.getEmail()}">emailProva</td>
-            <td th:text="${user.getPassword()}">passwordProva</td>
-            <td><a th:href="@{/GetPhotos(albumId=${album.id}, set=1, imgSelected=-1)}">link non funzionante</a></td>
-        </tr>
-    </tbody>
-
-</table>
 
 
 </body>
