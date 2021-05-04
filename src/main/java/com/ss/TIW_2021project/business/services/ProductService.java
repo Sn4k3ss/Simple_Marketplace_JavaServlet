@@ -2,7 +2,6 @@ package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.entities.Product;
-import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.ServletContext;
@@ -40,7 +39,7 @@ public class ProductService {
     }
 
     /**
-     * Return a list of {@link List<Product> SupplierProduct} that contains the given {@link String keyword} in {@link Product#name} or {@link Product#description}
+     * Return a list of {@link List<Product> SupplierProduct} that contains the given {@link String keyword} in {@link Product#productName} or {@link Product#productDescription}
      *
      * @param keyword the keyword that needs to be in name or description
      * @return a list of relevant products
@@ -52,7 +51,7 @@ public class ProductService {
         List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
 
         retrievedProducts.removeIf(
-                supplierProduct -> (!supplierProduct.getDescription().contains(keyword) && !supplierProduct.getSupplierName().contains(keyword) ));
+                supplierProduct -> (!supplierProduct.getProductDescription().contains(keyword) && !supplierProduct.getProductName().contains(keyword) ));
 
         return retrievedProducts;
     }

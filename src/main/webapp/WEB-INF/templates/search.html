@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <title>Search</title>
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../CSS/search.css" th:href="@{/css/search.css}" />
+</head>
+
+
+<body>
+
+<div class="topnav">
+    <p>Link veloci</p>
+    <a th:href="@{/home}">Home</a>
+    <a th:href="@{/cart}">Cart</a>
+    <a th:href="@{/orders}">Orders</a>
+</div>
+
+<div>
+    <table style="width:50%">
+        <caption>Products from the marketplace</caption>
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Description</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Supplier</th>
+            </tr>
+        </thead>
+        <tbody th:remove="all-but-first">
+            <tr th:each="product : ${products}">
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.productDescription}"></td>
+                <td th:text="${product.price}"></td>
+                <td th:text="${product.supplierName}"></td>
+            </tr>
+            <tr>
+                <td>Nome template</td>
+                <td>Description template</td>
+                <td>Cost template</td>
+                <td>Supplier template</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

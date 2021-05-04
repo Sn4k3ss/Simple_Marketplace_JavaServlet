@@ -4,44 +4,44 @@ import java.nio.file.Path;
 
 public class Product {
 
-    private Integer idProduct = null;
-    private String name = null;
-    private String description = null;
-    private String category = null;
-    private Path path = null;
+    private Integer productId = null;
+    private String productName = null;
+    private String productDescription = null;
+    private String productCategory = null;
+    private Path productImagePath = null;
 
-    public Integer getIdProduct() {
-        return idProduct;
+    public Integer getProductId() {
+        return productId;
     }
-    public void setIdProduct(Integer idProduct) {
-        this.idProduct = idProduct;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getProductName() {
+        return productName;
     }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public Path getPath() {
-        return path;
+    public String getProductDescription() {
+        return productDescription;
     }
-    public void setPath(Path path) {
-        this.path = path;
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    public String getProductCategory() {
+        return productCategory;
+    }
+    public void setProductCategory(String productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public Path getProductImagePath() {
+        return productImagePath;
+    }
+    public void setProductImagePath(Path productImagePath) {
+        this.productImagePath = productImagePath;
     }
 }

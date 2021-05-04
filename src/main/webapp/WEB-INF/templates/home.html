@@ -13,10 +13,9 @@
 <body>
 
 <h1>Welcome to our marketplace <span th:text="${session.user.name}">Amadeus</span></h1>
-<h2>Primo menu (riempito con cose a caso</h2>
+<h2>Primo menu (riempito con cose a caso)</h2>
 
-<p>riga 1</p>
-<p>riga 2</p>
+<p>Your country is: <span th:text="${#locale.country}">US</span> </p>
 
 
 <div class="topnav">
@@ -24,6 +23,8 @@
   <a th:href="@{/home}">Home</a>
   <a th:href="@{/cart}">Cart</a>
   <a th:href="@{/orders}">Orders</a>
+  <a th:href="@{/logout}">Logout</a>
+
 </div>
 
 <form action="searchProducts" method="POST">

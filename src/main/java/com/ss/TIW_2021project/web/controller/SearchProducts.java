@@ -4,7 +4,9 @@ import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -41,8 +43,13 @@ public class SearchProducts extends HttpServlet {
         String keyword = req.getParameter("keyword");
 
         ProductService productService = new ProductService(req.getServletContext());
+
+        //Product are duplicated but with different vendors
         List<SupplierProduct> retrievedProducts = productService.getRelevantProducts(keyword);
 
-
+        //redirect to the search page with the products retrieved displayed in a table
+        final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        webContext.setVariable("products", retrievedProducts);
+        templateEngine.process("search", webContext, resp.getWriter());
     }
 }

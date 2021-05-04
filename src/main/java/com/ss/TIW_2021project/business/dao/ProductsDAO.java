@@ -35,7 +35,7 @@ public class ProductsDAO {
                 while (result.next()) {
                     supplierProduct = new SupplierProduct();
                     supplierProduct.setSupplierId(result.getInt("supplierId"));
-                    supplierProduct.setIdProduct(result.getInt("productId"));
+                    supplierProduct.setProductId(result.getInt("productId"));
                     supplierProduct.setPrice(result.getFloat("productCost"));
                     productsList.add(supplierProduct);
                 }
@@ -73,10 +73,10 @@ public class ProductsDAO {
                 SupplierProduct supplierProduct = null;
                 while (result.next()) {
                     supplierProduct = new SupplierProduct();
-                    supplierProduct.setIdProduct(result.getInt("productId"));
-                    supplierProduct.setName(result.getString("productName"));
-                    supplierProduct.setDescription(result.getString("productDescription"));
-                    supplierProduct.setCategory(result.getString("categoryName"));
+                    supplierProduct.setProductId(result.getInt("productId"));
+                    supplierProduct.setProductName(result.getString("productName"));
+                    supplierProduct.setProductDescription(result.getString("productDescription"));
+                    supplierProduct.setProductCategory(result.getString("categoryName"));
                     supplierProduct.setSupplierId(result.getInt("supplierId"));
                     supplierProduct.setSupplierName(result.getString("supplierName"));
                     supplierProduct.setPrice(result.getFloat("productCost"));
