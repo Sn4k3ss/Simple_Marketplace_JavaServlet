@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class ProductsDAO {
 
@@ -25,21 +24,21 @@ public class ProductsDAO {
     }
 
 
-    public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws SQLException {
+    public List<SupplierProduct> getProductsBySupplier(Integer supplierId) throws SQLException {
 
         List<SupplierProduct> productsList = new ArrayList<>();
 
         String query = "SELECT * FROM productsCatalogue WHERE supplierId = ? ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, idSupplier);
+            preparedStatement.setInt(1, supplierId);
             try (ResultSet result = preparedStatement.executeQuery();) {
                 SupplierProduct supplierProduct = null;
                 while (result.next()) {
                     supplierProduct = new SupplierProduct();
                     supplierProduct.setSupplierId(result.getInt("supplierId"));
                     supplierProduct.setProductId(result.getInt("productId"));
-                    supplierProduct.setPrice(result.getFloat("productCost"));
+                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
                     productsList.add(supplierProduct);
                 }
             }
@@ -82,7 +81,7 @@ public class ProductsDAO {
                     supplierProduct.setProductCategory(result.getString("categoryName"));
                     supplierProduct.setSupplierId(result.getInt("supplierId"));
                     supplierProduct.setSupplierName(result.getString("supplierName"));
-                    supplierProduct.setPrice(result.getFloat("productCost"));
+                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
 
                     productsList.add(supplierProduct);
                 }
@@ -102,9 +101,37 @@ public class ProductsDAO {
      *
      * @return the last 5 user product
      */
-    public List<Product> getLastUserProduct() {
-        //TODO
-        return new ArrayList<>(Collections.emptyList());
+    public List<Product> getLastUserProduct(Integer userId) {
+
+        //voglio che dalla table productsHistory mi prenda i 5 prodotti più recenti che l'utente abbia visualizzato
+        //successivamente bisogna andare a vedere ne catalogo quali venditori lo forniscono e ritornare la lista COMPLETA
+
+
+        List<Product> productsList = new ArrayList<>();
+
+        String query = "SELECT * " +
+                "FROM productsHistory " +
+                "JOIN productsCatalogue ON productsHistory.productId = productsCatalogue.productId " +
+                "WHERE userId = ? ";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+            preparedStatement.setInt(1, userId);
+            try (ResultSet result = preparedStatement.executeQuery();) {
+                SupplierProduct supplierProduct = null;
+                while (result.next()) {
+                    supplierProduct = new SupplierProduct();
+                    supplierProduct.setSupplierId(result.getInt("supplierId"));
+                    supplierProduct.setProductId(result.getInt("productId"));
+                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
+                    productsList.add(supplierProduct);
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return productsList;
+
     }
 
     /**

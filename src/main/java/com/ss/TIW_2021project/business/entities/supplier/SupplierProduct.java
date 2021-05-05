@@ -6,7 +6,7 @@ public class SupplierProduct extends Product {
 
     private Integer supplierId = null;
     private String supplierName = null;
-    private Float price = null;
+    private Float supplierProductCost = null;
     private Integer isAvailable = null;
     private boolean discounted = false;
 
@@ -27,12 +27,12 @@ public class SupplierProduct extends Product {
         this.supplierName = supplierName;
     }
 
-    public Float getPrice() {
-        return price;
+    public Float getSupplierProductCost() {
+        return supplierProductCost;
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
+    public void setSupplierProductCost(Float supplierProductCost) {
+        this.supplierProductCost = supplierProductCost;
     }
 
     public Integer getIsAvailable() {

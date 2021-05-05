@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/home")
 public class HomeController extends HttpServlet {
@@ -29,10 +31,12 @@ public class HomeController extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService(getServletContext());
-        productService.getLastUserProducts(user.getId());
+        List<Product> retrievedProducts = productService.getLastUserProducts(user.getUserId());
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        webContext.setVariable("userInfo", user);
+        webContext.setVariable("retrievedProducts", retrievedProducts);
         templateEngine.process("home", webContext, resp.getWriter());
 
     }

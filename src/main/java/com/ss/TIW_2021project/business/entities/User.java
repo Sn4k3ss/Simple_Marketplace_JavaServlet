@@ -2,32 +2,32 @@ package com.ss.TIW_2021project.business.entities;
 
 public class User {
 
-    private Integer id = null;
-    private String name = null;
-    private String surname = null;
+    private Integer userId = null;
+    private String userName = null;
+    private String userSurname = null;
     private String email = null;
     private String password = null;
     private ShippingAddress shippingAddress = null;
 
-    public Integer getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getUserName() {
+        return userName;
     }
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserSurname() {
+        return userSurname;
+    }
+    public void setUserSurname(String userSurname) {
+        this.userSurname = userSurname;
     }
 
     public String getEmail() {

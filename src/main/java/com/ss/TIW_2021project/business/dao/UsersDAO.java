@@ -35,11 +35,11 @@ public class UsersDAO {
 
                 while (result.next()) {
                     userRetrieved = new User();
-                    userRetrieved.setId(result.getInt("userId"));
+                    userRetrieved.setUserId(result.getInt("userId"));
                     userRetrieved.setEmail(result.getString("email"));
                     userRetrieved.setPassword(result.getString("password"));
-                    userRetrieved.setName(result.getString("name"));
-                    userRetrieved.setSurname(result.getString("surname"));
+                    userRetrieved.setUserName(result.getString("userName"));
+                    userRetrieved.setUserSurname(result.getString("userSurname"));
 
                     //TODO shipping address to be got here is a possibility
 
@@ -69,11 +69,11 @@ public class UsersDAO {
                 User user = null;
                 while (result.next()) {
                     user = new User();
-                    user.setId(result.getInt("idUser"));
+                    user.setUserId(result.getInt("userId"));
                     user.setEmail(result.getString("email"));
                     user.setPassword(result.getString("password"));
-                    user.setName(result.getString("name"));
-                    user.setSurname(result.getString("surname"));
+                    user.setUserName(result.getString("userName"));
+                    user.setUserSurname(result.getString("userSurname"));
                     userList.add(user);
                 }
             }

@@ -12,10 +12,20 @@
 
 <body>
 
-<h1>Welcome to our marketplace <span th:text="${session.user.name}">Amadeus</span></h1>
-<h2>Primo menu (riempito con cose a caso)</h2>
+<h1>Welcome to our marketplace <span th:text="${session.user.userName}">Amadeus</span></h1>
 
-<p>Your country is: <span th:text="${#locale.country}">US</span> </p>
+<h2>User info</h2>
+
+<p>This is your e-mail:
+  <span th:text="${userInfo.email}">amadeus.wgang@gmail.com </span> <br>
+  Name:
+  <span th:text="${userInfo.userName}">Amadeus</span> <br>
+  Surname:
+  <span th:text="${userInfo.userSurname}">Mozart</span> <br>
+  Id:
+  <span th:text="${userInfo.userId}">0</span> <br>
+  Your country is: <span th:text="${#locale.country}">IT</span>
+</p>
 
 
 <div class="topnav">
@@ -32,6 +42,34 @@
   <input type="text" name="keyword" >
   <input type="submit" value="vai!">
 </form>
+
+<div>
+  <table style="width:50%">
+    <caption>Seen recently</caption>
+    <thead>
+    <tr>
+      <th scope="col">Product</th>
+      <th scope="col">Description</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Supplier</th>
+    </tr>
+    </thead>
+    <tbody th:remove="all-but-first">
+    <tr th:each="product : ${retrievedProducts}">
+      <td th:text="${product.productName}"></td>
+      <td th:text="${product.productDescription}"></td>
+      <td th:text="${product.supplierProductCost}"></td>
+      <td th:text="${product.supplierName}"></td>
+    </tr>
+    <tr>
+      <td>A product</td>
+      <td>A product's description</td>
+      <td>A product's cost</td>
+      <td>A product's vendor</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
 
 </body>
 </html>
