@@ -1,60 +1,58 @@
 package com.ss.TIW_2021project.business.entities;
 
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
-
 import java.util.Date;
 import java.util.List;
 
 public class Order {
 
-    private Integer id = null;
-    private String supplier = null;
-    private List<SupplierProduct> productsList = null;
-    private Integer total = null;
-    private Double shippingCost = null;
-    private Date shippingDate = null;
+    private Integer orderId = null;
+    private String orderSupplier = null;
+    private List<Product> orderProductsList = null;
+    private Float orderAmount = null;
+    private Float orderShippingCosts = null;
+    private Date deliveryDate = null;
     private ShippingAddress shippingAddress = null;
 
-    public Integer getId() {
-        return id;
+    public Integer getOrderId() {
+        return orderId;
     }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getSupplier() {
-        return supplier;
-    }
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
-    public List<SupplierProduct> getProductsList() {
-        return productsList;
+    public String getOrderSupplier() {
+        return orderSupplier;
     }
-    public void setProductsList(List<SupplierProduct> productsList) {
-        this.productsList = productsList;
-    }
-
-    public Integer getTotal() {
-        return total;
-    }
-    public void setTotal(Integer total) {
-        this.total = total;
+    public void setOrderSupplier(String orderSupplier) {
+        this.orderSupplier = orderSupplier;
     }
 
-    public Double getShippingCost() {
-        return shippingCost;
+    public List<Product> getOrderProductsList() {
+        return orderProductsList;
     }
-    public void setShippingCost(Double shippingCost) {
-        this.shippingCost = shippingCost;
+    public void setOrderProductsList(List<Product> orderProductsList) {
+        this.orderProductsList = orderProductsList;
     }
 
-    public Date getShippingDate() {
-        return shippingDate;
+    public Float getOrderAmount() {
+        return orderAmount;
     }
-    public void setShippingDate(Date shippingDate) {
-        this.shippingDate = shippingDate;
+    public void setOrderAmount(Float orderAmount) {
+        this.orderAmount = orderAmount;
+    }
+
+    public Float getOrderShippingCosts() {
+        return orderShippingCosts;
+    }
+    public void setOrderShippingCosts(Float orderShippingCosts) {
+        this.orderShippingCosts = orderShippingCosts;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 
     public ShippingAddress getShippingAddress() {

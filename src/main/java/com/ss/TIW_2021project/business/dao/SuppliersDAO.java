@@ -45,9 +45,9 @@ public class SuppliersDAO {
             preparedStatement.setInt(1, idSupplier);
             try (ResultSet result = preparedStatement.executeQuery();) {
                 if (result.next()) {
-                    supplier.setId(result.getInt(1));
-                    supplier.setName(result.getString(2));
-                    supplier.setRating(result.getFloat(3));
+                    supplier.setSupplierId(result.getInt(1));
+                    supplier.setSupplierName(result.getString(2));
+                    supplier.setSupplierRating(result.getFloat(3));
 
                     //this handles the null value returned whenever the
                     Float tmp = result.getFloat(4);

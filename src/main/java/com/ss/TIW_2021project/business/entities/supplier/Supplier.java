@@ -2,38 +2,38 @@ package com.ss.TIW_2021project.business.entities.supplier;
 
 public class Supplier {
 
-    private Integer id = null;
-    private String name = null;
-    private Float rating = null;
-    private ShippingPolicy shippingPolicy= null;
+    private Integer supplierId = null;
+    private String supplierName = null;
+    private Float supplierRating = null;
+    private ShippingPolicy supplierShippingPolicy = null;
     private Float freeShippingMinAmount = null;
 
-    public Integer getId() {
-        return id;
+    public Integer getSupplierId() {
+        return supplierId;
     }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+    public void setSupplierId(Integer supplierId) {
+        this.supplierId = supplierId;
     }
 
-    public Float getRating() {
-        return rating;
+    public String getSupplierName() {
+        return supplierName;
     }
-    public void setRating(Float rating) {
-        this.rating = rating;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
-    public ShippingPolicy getShippingPolicy() {
-        return shippingPolicy;
+    public Float getSupplierRating() {
+        return supplierRating;
     }
-    public void setShippingPolicy(ShippingPolicy shippingPolicy) {
-        this.shippingPolicy = shippingPolicy;
+    public void setSupplierRating(Float supplierRating) {
+        this.supplierRating = supplierRating;
+    }
+
+    public ShippingPolicy getSupplierShippingPolicy() {
+        return supplierShippingPolicy;
+    }
+    public void setSupplierShippingPolicy(ShippingPolicy supplierShippingPolicy) {
+        this.supplierShippingPolicy = supplierShippingPolicy;
     }
 
     public Float getFreeShippingMinAmount() {
