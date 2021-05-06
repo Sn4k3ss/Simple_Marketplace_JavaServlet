@@ -109,10 +109,17 @@ public class ProductsDAO {
 
         List<Product> productsList = new ArrayList<>();
 
-        String query = "SELECT * " +
+        String query = "SELECT " +
+                "products.productId, productName, productDescription, " +
+                "productsHistory.userId, timestamp, " +
+                "productsCatalogue.supplierId, productCost, " +
+                "productsCategory.categoryName " +
                 "FROM productsHistory " +
                 "JOIN productsCatalogue ON productsHistory.productId = productsCatalogue.productId " +
-                "WHERE userId = ? ";
+                "JOIN products ON productsHistory.productId = products.productId " +
+                "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
+                "WHERE userId = ? " +
+                "ORDER BY productsHistory.timestamp DESC";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, userId);
@@ -130,6 +137,8 @@ public class ProductsDAO {
             throwables.printStackTrace();
         }
 
+        //FIXME
+        //in questa lista ci stanno prodotti ripetuti venduti da diversi venditori (a prezzi diversi)
         return productsList;
 
     }
@@ -162,8 +171,41 @@ public class ProductsDAO {
         //richiesta una join tra il catalogo e la categoria
         //facendo si che però non sia abbiano prodotti uguali
 
+        String query = " SELECT " +
+                "products.productId, productName, productDescription, " +
+                "productsCategory.categoryId, categoryName, " +
+                "productsCatalogue.supplierId, productCost, discountedProductCost, " +
+                "suppliers.supplierName, supplierRating, freeShippingMin " +
+            "FROM productsCatalogue " +
+                "JOIN products ON productsCatalogue.productId = products.productId " +
+                "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
+                "JOIN suppliers ON productsCatalogue.supplierId = suppliers.supplierId " +
+            "WHERE productsCatalogue.onDiscount = 1";
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
 
-        return null;
+            try (ResultSet result = preparedStatement.executeQuery();) {
+                SupplierProduct supplierProduct = null;
+                while (result.next()) {
+                    supplierProduct = new SupplierProduct();
+                    supplierProduct.setOnDiscount(true);    //we know that from th query
+                    supplierProduct.setSupplierId(result.getInt("supplierId"));
+                    supplierProduct.setProductId(result.getInt("productId"));
+                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
+                    supplierProduct.setDiscountedCost(result.getFloat("discountedProductCost"));
+                    supplierProduct.setProductCategory(result.getString("categoryName"));
+                    supplierProduct.setProductName(result.getString("productName"));
+                    supplierProduct.setProductDescription(result.getString("productDescription"));
+                    supplierProduct.setSupplierName(result.getString("supplierName"));
+
+                    randomDiscountedProducts.add(supplierProduct);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return randomDiscountedProducts;
+        }
+
+        return randomDiscountedProducts;
     }
 }

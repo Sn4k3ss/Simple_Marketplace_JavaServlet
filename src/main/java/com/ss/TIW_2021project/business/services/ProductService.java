@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ProductService {
@@ -43,17 +44,20 @@ public class ProductService {
      *
      * @param keyword the keyword that needs to be in name or description
      * @return a list of relevant products
-     * @throws UnavailableException can't get the products
      */
-    public List<SupplierProduct> getRelevantProducts(String keyword) throws UnavailableException {
+    public List<SupplierProduct> getRelevantProducts(String keyword) {
 
-        ProductsDAO productsDAO = new ProductsDAO(servletContext);
-        List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
+        try {
+            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
 
-        retrievedProducts.removeIf(
-                supplierProduct -> (!supplierProduct.getProductDescription().contains(keyword) && !supplierProduct.getProductName().contains(keyword) ));
+            retrievedProducts.removeIf(
+                    supplierProduct -> (!supplierProduct.getProductDescription().contains(keyword) && !supplierProduct.getProductName().contains(keyword)));
 
-        return retrievedProducts;
+            return retrievedProducts;
+        } catch (UnavailableException e) {
+            return new ArrayList<>(Collections.emptyList());
+        }
     }
 
     /**
@@ -64,15 +68,23 @@ public class ProductService {
      * @param userId the user id
      * @return the last last products seen by the user.
      */
-    public List<Product> getLastUserProducts(Integer userId) throws UnavailableException {
+    public List<Product> getLastUserProducts(Integer userId) {
 
-        ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
-        List<Product> mostRecentProducts = productsDAO.getLastUserProduct();
+        try {
 
-        if (mostRecentProducts.size() < 5)
-            return productsDAO.getRandomDiscountedProducts();
-        else
-            return mostRecentProducts;
+            ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
+            List<Product> mostRecentProducts = new ArrayList<>(Collections.emptyList());
+
+            //mostRecentProducts = productsDAO.getLastUserProduct(userId);
+
+            if (mostRecentProducts.size() < 5)
+                return productsDAO.getRandomDiscountedProducts();
+            else
+                return mostRecentProducts;
+
+        } catch (UnavailableException e) {
+            return new ArrayList<>(Collections.emptyList());
+        }
 
     }
 }
