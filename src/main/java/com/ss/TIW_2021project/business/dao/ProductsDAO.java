@@ -7,6 +7,7 @@ import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -101,40 +102,44 @@ public class ProductsDAO {
      *
      * @return the last 5 user product
      */
-    public List<Product> getLastUserProduct(Integer userId) {
+    public List<SupplierProduct> getLastUserProduct(Integer userId) {
 
-        //voglio che dalla table productsHistory mi prenda i 5 prodotti più recenti che l'utente abbia visualizzato
-        //successivamente bisogna andare a vedere ne catalogo quali venditori lo forniscono e ritornare la lista COMPLETA
-
-
-        List<Product> productsList = new ArrayList<>();
+        List<SupplierProduct> productsList;
 
         String query = "SELECT " +
-                "products.productId, productName, productDescription, " +
-                "productsHistory.userId, timestamp, " +
-                "productsCatalogue.supplierId, productCost, " +
-                "productsCategory.categoryName " +
-                "FROM productsHistory " +
-                "JOIN productsCatalogue ON productsHistory.productId = productsCatalogue.productId " +
-                "JOIN products ON productsHistory.productId = products.productId " +
-                "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
-                "WHERE userId = ? " +
-                "ORDER BY productsHistory.timestamp DESC";
+                "p.productId, " +
+                "p.productName, " +
+                "p.productDescription, " +
+                "pC.categoryName, " +
+                "s.supplierName, " +
+                "s.supplierRating," +
+                "pc1.supplierId, " +
+                "pc1.productCost, " +
+                "ph.timestamp\n" +
+                "FROM products AS p " +
+                    "JOIN productsCatalogue AS pc1 ON p.productId = pc1.productId " +
+                    "JOIN productsHistory AS ph ON p.productId = ph.productId " +
+                    "JOIN productsCategory pC on p.categoryId = pC.categoryId " +
+                    "JOIN suppliers s on pc1.supplierId = s.supplierId " +
+
+                "WHERE ph.userId = ? AND pc1.productCost = (select min(pc2.productCost) " +
+                                                            "FROM productsCatalogue AS pc2 " +
+                                                            "WHERE pc2.productId = p.productId) " +
+                "ORDER BY ph.timestamp desc " +
+                "LIMIT 5" ;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, userId);
-            try (ResultSet result = preparedStatement.executeQuery();) {
-                SupplierProduct supplierProduct = null;
-                while (result.next()) {
-                    supplierProduct = new SupplierProduct();
-                    supplierProduct.setSupplierId(result.getInt("supplierId"));
-                    supplierProduct.setProductId(result.getInt("productId"));
-                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
-                    productsList.add(supplierProduct);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                productsList = buildProductsList(resultSet);
                 }
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
+        } catch (SQLException ex) {
+            //if error while getting from db
+            //an empty list is returned
+            ex.printStackTrace();
+            return new ArrayList<>(Collections.emptyList());
         }
 
         //FIXME
@@ -144,68 +149,95 @@ public class ProductsDAO {
     }
 
     /**
-     * Gets 5 random products from a random category.
-     *
+     * Gets 5 random discounted products from a random category.
      *
      *
      * @return the random products
      */
-    public List<Product> getRandomDiscountedProducts() {
+    public List<SupplierProduct> getRandomDiscountedProducts() {
 
         Integer categoryId;
-        List<Product> randomDiscountedProducts = new ArrayList<>();
+        List<SupplierProduct> randomDiscountedProducts = new ArrayList<>();
 
         //FIXME
         //How many categories are there?
         //Here is hard-coded but it'll be better to access db to get the correct number
-        //categoryId = new Random().nextInt(13);
-
-
-        //TODO
-        //Just for now the category is fixed to the first category due to lack of products in database
-        //The randomness in the products will be implemented later
-
+        //int howManyCategories = getHowManyCategories();
+        //categoryId = new Random().nextInt(howManyCategories);
         categoryId = 1;
 
-        //query da fare
-        //richiesta una join tra il catalogo e la categoria
-        //facendo si che però non sia abbiano prodotti uguali
-
-        String query = " SELECT " +
-                "products.productId, productName, productDescription, " +
-                "productsCategory.categoryId, categoryName, " +
-                "productsCatalogue.supplierId, productCost, discountedProductCost, " +
-                "suppliers.supplierName, supplierRating, freeShippingMin " +
-            "FROM productsCatalogue " +
-                "JOIN products ON productsCatalogue.productId = products.productId " +
-                "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
-                "JOIN suppliers ON productsCatalogue.supplierId = suppliers.supplierId " +
-            "WHERE productsCatalogue.onDiscount = 1";
+        String query =
+                " SELECT " +
+                    "products.productId, productName, productDescription, photoPath, " +
+                    "productsCategory.categoryId, categoryName, " +
+                    "productsCatalogue.supplierId, productCost, onDiscount, originalProductCost, " +
+                    "suppliers.supplierName, supplierRating, freeShippingMin " +
+                "FROM productsCatalogue " +
+                    "JOIN products ON productsCatalogue.productId = products.productId " +
+                    "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
+                    "JOIN suppliers ON productsCatalogue.supplierId = suppliers.supplierId " +
+                "WHERE productsCatalogue.onDiscount = true AND products.categoryId = ? ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-
-            try (ResultSet result = preparedStatement.executeQuery();) {
-                SupplierProduct supplierProduct = null;
-                while (result.next()) {
-                    supplierProduct = new SupplierProduct();
-                    supplierProduct.setOnDiscount(true);    //we know that from th query
-                    supplierProduct.setSupplierId(result.getInt("supplierId"));
-                    supplierProduct.setProductId(result.getInt("productId"));
-                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
-                    supplierProduct.setDiscountedCost(result.getFloat("discountedProductCost"));
-                    supplierProduct.setProductCategory(result.getString("categoryName"));
-                    supplierProduct.setProductName(result.getString("productName"));
-                    supplierProduct.setProductDescription(result.getString("productDescription"));
-                    supplierProduct.setSupplierName(result.getString("supplierName"));
-
-                    randomDiscountedProducts.add(supplierProduct);
-                }
+            preparedStatement.setInt(1, categoryId);
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                randomDiscountedProducts = buildProductsList(resultSet);
             }
+
         } catch (SQLException ex) {
+            //if error while getting from db
+            //an empty list is returned
             ex.printStackTrace();
-            return randomDiscountedProducts;
+            return new ArrayList<>(Collections.emptyList());
         }
 
         return randomDiscountedProducts;
     }
+
+
+
+
+    /**
+     * Build the {@link List<Product> productsList} from the {@link ResultSet resultSet}
+     *
+     *
+     *
+     * @param resultSet - the resultSet containing the product info
+     * @return a {@link List<Product> products list} containing every product in {@link ResultSet resultSet}
+     * @throws SQLException if error while reading from columns
+     */
+    private List<SupplierProduct> buildProductsList(ResultSet resultSet) throws SQLException {
+        List<SupplierProduct> productsList = new ArrayList<>();
+
+        SupplierProduct supplierProduct;
+
+        while (resultSet.next()) {
+            supplierProduct = new SupplierProduct();
+            supplierProduct.setSupplierId(resultSet.getInt("supplierId"));
+            supplierProduct.setProductId(resultSet.getInt("productId"));
+            supplierProduct.setSupplierProductCost(resultSet.getFloat("productCost"));
+            supplierProduct.setProductCategory(resultSet.getString("categoryName"));
+            supplierProduct.setProductName(resultSet.getString("productName"));
+            supplierProduct.setProductDescription(resultSet.getString("productDescription"));
+            supplierProduct.setSupplierName(resultSet.getString("supplierName"));
+            supplierProduct.setProductImagePath(resultSet.getString("photoPath"));
+
+
+            //FIXME
+            if (resultSet.getBoolean("onDiscount")) {
+                supplierProduct.setOnDiscount(true);    //we know that from the query
+                supplierProduct.setDiscountedCost(resultSet.getFloat("discountedProductCost"));
+            } else {
+                supplierProduct.setOnDiscount(false);
+                supplierProduct.setDiscountedCost(0f);
+            }
+
+            productsList.add(supplierProduct);
+        }
+
+        return productsList;
+    }
+
+
+
 }

@@ -9,7 +9,10 @@ import javax.servlet.UnavailableException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ProductService {
 
@@ -68,23 +71,33 @@ public class ProductService {
      * @param userId the user id
      * @return the last last products seen by the user.
      */
-    public List<Product> getLastUserProducts(Integer userId) {
+    public List<SupplierProduct> getLastUserProducts(Integer userId) throws UnavailableException {
 
-        try {
+        //TODO FAR BUTTARE ECCEZIONI A CASO
+        //E SICURAMENTE NON FARLO FALLIRE SILENZIOSAMENTE
 
-            ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
-            List<Product> mostRecentProducts = new ArrayList<>(Collections.emptyList());
+        ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
+        List<SupplierProduct> mostRecentProducts;
 
-            //mostRecentProducts = productsDAO.getLastUserProduct(userId);
+        mostRecentProducts = productsDAO.getLastUserProduct(userId);
 
-            if (mostRecentProducts.size() < 5)
-                return productsDAO.getRandomDiscountedProducts();
-            else
-                return mostRecentProducts;
-
-        } catch (UnavailableException e) {
-            return new ArrayList<>(Collections.emptyList());
+        if (mostRecentProducts.size() >= 5) {
+            return mostRecentProducts;
         }
 
+
+        List<SupplierProduct> randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
+        return getMinPriceProducts(randomDiscountedProducts);
+
+
+    }
+
+
+    private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
+        return new ArrayList<>(productsList.stream()
+                .collect(Collectors.toMap(Product::getProductId,
+                                            Function.identity(),
+                                            (p1, p2) -> p1.getDiscountedCost()<= p2.getDiscountedCost()? p1 : p2))
+                .values());
     }
 }
