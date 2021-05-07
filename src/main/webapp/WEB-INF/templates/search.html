@@ -27,14 +27,32 @@
                 <th scope="col">Description</th>
                 <th scope="col">Cost</th>
                 <th scope="col">Supplier</th>
+                <th scope="col">Add to cart</th>
             </tr>
         </thead>
-        <tbody th:remove="all-but-first">
-            <tr th:each="product : ${products}">
+        <tbody th:remove="all-but-first" th:each="productId : ${products.supplierProductMultiMap.keySet()}">
+            <tr th:each="product : ${products.supplierProductMultiMap.get(productId)}">
                 <td th:text="${product.productName}"></td>
                 <td th:text="${product.productDescription}"></td>
                 <td th:text="${product.supplierProductCost}"></td>
                 <td th:text="${product.supplierName}"></td>
+                <form action="AddToCart"  th:object="${product}" method="POST">
+                    <input type="hidden" th:value="${product.productId}"    name="productId" />
+                    <input type="hidden" th:value="${product.supplierId}"   name="supplierId" />
+                    <input type="hidden" th:value="${product.supplierProductCost}"   name="supplierProductCost" />
+
+                    <!--
+                    <input type="hidden" th:value="${product.productName}"    name="productName" />
+                    <input type="hidden" th:value="${product.productDescription}"   name="productDescription" />
+                    <input type="hidden" th:value="${product.productCategory}"    name="productCategory" />
+                    <input type="hidden" th:value="${product.productCategoryId}"    name="productCategoryId" />
+                    <input type="hidden" th:value="${product.productImagePath}"    name="productImagePath" />
+                    <input type="hidden" th:value="${product.supplierName}"   name="supplierName" />
+                    <input type="hidden" th:value="${product.onDiscount}"   name="onDiscount" />
+                    <input type="hidden" th:value="${product.originalProductCost}"   name="originalProductCost" />
+                    -->
+                    <input type="submit"                                    value="Add to cart" />
+                </form>
             </tr>
             <tr>
                 <td>Nome template</td>
@@ -45,6 +63,7 @@
         </tbody>
     </table>
 </div>
+
 
 
 </body>

@@ -90,8 +90,7 @@ public class ProductsDAO {
             ex.printStackTrace();
         }
 
-        ProductsCatalogue catalogue = new ProductsCatalogue(Collections.emptyList());
-        catalogue.setSupplierProductList(productsList);
+        ProductsCatalogue catalogue = new ProductsCatalogue(productsList);
         return catalogue;
 
     }
@@ -106,7 +105,7 @@ public class ProductsDAO {
         List<SupplierProduct> productsList;
 
 
-        //FIXME ogni tanto ritorna lo stesso prodotto due volte
+        //FIXME ritorna lo stesso prodotto due volte
         String query = "SELECT " +
                 "p.productId, p.productName, p.productDescription, p.photoPath, " +
                 "pC.categoryId ,pC.categoryName, " +

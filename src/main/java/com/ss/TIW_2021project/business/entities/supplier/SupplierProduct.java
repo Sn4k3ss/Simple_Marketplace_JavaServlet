@@ -6,6 +6,7 @@ public class SupplierProduct extends Product {
 
     private Integer supplierId = null;
     private String supplierName = null;
+    private Supplier supplier = null;
     private Float supplierProductCost = null;
     private Integer isAvailable = null;
     private boolean onDiscount = false;
