@@ -13,19 +13,56 @@
 <body>
 
 
-<h1>Ecco il tuo carrello<span th:text="${session.user.userName}">NomeProva</span></h1>
-<h2>Prodotti nel carrello:</h2>
-
-<p>Non c'è nulla</p>
-<p>Proprio nulla</p>
-
-
-
 <div class="topnav">
   <a th:href="@{/home}">Home</a>
   <a th:href="@{/cart}">Home</a>
   <a th:href="@{/orders}">Orders</a>
 </div>
+
+<h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
+
+
+
+<div th:if="${not #lists.isEmpty(shoppingCart.shoppingCartList)}">
+  <table style="width:50%">
+    <!-- se il carrello è vuoto non mostrare la tabella -->
+    <caption>CART</caption>
+    <thead>
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Supplier ID</th>
+      <th scope="col">supplierProductCost</th>
+    </tr>
+    </thead>
+    <tbody th:remove="all-but-first">
+    <tr th:each="product : ${shoppingCart.shoppingCartList}">
+      <td th:text="${product.productId}">
+      <td th:text="${product.supplierId}"></td>
+      <td th:text="${product.supplierProductCost}"></td>
+    </tr>
+    <tr>
+      <td>A product id</td>
+      <td>A supplier id</td>
+      <td>A product's cost</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+<h4>User info</h4>
+This is your e-mail:
+  <span th:text="${session.user.email}">amadeus.wgang@gmail.com </span> <br>
+  Name:
+  <span th:text="${session.user.userName}">Amadeus</span> <br>
+  Surname:
+  <span th:text="${session.user.userSurname}">Mozart</span> <br>
+  Id:
+  <span th:text="${session.user.userId}">0</span> <br>
+  Your country is: <span th:text="${#locale.country}">IT</span>
+</p>
+
+
 
 </body>
 </html>

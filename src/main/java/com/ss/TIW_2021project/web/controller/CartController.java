@@ -1,9 +1,12 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.ShoppingCart;
+import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +17,7 @@ import java.io.IOException;
 @WebServlet(
         name = "CartController",
         description = "This is my first annotated servlet",
+        //urlPatterns = {("/cart"),("/addToCart")},
         value = "/cart"
 )
 public class CartController extends HttpServlet {
@@ -27,9 +31,15 @@ public class CartController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        CartService cartService = new CartService(getServletContext());
+        ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
 
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        templateEngine.process("cart", webContext, resp.getWriter());
+        ServletContext servletContext = getServletContext();
+        final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
+        webContext.setVariable("shoppingCart", shoppingCart);
+        templateEngine.process("cart.html", webContext, resp.getWriter());
+
     }
 
     @Override

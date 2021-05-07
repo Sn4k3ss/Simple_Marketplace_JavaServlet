@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
@@ -45,7 +46,7 @@ public class SearchProducts extends HttpServlet {
         ProductService productService = new ProductService(req.getServletContext());
 
         //Product are duplicated but with different vendors
-        List<SupplierProduct> retrievedProducts = productService.getRelevantProducts(keyword);
+        ProductsCatalogue retrievedProducts = productService.getRelevantProducts(keyword);
 
         //redirect to the search page with the products retrieved displayed in a table
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

@@ -66,7 +66,8 @@ public class ProductsDAO {
                 "FROM products " +
                 "JOIN productsCatalogue ON products.productId=productsCatalogue.productId " +
                 "JOIN productsCategory ON products.categoryId= productsCategory.categoryId " +
-                "JOIN suppliers ON productsCatalogue.supplierId=suppliers.supplierId;";
+                "JOIN suppliers ON productsCatalogue.supplierId=suppliers.supplierId " +
+                "ORDER BY products.productId";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
 
@@ -89,7 +90,7 @@ public class ProductsDAO {
             ex.printStackTrace();
         }
 
-        ProductsCatalogue catalogue = new ProductsCatalogue();
+        ProductsCatalogue catalogue = new ProductsCatalogue(Collections.emptyList());
         catalogue.setSupplierProductList(productsList);
         return catalogue;
 
@@ -100,7 +101,7 @@ public class ProductsDAO {
      *
      * @return the last 5 user product
      */
-    public List<SupplierProduct> getLastUserProduct(Integer userId) {
+    public List<SupplierProduct> getLastUserProduct(Integer userId) throws SQLException {
 
         List<SupplierProduct> productsList;
 
@@ -108,7 +109,7 @@ public class ProductsDAO {
         //FIXME ogni tanto ritorna lo stesso prodotto due volte
         String query = "SELECT " +
                 "p.productId, p.productName, p.productDescription, p.photoPath, " +
-                "pC.categoryName, " +
+                "pC.categoryId ,pC.categoryName, " +
                 "s.supplierName, s.supplierRating, " +
                 "pc1.supplierId, pc1.productCost, pc1.onDiscount, pc1.originalProductCost, " +
                 "ph.timestamp\n" +
@@ -133,9 +134,7 @@ public class ProductsDAO {
 
         } catch (SQLException ex) {
             //if error while getting from db
-            //an empty list is returned
-            ex.printStackTrace();
-            return new ArrayList<>(Collections.emptyList());
+            throw ex;
         }
 
 
@@ -147,9 +146,11 @@ public class ProductsDAO {
      * Gets 5 random discounted products from a random category.
      *
      *
+     *
      * @return the random products
+     * @throws SQLException if an error appears while interacting with the db
      */
-    public List<SupplierProduct> getRandomDiscountedProducts() {
+    public List<SupplierProduct> getRandomDiscountedProducts() throws SQLException {
 
         Integer categoryId;
         List<SupplierProduct> randomDiscountedProducts = new ArrayList<>();
@@ -161,17 +162,25 @@ public class ProductsDAO {
         //categoryId = new Random().nextInt(howManyCategories);
         categoryId = 1;
 
-        String query =
-                " SELECT " +
-                    "products.productId, productName, productDescription, photoPath, " +
-                    "productsCategory.categoryId, categoryName, " +
-                    "productsCatalogue.supplierId, productCost, onDiscount, originalProductCost, " +
-                    "suppliers.supplierName, supplierRating, freeShippingMin " +
-                "FROM productsCatalogue " +
-                    "JOIN products ON productsCatalogue.productId = products.productId " +
-                    "JOIN productsCategory ON products.categoryId = productsCategory.categoryId " +
-                    "JOIN suppliers ON productsCatalogue.supplierId = suppliers.supplierId " +
-                "WHERE productsCatalogue.onDiscount = true AND products.categoryId = ? ";
+        String query = " SELECT " +
+                        "        p.productId, p.productName, p.productDescription, p.photoPath, " +
+                        "        C.categoryId, C.categoryName, " +
+                        "        pc.supplierId, pc.productCost, pc.onDiscount, pc.originalProductCost, " +
+                        "        s.supplierName, s.supplierRating, s.freeShippingMin " +
+                        "FROM productsCatalogue AS pc " +
+                        "    INNER JOIN ( " +
+                        "        SELECT pc2.productId, min(pc2.productCost) minCost " +
+                        "        FROM productsCatalogue AS pc2 " +
+                        "        GROUP BY productId " +
+                        "        ) b  ON pc.productId = b.productId AND pc.productCost = b.minCost   -- 'b' is the alias fro each row in the inner call \n" +
+                        "JOIN products p ON p.productId = pc.productId " +
+                        "JOIN suppliers s ON pc.supplierId = s.supplierId " +
+                        "JOIN productsCategory C on C.categoryId = p.categoryId " +
+                        "WHERE p.categoryId = ?  AND pc.onDiscount = TRUE -- in questo modo si ritorna solo prodotti 'onDiscsount' ma che potrebbero avere prezzi più alti di altri venditori poichè non 'onDiscount' \n" +
+                        "GROUP BY pc.productId  -- fa si che ritorna un solo prezzo per prodotto \n" +
+                        "ORDER BY rand() " +
+                        "LIMIT 5 " +
+                        "-- ritorna il prezzo minimo al quale è venduto un prodotto 'onDiscount' (in offerta) ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, categoryId);
@@ -181,9 +190,7 @@ public class ProductsDAO {
 
         } catch (SQLException ex) {
             //if error while getting from db
-            //an empty list is returned
-            ex.printStackTrace();
-            return new ArrayList<>(Collections.emptyList());
+            throw ex;
         }
 
         return randomDiscountedProducts;
@@ -208,21 +215,64 @@ public class ProductsDAO {
             preparedStatement.executeUpdate(query);
 
         } catch (SQLException ex) {
-            //if error while getting from db
-            //an empty list is returned
-            ex.printStackTrace();
+            //errore durante l'inserimento in productsHistory table
+            throw ex;
         }
 
 
         //The procedure maxFiveLastProducts is called to have a maximum of 5 recent element by every user in the productsHistory table
-        CallableStatement callableStatement = connection.prepareCall("{call maxFiveLastProducts(?)}");
-        callableStatement.setInt(1, userId);
-        callableStatement.execute();
+        CallableStatement callableStatement = null;
+        try {
+            System.out.println("Executing procedure: maxFiveLastProducts(userId)...");
+            callableStatement = connection.prepareCall("{call maxFiveLastProducts(?)}");
+            callableStatement.setInt(1, userId);
+            callableStatement.execute();
+
+        } catch (SQLException ex) {
+            //Errore durante l'esecuzione della procedura...
+            //"Error while executing routine procedure on db
+            throw ex;
+        }
 
 
 
     }
 
+
+    /**
+     * Gets all the products that contains the keyword given as parameter inside Name or Description
+     *
+     * @param keyword
+     * @return a list of inherent products
+     * @throws SQLException if an error appears while interacting with the db
+     */
+    public ProductsCatalogue getProductsMatching(String keyword) throws SQLException {
+        List<SupplierProduct> productsList = new ArrayList<>();
+        String query = "SELECT " +
+                "p.productId, p.productName, p.productDescription, p.photoPath," +
+                "C.categoryName, C.categoryId , " +
+                "pc.supplierId, pc.productCost, pc.onDiscount, pc.originalProductCost, " +
+                "S.supplierName " +
+                "FROM products as p " +
+                "JOIN productsCatalogue as pc ON p.productId=pc.productId " +
+                "JOIN productsCategory as C ON p.categoryId= C.categoryId " +
+                "JOIN suppliers as S ON pc.supplierId=S.supplierId " +
+                "WHERE REGEXP_LIKE(p.productName, '"+ keyword +"') OR REGEXP_LIKE(p.productDescription, '" + keyword + "')" +
+                "ORDER BY p.productId ";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                productsList = buildProductsList(resultSet);
+
+            }
+        } catch (SQLException ex) {
+            throw ex;
+        }
+
+        ProductsCatalogue catalogue = new ProductsCatalogue(productsList);
+        return catalogue;
+    }
 
 
     /**
@@ -243,6 +293,7 @@ public class ProductsDAO {
             supplierProduct = new SupplierProduct();
             supplierProduct.setSupplierId(resultSet.getInt("supplierId"));
             supplierProduct.setProductId(resultSet.getInt("productId"));
+            supplierProduct.setProductCategoryId(resultSet.getInt("categoryId"));
             supplierProduct.setSupplierProductCost(resultSet.getFloat("productCost"));
             supplierProduct.setProductCategory(resultSet.getString("categoryName"));
             supplierProduct.setProductName(resultSet.getString("productName"));

@@ -8,6 +8,7 @@ import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,17 +27,23 @@ public class HomeController extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService(getServletContext());
-        List<SupplierProduct> retrievedProducts = productService.getLastUserProducts(user.getUserId());
+        List<SupplierProduct> retrievedProducts = null;
 
-        //TEST
-        int productIdToBeSetAsVisualized = 22;
-        productService.setProductDisplayed(user.getUserId(), productIdToBeSetAsVisualized);
-        //
+        try {
+            retrievedProducts = productService.getLastUserProducts(user.getUserId());
+        } catch (UnavailableException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("Not possible to get last user's products");
+            //una possibile soluzione: piuttosto che far fallire la chaimata alla doGet della servlet
+            //si potrebbe gestire l'eccezione in modo tale che la tabellla con i prodotti recenti non venga visualizzata
+            //retrievedProducts = new ArrayList<>();
+            return;
+        }
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

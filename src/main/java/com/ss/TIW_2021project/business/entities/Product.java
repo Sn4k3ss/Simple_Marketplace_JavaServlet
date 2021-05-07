@@ -8,6 +8,7 @@ public class Product {
     private String productName = null;
     private String productDescription = null;
     private String productCategory = null;
+    private Integer productCategoryId = null;
     private String productImagePath = null;
 
     public Integer getProductId() {
@@ -36,6 +37,13 @@ public class Product {
     }
     public void setProductCategory(String productCategory) {
         this.productCategory = productCategory;
+    }
+
+    public Integer getProductCategoryId() {
+        return productCategoryId;
+    }
+    public void setProductCategoryId(Integer productCategoryId) {
+        this.productCategoryId = productCategoryId;
     }
 
     public String getProductImagePath() {

@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.entities.Product;
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.ServletContext;
@@ -47,18 +48,23 @@ public class ProductService {
      * @param keyword the keyword that needs to be in name or description
      * @return a list of relevant products
      */
-    public List<SupplierProduct> getRelevantProducts(String keyword) {
+    public ProductsCatalogue getRelevantProducts(String keyword) throws UnavailableException {
 
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
-            List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
 
+            //List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
+            ProductsCatalogue retrievedProducts = productsDAO.getProductsMatching(keyword);
+
+            /*
             retrievedProducts.removeIf(
                     supplierProduct -> (!supplierProduct.getProductDescription().contains(keyword) && !supplierProduct.getProductName().contains(keyword)));
 
+             */
+
             return retrievedProducts;
-        } catch (UnavailableException e) {
-            return new ArrayList<>(Collections.emptyList());
+        } catch (SQLException e) {
+            throw  new UnavailableException("Error while retrieving from databse");
         }
     }
 
@@ -72,22 +78,33 @@ public class ProductService {
      */
     public List<SupplierProduct> getLastUserProducts(Integer userId) throws UnavailableException {
 
-        //TODO FAR BUTTARE ECCEZIONI A CASO
-        //E SICURAMENTE NON FARLO FALLIRE SILENZIOSAMENTE
 
-        ProductsDAO productsDAO = new ProductsDAO(this.servletContext);
-        List<SupplierProduct> mostRecentProducts;
+        ProductsDAO productsDAO = null;
+        productsDAO = new ProductsDAO(this.servletContext);
+        List<SupplierProduct> mostRecentProducts = null;
 
-        mostRecentProducts = productsDAO.getLastUserProduct(userId);
 
-        if (mostRecentProducts.size() >= 5) {
+        try {
+            mostRecentProducts = productsDAO.getLastUserProduct(userId);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            //Ma facciamo continuare l'esecuzione per provare a prendere almeno i 5 prodotti in offerta da una categoria casuale
+        }
+
+        if (mostRecentProducts != null && mostRecentProducts.size() >= 5) {
             return mostRecentProducts;
         }
 
 
-        List<SupplierProduct> randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
-        return getMinPriceProducts(randomDiscountedProducts);
+        List<SupplierProduct> randomDiscountedProducts = null;
+        try {
+            randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            throw new UnavailableException("Error while retrieving the last five products seen by the user");
+        }
 
+        return randomDiscountedProducts;
 
     }
 
@@ -100,11 +117,14 @@ public class ProductService {
             productsDAO.setProductDisplayed(userId, productId);
 
         } catch (SQLException | UnavailableException exception) {
+            //se aerriva una sqlexception allora il problema è nella query
+            //se è una unavailable exception allora il problema sta nella connessione al db
             exception.printStackTrace();
         }
     }
 
 
+        //Data una lista conntenente diversi prodotti venduti da diversi venditori, raggruppa per prodotti lasciando il venditore col prezzo più basso
         private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
         return new ArrayList<>(productsList.stream()
                 .collect(Collectors.toMap(Product::getProductId,
