@@ -7,14 +7,12 @@ import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
-import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.Date;
 
 public class ProductsDAO {
 
@@ -106,15 +104,13 @@ public class ProductsDAO {
 
         List<SupplierProduct> productsList;
 
+
+        //FIXME ogni tanto ritorna lo stesso prodotto due volte
         String query = "SELECT " +
-                "p.productId, " +
-                "p.productName, " +
-                "p.productDescription, " +
+                "p.productId, p.productName, p.productDescription, p.photoPath, " +
                 "pC.categoryName, " +
-                "s.supplierName, " +
-                "s.supplierRating," +
-                "pc1.supplierId, " +
-                "pc1.productCost, " +
+                "s.supplierName, s.supplierRating, " +
+                "pc1.supplierId, pc1.productCost, pc1.onDiscount, pc1.originalProductCost, " +
                 "ph.timestamp\n" +
                 "FROM products AS p " +
                     "JOIN productsCatalogue AS pc1 ON p.productId = pc1.productId " +
@@ -142,8 +138,7 @@ public class ProductsDAO {
             return new ArrayList<>(Collections.emptyList());
         }
 
-        //FIXME
-        //in questa lista ci stanno prodotti ripetuti venduti da diversi venditori (a prezzi diversi)
+
         return productsList;
 
     }
@@ -195,6 +190,39 @@ public class ProductsDAO {
     }
 
 
+    public void setProductDisplayed(Integer userId, Integer productId) throws SQLException {
+
+
+        String query = "INSERT INTO tiw_2021projects.productsHistory (productId, userId, timestamp) VALUES (?, ?, ?) ";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+            preparedStatement.setInt(1, productId);
+            preparedStatement.setInt(2, userId);
+
+
+            //FIXME NOT WORKING
+            ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("Etc/UTC"));
+            Timestamp timestamp = Timestamp.valueOf(zdt.toLocalDateTime()); //due ore indietro
+
+            preparedStatement.setTimestamp(3, timestamp );
+            preparedStatement.executeUpdate(query);
+
+        } catch (SQLException ex) {
+            //if error while getting from db
+            //an empty list is returned
+            ex.printStackTrace();
+        }
+
+
+        //The procedure maxFiveLastProducts is called to have a maximum of 5 recent element by every user in the productsHistory table
+        CallableStatement callableStatement = connection.prepareCall("{call maxFiveLastProducts(?)}");
+        callableStatement.setInt(1, userId);
+        callableStatement.execute();
+
+
+
+    }
+
 
 
     /**
@@ -223,14 +251,11 @@ public class ProductsDAO {
             supplierProduct.setProductImagePath(resultSet.getString("photoPath"));
 
 
-            //FIXME
             if (resultSet.getBoolean("onDiscount")) {
                 supplierProduct.setOnDiscount(true);    //we know that from the query
-                supplierProduct.setDiscountedCost(resultSet.getFloat("discountedProductCost"));
-            } else {
-                supplierProduct.setOnDiscount(false);
-                supplierProduct.setDiscountedCost(0f);
+                supplierProduct.setOriginalProductCost(resultSet.getFloat("originalProductCost"));
             }
+
 
             productsList.add(supplierProduct);
         }

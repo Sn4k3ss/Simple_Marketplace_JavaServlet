@@ -9,7 +9,6 @@ import javax.servlet.UnavailableException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ public class ProductService {
     }
 
     /**
-     * Return a list of {@link List<Product> SupplierProduct} that contains the given {@link String keyword} in {@link Product#productName} or {@link Product#productDescription}
+     * Return a list of {@link List<Product> SupplierProduct} that contains the given {@link String keyword} in {@link Product#getProductName()} or {@link Product#getProductDescription()}
      *
      * @param keyword the keyword that needs to be in name or description
      * @return a list of relevant products
@@ -93,11 +92,24 @@ public class ProductService {
     }
 
 
-    private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
+
+    public void setProductDisplayed(Integer userId, int productId) {
+
+        try {
+            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            productsDAO.setProductDisplayed(userId, productId);
+
+        } catch (SQLException | UnavailableException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+
+        private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
         return new ArrayList<>(productsList.stream()
                 .collect(Collectors.toMap(Product::getProductId,
                                             Function.identity(),
-                                            (p1, p2) -> p1.getDiscountedCost()<= p2.getDiscountedCost()? p1 : p2))
+                                            (p1, p2) -> p1.getOriginalProductCost()<= p2.getOriginalProductCost()? p1 : p2))
                 .values());
     }
 }

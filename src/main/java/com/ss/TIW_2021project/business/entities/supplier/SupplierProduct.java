@@ -9,7 +9,7 @@ public class SupplierProduct extends Product {
     private Float supplierProductCost = null;
     private Integer isAvailable = null;
     private boolean onDiscount = false;
-    private Float discountedCost = null;
+    private Float originalProductCost = null;
 
 
     public Integer getSupplierId() {
@@ -52,11 +52,11 @@ public class SupplierProduct extends Product {
         this.onDiscount = onDiscount;
     }
 
-    public Float getDiscountedCost() {
-        return discountedCost;
+    public Float getOriginalProductCost() {
+        return originalProductCost;
     }
 
-    public void setDiscountedCost(Float discountedCost) {
-        this.discountedCost = discountedCost;
+    public void setOriginalProductCost(Float originalProductCost) {
+        this.originalProductCost = originalProductCost;
     }
 }

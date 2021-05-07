@@ -1,6 +1,5 @@
 package com.ss.TIW_2021project.web.controller;
 
-import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
@@ -32,10 +31,12 @@ public class HomeController extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService(getServletContext());
-
-
         List<SupplierProduct> retrievedProducts = productService.getLastUserProducts(user.getUserId());
 
+        //TEST
+        int productIdToBeSetAsVisualized = 22;
+        productService.setProductDisplayed(user.getUserId(), productIdToBeSetAsVisualized);
+        //
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

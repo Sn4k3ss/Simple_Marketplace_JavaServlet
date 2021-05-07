@@ -10,5 +10,4 @@ public class ShoppingCart {
 
     private List<SupplierProduct> shoppingCartList = null;
 
-
 }

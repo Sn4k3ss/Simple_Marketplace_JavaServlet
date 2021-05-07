@@ -11,7 +11,6 @@ public class ShippingAddress {
     public String getRecipient() {
         return recipient;
     }
-
     public void setRecipient(String recipient) {
         this.recipient = recipient;
     }
@@ -19,7 +18,6 @@ public class ShippingAddress {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -27,7 +25,6 @@ public class ShippingAddress {
     public String getCity() {
         return city;
     }
-
     public void setCity(String city) {
         this.city = city;
     }
@@ -35,7 +32,6 @@ public class ShippingAddress {
     public String getState() {
         return state;
     }
-
     public void setState(String state) {
         this.state = state;
     }
@@ -43,7 +39,6 @@ public class ShippingAddress {
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
