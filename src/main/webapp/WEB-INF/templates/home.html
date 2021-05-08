@@ -31,10 +31,9 @@
 <div class="topnav">
   <p>Link veloci</p>
   <a th:href="@{/home}">Home</a>
-  <a th:href="@{/cart}">Cart</a>
-  <a th:href="@{/orders}">Orders</a>
+  <a th:href="@{/shoppingCart}">Shopping cart</a>
+  <a th:href="@{/orders}">My Orders</a>
   <a th:href="@{/logout}">Logout</a>
-
 </div>
 
 <form action="searchProducts" method="POST">
@@ -46,15 +45,15 @@
 <div>
     <table style="width:100%">
       <caption>Seen recently</caption>
-      <thead>
-          <tr>
-            <th scope="col">Product</th>
-            <th scope="col">Description</th>
-            <th scope="col">Cost</th>
-            <th scope="col">Supplier</th>
-            <th scope="col">Add to cart</th>
-          </tr>
-      </thead>
+          <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Description</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Supplier</th>
+                <th scope="col">Add to cart</th>
+              </tr>
+          </thead>
       <tbody th:remove="all-but-first" th:each="productId : ${products.supplierProductMultiMap.keySet()}">
           <tr th:each="product : ${products.supplierProductMultiMap.get(productId)}">
               <td th:text="${product.productName}">

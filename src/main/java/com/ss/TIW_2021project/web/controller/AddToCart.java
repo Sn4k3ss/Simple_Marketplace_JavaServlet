@@ -41,6 +41,10 @@ public class AddToCart extends HttpServlet {
 
         SupplierProduct supplierProduct;
 
+        //the request contains: -productId
+        //                      -supplierId
+        //                      -supplierProductCost
+
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UnavailableException e) {
@@ -53,16 +57,8 @@ public class AddToCart extends HttpServlet {
         ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), supplierProduct);
 
 
-        //Once the product is added to the shopping cart the user is redirected to the home page
-        final WebContext webContext = new WebContext(req, resp, req.getServletContext(), req.getLocale());
-        webContext.setVariable("shoppingCart", shoppingCart);
-        templateEngine.process("cart.html", webContext, resp.getWriter());
+        String path = getServletContext().getContextPath() + "/shoppingCart";
+        resp.sendRedirect(path);
     }
 
-    private void invalidCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-        webContext.setVariable("errorMessage", errorMessage);
-        templateEngine.process("../../index.html", webContext, response.getWriter());
-    }
 }

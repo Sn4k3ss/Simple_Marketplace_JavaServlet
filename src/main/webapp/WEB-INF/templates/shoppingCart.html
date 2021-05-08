@@ -14,32 +14,34 @@
 
 
 <div class="topnav">
+  <p>Link veloci</p>
   <a th:href="@{/home}">Home</a>
-  <a th:href="@{/cart}">Home</a>
-  <a th:href="@{/orders}">Orders</a>
+  <a th:href="@{/shoppingCart}">Shopping cart</a>
+  <a th:href="@{/orders}">My Orders</a>
+  <a th:href="@{/logout}">Logout</a>
 </div>
 
 <h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 
 
 
-<div th:if="${not #lists.isEmpty(shoppingCart.shoppingCartList)}">
+<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartList.asMap())}">
   <table style="width:50%">
     <!-- se il carrello è vuoto non mostrare la tabella -->
     <caption>CART</caption>
-    <thead>
-    <tr>
-      <th scope="col">Product ID</th>
-      <th scope="col">Supplier ID</th>
-      <th scope="col">supplierProductCost</th>
-    </tr>
-    </thead>
-    <tbody th:remove="all-but-first">
-    <tr th:each="product : ${shoppingCart.shoppingCartList}">
-      <td th:text="${product.productId}">
-      <td th:text="${product.supplierId}"></td>
-      <td th:text="${product.supplierProductCost}"></td>
-    </tr>
+      <thead>
+        <tr>
+          <th scope="col">Product ID</th>
+          <th scope="col">Supplier ID</th>
+          <th scope="col">supplierProductCost</th>
+        </tr>
+      </thead>
+    <tbody th:remove="all-but-first" th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}">
+      <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}">
+        <td th:text="${product.productId}">
+        <td th:text="${product.supplierId}"></td>
+        <td th:text="${product.supplierProductCost}"></td>
+      </tr>
     <tr>
       <td>A product id</td>
       <td>A supplier id</td>

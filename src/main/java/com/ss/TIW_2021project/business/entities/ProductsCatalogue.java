@@ -26,7 +26,6 @@ public class ProductsCatalogue {
         for (SupplierProduct supProd : productsList) {
             supplierProductMultiMap.put(supProd.getProductId(), supProd);
         }
-
     }
 
     /**
@@ -47,6 +46,14 @@ public class ProductsCatalogue {
         this.supplierProductMultiMap = supplierProductMultiMap;
     }
 
+
+    /**
+     * This method checks if there are at least the given number of unique products.
+     * NB Still every product can have multiple supplier
+     *
+     * @param num the minimum number of products required
+     * @return true if the unique products are at least <code>num</code>
+     */
     public boolean containsAtLeast(int num) {
 
         int productsInCatalogue = supplierProductMultiMap.asMap().size();

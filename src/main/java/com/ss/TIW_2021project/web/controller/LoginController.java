@@ -95,6 +95,6 @@ public class LoginController extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
         webContext.setVariable("errorMessage", errorMessage);
-        templateEngine.process("../../index.html", webContext, response.getWriter());
+        templateEngine.process("../../index", webContext, response.getWriter());
     }
 }

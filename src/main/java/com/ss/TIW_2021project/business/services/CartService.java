@@ -9,6 +9,7 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CartService {
@@ -25,7 +26,7 @@ public class CartService {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
 
         if (shoppingCart == null) {
-            shoppingCart = new ShoppingCart();
+            shoppingCart = new ShoppingCart(Collections.emptyList());
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
@@ -38,11 +39,11 @@ public class CartService {
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
 
         if(shoppingCart == null) {
-            shoppingCart = new ShoppingCart();
+            shoppingCart = new ShoppingCart(Collections.emptyList());
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
-        shoppingCart.addProduct(supplierProduct);
+        shoppingCart.addProductToCart(supplierProduct);
 
         return shoppingCart;
     }

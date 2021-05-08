@@ -1,5 +1,7 @@
 package com.ss.TIW_2021project.business.entities;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import java.util.ArrayList;
@@ -14,24 +16,32 @@ public class ShoppingCart {
 
 
 
-    private List<SupplierProduct> shoppingCartList = null;
+    //A simple MultiMap with supplierId as key mapped to multiple products
+    private Multimap<Integer, SupplierProduct> shoppingCartList = null;
 
-    public ShoppingCart() {
-        this.shoppingCartList = new ArrayList<>();
+
+
+
+    /**
+     * Instantiates a new Products catalogue.
+     *
+     * @param productsList a {@link List<SupplierProduct> productsList from wich the catalogue wee'll be generated}
+     */
+    public ShoppingCart(List<SupplierProduct> productsList) {
+        shoppingCartList = ArrayListMultimap.create();
+
+        for (SupplierProduct supProd : productsList) {
+            shoppingCartList.put(supProd.getSupplierId(), supProd);
+        }
     }
 
-    public void addProduct(SupplierProduct supplierProduct) {
-        this.getShoppingCartList().add(supplierProduct);
+    public void addProductToCart(SupplierProduct supplierProduct) {
+        shoppingCartList.put(supplierProduct.getSupplierId(), supplierProduct);
     }
 
-    public void removeProduct(SupplierProduct productToRemove) {
-        this.getShoppingCartList().removeIf(productInCart -> productInCart.getProductId() == productToRemove.getProductId()
-                && productInCart.getSupplierId() == productToRemove.getSupplierId()
-                && productInCart.getSupplierProductCost() == productInCart.getSupplierProductCost());
 
-    }
-
-    public List<SupplierProduct> getShoppingCartList() {
+    public Multimap<Integer, SupplierProduct> getShoppingCartList() {
         return shoppingCartList;
     }
+
 }

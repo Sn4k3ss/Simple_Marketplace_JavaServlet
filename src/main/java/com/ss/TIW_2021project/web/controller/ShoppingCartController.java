@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "CartController",
+        name = "shoppingCartController",
         description = "This is my first annotated servlet",
         //urlPatterns = {("/cart"),("/addToCart")},
-        value = "/cart"
+        value = "/shoppingCart"
 )
-public class CartController extends HttpServlet {
+public class ShoppingCartController extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
@@ -38,7 +38,7 @@ public class CartController extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("shoppingCart", shoppingCart);
-        templateEngine.process("cart.html", webContext, resp.getWriter());
+        templateEngine.process("shoppingCart", webContext, resp.getWriter());
 
     }
 

@@ -55,7 +55,7 @@ public class SessionChecker implements Filter {
      */
 
     private boolean process(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
 
         HttpSession session = request.getSession();
 
