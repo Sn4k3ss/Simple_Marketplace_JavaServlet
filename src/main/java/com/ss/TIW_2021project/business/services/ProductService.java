@@ -76,13 +76,13 @@ public class ProductService {
      * @param userId the user id
      * @return the last last products seen by the user.
      */
-    public List<SupplierProduct> getLastUserProducts(Integer userId) throws UnavailableException {
+    public ProductsCatalogue getLastUserProducts(Integer userId) throws UnavailableException {
 
 
         ProductsDAO productsDAO = null;
         productsDAO = new ProductsDAO(this.servletContext);
-        List<SupplierProduct> mostRecentProducts = null;
 
+        ProductsCatalogue mostRecentProducts = null;
 
         try {
             mostRecentProducts = productsDAO.getLastUserProduct(userId);
@@ -91,12 +91,13 @@ public class ProductService {
             //Ma facciamo continuare l'esecuzione per provare a prendere almeno i 5 prodotti in offerta da una categoria casuale
         }
 
-        if (mostRecentProducts != null && mostRecentProducts.size() >= 5) {
+        if (mostRecentProducts != null && mostRecentProducts.containsAtLeast(5)) {
             return mostRecentProducts;
         }
 
 
-        List<SupplierProduct> randomDiscountedProducts = null;
+
+        ProductsCatalogue randomDiscountedProducts = null;
         try {
             randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
         } catch (SQLException exception) {
@@ -110,17 +111,19 @@ public class ProductService {
 
 
 
-    public void setProductDisplayed(Integer userId, int productId) {
+    public void setProductDisplayed(Integer userId, int productId) throws SQLException, UnavailableException {
 
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
             productsDAO.setProductDisplayed(userId, productId);
 
-        } catch (SQLException | UnavailableException exception) {
-            //se aerriva una sqlexception allora il problema è nella query
+        } catch (SQLException | UnavailableException ex) {
+            //se arriva una sqlexception allora il problema è nella query
             //se è una unavailable exception allora il problema sta nella connessione al db
-            exception.printStackTrace();
+            //exception.printStackTrace();
+            throw ex;
         }
+
     }
 
 

@@ -12,6 +12,8 @@ public class ShoppingCart {
     //                                          -supplierId
     //                                          -supplierProductCost
 
+
+
     private List<SupplierProduct> shoppingCartList = null;
 
     public ShoppingCart() {

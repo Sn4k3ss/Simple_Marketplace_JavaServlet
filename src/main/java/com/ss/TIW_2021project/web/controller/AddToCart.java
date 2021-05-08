@@ -53,7 +53,7 @@ public class AddToCart extends HttpServlet {
         ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), supplierProduct);
 
 
-
+        //Once the product is added to the shopping cart the user is redirected to the home page
         final WebContext webContext = new WebContext(req, resp, req.getServletContext(), req.getLocale());
         webContext.setVariable("shoppingCart", shoppingCart);
         templateEngine.process("cart.html", webContext, resp.getWriter());

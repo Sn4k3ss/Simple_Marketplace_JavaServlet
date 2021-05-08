@@ -44,50 +44,52 @@
 </form>
 
 <div>
-  <table style="width:50%">
-    <caption>Seen recently</caption>
-    <thead>
-    <tr>
-      <th scope="col">Product</th>
-      <th scope="col">Description</th>
-      <th scope="col">Cost</th>
-      <th scope="col">Supplier</th>
-      <th scope="col">Add to cart</th>
-    </tr>
-    </thead>
-    <tbody th:remove="all-but-first">
-    <tr th:each="product : ${retrievedProducts}">
-      <td th:text="${product.productName}">
-      <td th:text="${product.productDescription}"></td>
-      <td th:text="${product.supplierProductCost}"></td>
-      <td th:text="${product.supplierName}"></td>
-      <td>
-        <form action="AddToCart"  th:object="${product}" method="POST">
-          <input type="hidden" th:value="${product.productId}"    name="productId" />
-          <input type="hidden" th:value="${product.supplierId}"   name="supplierId" />
-          <input type="hidden" th:value="${product.supplierProductCost}"   name="supplierProductCost" />
+    <table style="width:100%">
+      <caption>Seen recently</caption>
+      <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Description</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Add to cart</th>
+          </tr>
+      </thead>
+      <tbody th:remove="all-but-first" th:each="productId : ${products.supplierProductMultiMap.keySet()}">
+          <tr th:each="product : ${products.supplierProductMultiMap.get(productId)}">
+              <td th:text="${product.productName}">
+              <td th:text="${product.productDescription}"></td>
+              <td th:text="${product.supplierProductCost}"></td> <!-- if product.isOnDiscount 'illimuna prezzo' -->
+              <td th:text="${product.supplierName}"></td>
+              <td>
+                <form action="AddToCart"  th:object="${product}" method="POST">
+                  <input type="hidden" th:value="${product.productId}"    name="productId" />
+                  <input type="hidden" th:value="${product.supplierId}"   name="supplierId" />
+                  <input type="hidden" th:value="${product.supplierProductCost}"   name="supplierProductCost" />
 
-          <!--
-          <input type="hidden" th:value="${product.productName}"    name="productName" />
-          <input type="hidden" th:value="${product.productDescription}"   name="productDescription" />
-          <input type="hidden" th:value="${product.productCategory}"    name="productCategory" />
-          <input type="hidden" th:value="${product.productCategoryId}"    name="productCategoryId" />
-          <input type="hidden" th:value="${product.productImagePath}"    name="productImagePath" />
-          <input type="hidden" th:value="${product.supplierName}"   name="supplierName" />
-          <input type="hidden" th:value="${product.onDiscount}"   name="onDiscount" />
-          <input type="hidden" th:value="${product.originalProductCost}"   name="originalProductCost" />
-          -->
-          <input type="submit"                                    value="Add to cart" />
-        </form>
-      </td>
-    </tr>
-    <tr>
-      <td>A product</td>
-      <td>A product's description</td>
-      <td>A product's cost</td>
-      <td>A product's vendor</td>
-    </tr>
-    </tbody>
+                  <!--
+                  <input type="hidden" th:value="${product.productName}"    name="productName" />
+                  <input type="hidden" th:value="${product.productDescription}"   name="productDescription" />
+                  <input type="hidden" th:value="${product.productCategory}"    name="productCategory" />
+                  <input type="hidden" th:value="${product.productCategoryId}"    name="productCategoryId" />
+                  <input type="hidden" th:value="${product.productImagePath}"    name="productImagePath" />
+                  <input type="hidden" th:value="${product.supplierName}"   name="supplierName" />
+                  <input type="hidden" th:value="${product.onDiscount}"   name="onDiscount" />
+                  <input type="hidden" th:value="${product.originalProductCost}"   name="originalProductCost" />
+                  -->
+                  <input type="submit"                                    value="Add to cart" />
+                </form>
+              </td>
+            </tr>
+        <!-- static content -->
+        <tr>
+          <td>A product</td>
+          <td>A product's description</td>
+          <td>A product's cost</td>
+          <td>A product's vendor</td>
+          <td> <form action="#" method="post"> </form></td>
+        </tr>
+      </tbody>
   </table>
 </div>
 

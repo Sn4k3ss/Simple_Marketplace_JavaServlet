@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
@@ -32,7 +33,7 @@ public class HomeController extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService(getServletContext());
-        List<SupplierProduct> retrievedProducts = null;
+        ProductsCatalogue retrievedProducts = null;
 
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
@@ -48,7 +49,7 @@ public class HomeController extends HttpServlet {
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("userInfo", user);
-        webContext.setVariable("retrievedProducts", retrievedProducts);
+        webContext.setVariable("products", retrievedProducts);
         templateEngine.process("home", webContext, resp.getWriter());
 
     }
