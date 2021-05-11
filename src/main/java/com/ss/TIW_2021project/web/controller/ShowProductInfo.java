@@ -1,7 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
@@ -15,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "SearchProduct",
-        description = "This servlet handles the search through the catalogue",
-        value = "/searchProducts"
+        name = "ShowProductInfo",
+        description = "This servlet handle the click on a specific product to show the relative info",
+        value = "/showProductInfo"
 )
-public class SearchProducts extends HttpServlet {
+public class ShowProductInfo extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
@@ -32,27 +31,19 @@ public class SearchProducts extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
-
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Integer selectedProductId = 0;
-        String keyword = req.getParameter("keyword");
-
-        ProductService productService = new ProductService(req.getServletContext());
-
-        //Product are duplicated but with different vendors
-        ProductsCatalogue retrievedProducts = productService.getRelevantProducts(keyword);
-
-        req.getSession().setAttribute("products_from_query", retrievedProducts);
+        Integer productId = Integer.parseInt(req.getParameter("productId"));
+        ProductsCatalogue productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
 
         //redirect to the search page with the products retrieved displayed in a table
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        webContext.setVariable("products", retrievedProducts);
-        webContext.setVariable("selectedProductId", selectedProductId);
+        webContext.setVariable("products", productsFromQuery);
+        webContext.setVariable("selectedProductId", productId);
         templateEngine.process("search", webContext, resp.getWriter());
     }
+
 }
