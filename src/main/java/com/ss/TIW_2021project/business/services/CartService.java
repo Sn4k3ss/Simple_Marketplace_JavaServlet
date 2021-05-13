@@ -23,6 +23,7 @@ public class CartService {
     }
 
     public ShoppingCart getShoppingCart(HttpSession session) {
+
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
 
         if (shoppingCart == null) {

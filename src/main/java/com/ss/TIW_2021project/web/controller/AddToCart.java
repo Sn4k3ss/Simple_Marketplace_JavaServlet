@@ -20,7 +20,7 @@ import java.io.IOException;
 @WebServlet(
         name = "AddToCart",
         description = "This servlet handles the 'add to cart' action whenever is triggered",
-        value = "/AddToCart"
+        value = "/products/AddToCart"
 )
 public class AddToCart extends HttpServlet {
 

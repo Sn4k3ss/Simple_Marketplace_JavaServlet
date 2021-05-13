@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <title>Search</title>
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../css/search.css" th:href="@{/css/search.css}" />
+</head>
+
+
+<body>
+
+<div class="topnav">
+    <p>Link veloci</p>
+    <a th:href="@{/home}">Home</a>
+    <a th:href="@{/shoppingCart}">Shopping cart</a>
+    <a th:href="@{/orders}">My Orders</a>
+    <a th:href="@{/logout}">Logout</a>
+</div>
+
+<div>
+    <table style="width:100%">
+        <caption>Products from the marketplace</caption>
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Description</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Supplier</th>
+                <th scope="col">Add to cart</th>
+            </tr>
+        </thead>
+
+        <tbody th:each="productId : ${products.supplierProductMultiMap.keySet()}">
+
+            <!-- TODO/FIX -->
+            <!-- se il prodotto del catalogo ha lo stesso id del prodotto selezionato allora mostra tutti i venditori "electedProductId == productId"-->
+            <tr th:each="productInfo1 : ${products.supplierProductMultiMap.get(productId)}" >
+                <td>
+                    <!-- form reso cliccabile e modificato con css -->
+                    <form th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
+                        <!-- il tag input vine utilizzato per mandare parametri nella richiesta -->
+                        <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
+                        <input type="submit" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">
+                        <!-- il tag button può essere utilizzato per inserire STATICAMENTE il testo del link -->
+                        <!-- <button type="submit" class="link-button"> Testo del link</button> -->
+                        <!-- inserire più 'type=submit' fa comparire più bottoni -->
+                    </form>
+                </td>
+                <td th:text="${productInfo1.productDescription}"></td>
+                <td th:text="${productInfo1.supplierProductCost}"></td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+                <td th:text="${productInfo1.supplierName}"></td>
+                <td>
+                    <form th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${productInfo1}" method="POST">
+                        <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
+                        <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
+                        <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
+                        <input type="submit"                                    value="Add to cart" />
+                    </form>
+                </td>
+            </tr>
+
+            <!-- altrimenti mostra solamente le informazioni essenziali del prodotto  "electedProductId != productId"
+            <tr th:each="productInfo2 : ${products.supplierProductMultiMap.get(productId)}" >
+                <td>
+                    <!- - form reso cliccabile e modificato con css - ->
+                    <form method="POST" action="products/showProductInfo" class="inline">
+                        <!- - il tag input vine utilizzato per mandare parametri nella richiesta - ->
+                        <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
+                        <input type="submit" name="productName" th:value="${productInfo2.productName}" value="Nome prodotto" class="link-button">
+                        <!- - il tag button può essere utilizzato per inserire STATICAMENTE il testo del link - ->
+                        <!- - <button type="submit" class="link-button"> Testo del link</button> - ->
+                        <!- - inserire più 'type=submit' fa comparire più bottoni - ->
+                    </form>
+                </td>
+                <td th:text="${productInfo2.productDescription} + 'ciao'"></td>
+                <td th:text="${productInfo2.supplierProductCost}"></td>  <!- - if product.isOnDiscount 'illimuna prezzo' - ->
+                <td th:text="${productInfo2.supplierName}"></td>
+                <td>
+                    <form action="AddToCart" th:object="${productInfo2}" method="POST">
+                        <input type="hidden" th:value="${productInfo2.productId}" name="productId" />
+                        <input type="hidden" th:value="${productInfo2.supplierId}" name="supplierId" />
+                        <input type="hidden" th:value="${productInfo2.supplierProductCost}" name="supplierProductCost" />
+                        <input type="submit"                                    value="Add to cart" />
+                    </form>
+                </td>
+            </tr>
+            -->
+
+            <!-- mock-up content -->
+            <tr th:remove="all">
+                <td>Nome template</td>
+                <td>Description template</td>
+                <td>Cost template</td>
+                <td>Supplier template</td>
+                <td> <form action="#" method="post"> </form></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

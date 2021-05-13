@@ -1,9 +1,10 @@
 package com.ss.TIW_2021project.business.entities;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.base.Function;
+import com.google.common.collect.*;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,6 +15,8 @@ public class ProductsCatalogue {
     //A simple MultiMap with productId as key mapped to multiple supplier
     private Multimap<Integer, SupplierProduct> supplierProductMultiMap = null;
 
+    private TreeMultimap<Integer, SupplierProduct> testList = null;
+
 
     /**
      * Instantiates a new Products catalogue.
@@ -21,11 +24,8 @@ public class ProductsCatalogue {
      * @param productsList a {@link List<SupplierProduct> productsList from wich the catalogue wee'll be generated}
      */
     public ProductsCatalogue(List<SupplierProduct> productsList) {
-        supplierProductMultiMap = ArrayListMultimap.create();
-
-        for (SupplierProduct supProd : productsList) {
-            supplierProductMultiMap.put(supProd.getProductId(), supProd);
-        }
+        Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getProductId;
+        supplierProductMultiMap = Multimaps.index(productsList.listIterator(), productIdFunc);
     }
 
     /**
@@ -60,4 +60,6 @@ public class ProductsCatalogue {
 
         return productsInCatalogue >= num;
     }
+
+
 }

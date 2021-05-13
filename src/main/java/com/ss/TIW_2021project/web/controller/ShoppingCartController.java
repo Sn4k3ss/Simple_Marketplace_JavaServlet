@@ -17,8 +17,7 @@ import java.io.IOException;
 @WebServlet(
         name = "shoppingCartController",
         description = "This is my first annotated servlet",
-        //urlPatterns = {("/cart"),("/addToCart")},
-        value = "/shoppingCart"
+        urlPatterns = {("/shoppingCart"),("/myShoppingCart")}
 )
 public class ShoppingCartController extends HttpServlet {
 
@@ -34,6 +33,9 @@ public class ShoppingCartController extends HttpServlet {
         
         CartService cartService = new CartService(getServletContext());
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
+
+        //cartService.loadInfos(shoppingCart);
+
 
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());

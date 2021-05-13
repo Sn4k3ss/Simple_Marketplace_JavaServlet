@@ -122,20 +122,14 @@ public class ProductsDAO {
                 "ORDER BY b.timestamp desc";
 
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, userId);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, userId);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                productsList = buildProductsList(resultSet);
-                }
+        ResultSet resultSet = preparedStatement.executeQuery();
+        productsList = buildProductsList(resultSet);
 
-        } catch (SQLException ex) {
-            throw ex;
-        }
 
-        ProductsCatalogue recentCatalogue = new ProductsCatalogue(productsList);
-
-        return recentCatalogue;
+        return new ProductsCatalogue(productsList);
 
     }
 
@@ -207,7 +201,8 @@ public class ProductsDAO {
      */
     public void setProductDisplayed(Integer userId, Integer productId) throws SQLException {
 
-        //Query p
+        //FIXME error while executing query
+        //intellij reports error in the syntax
         String query = "INSERT INTO productsHistory (productId, userId) " +
                 "VALUES(?, ?) " +
                 "ON DUPLICATE KEY UPDATE timestamp = current_timestamp ";
@@ -215,7 +210,7 @@ public class ProductsDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, productId);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate(query);
+            preparedStatement.executeUpdate() ;
 
         } catch (SQLException ex) {
             //errore during the productsHistory Table update
@@ -236,6 +231,8 @@ public class ProductsDAO {
             //"Error while executing routine procedure on db
             throw ex;
         }
+
+
 
 
 

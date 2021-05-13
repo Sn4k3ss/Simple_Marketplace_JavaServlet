@@ -1,8 +1,10 @@
 package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
+import com.ss.TIW_2021project.business.dao.SuppliersDAO;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
+import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.ServletContext;
@@ -53,14 +55,7 @@ public class ProductService {
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
 
-            //List<SupplierProduct> retrievedProducts = productsDAO.getCatalogue().getSupplierProductList();
             ProductsCatalogue retrievedProducts = productsDAO.getProductsMatching(keyword);
-
-            /*
-            retrievedProducts.removeIf(
-                    supplierProduct -> (!supplierProduct.getProductDescription().contains(keyword) && !supplierProduct.getProductName().contains(keyword)));
-
-             */
 
             return retrievedProducts;
         } catch (SQLException e) {
@@ -111,17 +106,17 @@ public class ProductService {
 
 
 
-    public void setProductDisplayed(Integer userId, int productId) throws SQLException, UnavailableException {
+    public void setProductDisplayed(Integer userId, int productId) throws UnavailableException {
 
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
             productsDAO.setProductDisplayed(userId, productId);
 
-        } catch (SQLException | UnavailableException ex) {
+        } catch (SQLException ex) {
             //se arriva una sqlexception allora il problema è nella query
             //se è una unavailable exception allora il problema sta nella connessione al db
             //exception.printStackTrace();
-            throw ex;
+            throw new UnavailableException("Error while interacting with database");
         }
 
     }

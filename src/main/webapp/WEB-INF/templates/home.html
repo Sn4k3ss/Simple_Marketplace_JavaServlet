@@ -36,10 +36,10 @@
   <a th:href="@{/logout}">Logout</a>
 </div>
 
-<form action="searchProducts" method="POST">
-  <p>Cosa vuoi cercare di bello? </p>
-  <input type="text" name="keyword" >
-  <input type="submit" value="vai!">
+<form action="search/products" method="POST">
+    <p>Cosa vuoi cercare di bello? </p>
+    <input type="text" name="keyword" >
+    <input type="submit" value="vai!">
 </form>
 
 <div>
@@ -61,21 +61,10 @@
               <td th:text="${product.supplierProductCost}"></td> <!-- if product.isOnDiscount 'illimuna prezzo' -->
               <td th:text="${product.supplierName}"></td>
               <td>
-                <form action="AddToCart"  th:object="${product}" method="POST">
+                <form th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${product}" method="POST">
                   <input type="hidden" th:value="${product.productId}"    name="productId" />
                   <input type="hidden" th:value="${product.supplierId}"   name="supplierId" />
                   <input type="hidden" th:value="${product.supplierProductCost}"   name="supplierProductCost" />
-
-                  <!--
-                  <input type="hidden" th:value="${product.productName}"    name="productName" />
-                  <input type="hidden" th:value="${product.productDescription}"   name="productDescription" />
-                  <input type="hidden" th:value="${product.productCategory}"    name="productCategory" />
-                  <input type="hidden" th:value="${product.productCategoryId}"    name="productCategoryId" />
-                  <input type="hidden" th:value="${product.productImagePath}"    name="productImagePath" />
-                  <input type="hidden" th:value="${product.supplierName}"   name="supplierName" />
-                  <input type="hidden" th:value="${product.onDiscount}"   name="onDiscount" />
-                  <input type="hidden" th:value="${product.originalProductCost}"   name="originalProductCost" />
-                  -->
                   <input type="submit"                                    value="Add to cart" />
                 </form>
               </td>

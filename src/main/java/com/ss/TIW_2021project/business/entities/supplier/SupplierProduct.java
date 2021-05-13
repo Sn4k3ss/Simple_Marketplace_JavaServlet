@@ -29,6 +29,14 @@ public class SupplierProduct extends Product {
         this.supplierName = supplierName;
     }
 
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
     public Float getSupplierProductCost() {
         return supplierProductCost;
     }
