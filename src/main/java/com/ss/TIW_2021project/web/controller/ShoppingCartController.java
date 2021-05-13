@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.services.CartService;
+import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -34,7 +35,8 @@ public class ShoppingCartController extends HttpServlet {
         CartService cartService = new CartService(getServletContext());
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
 
-        //cartService.loadInfos(shoppingCart);
+        //seems useless
+        shoppingCart.sortShoppingCart();
 
 
         ServletContext servletContext = getServletContext();

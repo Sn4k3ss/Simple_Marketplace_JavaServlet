@@ -1,11 +1,14 @@
 package com.ss.TIW_2021project.business.entities;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ShoppingCart {
 
@@ -18,7 +21,7 @@ public class ShoppingCart {
 
     //A simple MultiMap with supplierId as key mapped to multiple products
     private Multimap<Integer, SupplierProduct> shoppingCartList = null;
-
+    private Multimap<Integer, SupplierProduct> sortedBySupplierCart = null;
 
 
 
@@ -42,6 +45,24 @@ public class ShoppingCart {
 
     public Multimap<Integer, SupplierProduct> getShoppingCartList() {
         return shoppingCartList;
+    }
+
+    /**
+     * Sort the shopping cart by supplierId
+     *
+     * @return a multimap sorted by key mapped to supplierId (from 1 to maxSupplierId)
+     */
+    public Multimap<Integer, SupplierProduct> sortShoppingCart() {
+
+        List<SupplierProduct> supplierProducts = new ArrayList<>();
+
+        for(Integer supplierId: shoppingCartList.keySet())
+            supplierProducts.addAll(shoppingCartList.get(supplierId));
+
+
+        Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getSupplierId;
+        sortedBySupplierCart = Multimaps.index(supplierProducts.listIterator(), productIdFunc);
+        return sortedBySupplierCart;
     }
 
 }
