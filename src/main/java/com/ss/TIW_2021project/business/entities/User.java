@@ -1,5 +1,7 @@
 package com.ss.TIW_2021project.business.entities;
 
+import java.util.List;
+
 public class User {
 
     private Integer userId = null;
@@ -7,7 +9,7 @@ public class User {
     private String userSurname = null;
     private String email = null;
     private String password = null;
-    private ShippingAddress shippingAddress = null;
+    private List<ShippingAddress> shippingAddresses = null;
 
     public Integer getUserId() {
         return userId;
@@ -44,10 +46,10 @@ public class User {
         this.password = password;
     }
 
-    public ShippingAddress getShippingAddress() {
-        return shippingAddress;
+    public List<ShippingAddress> getShippingAddresses() {
+        return shippingAddresses;
     }
-    public void setShippingAddress(ShippingAddress shippingAddress) {
-        this.shippingAddress = shippingAddress;
+    public void setShippingAddresses(List<ShippingAddress> shippingAddresses) {
+        this.shippingAddresses = shippingAddresses;
     }
 }

@@ -32,8 +32,8 @@
             </tr>
         </thead>
 
-        <tbody th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
-            <tr class="active-row">
+        <tbody>
+            <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
                 <td>
                     <!-- form reso cliccabile e modificato con css -->
                     <form th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >

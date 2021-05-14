@@ -101,7 +101,19 @@ public class ShoppingCart {
         return totalAmountBySupplier;
     }
 
+    public Float getTotalAmountBySupplier(Integer supplierId) {
+        return totalAmountBySupplier.get(supplierId);
+    }
+
     public void setTotalAmountBySupplier(Map<Integer, Float> totalAmountBySupplier) {
         this.totalAmountBySupplier = totalAmountBySupplier;
+    }
+
+    public List<ShoppingCartProduct> getProductsFromSupplier(Integer supplierId) {
+
+        List<ShoppingCartProduct> productsLists = new ArrayList<>(shoppingCartList.get(supplierId));
+
+        return productsLists;
+
     }
 }

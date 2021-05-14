@@ -1,6 +1,6 @@
 /* Add a black background color to the top navigation */
 .topnav {
-    background-color: #333;
+    background-color: #04AA6D;
     overflow: hidden;
 }
 
@@ -64,6 +64,11 @@
 }
 
 .styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.styled-table caption {
     font-weight: bold;
     color: #009879;
 }

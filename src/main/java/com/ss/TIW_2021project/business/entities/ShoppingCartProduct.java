@@ -14,6 +14,7 @@ public class ShoppingCartProduct extends SupplierProduct {
     public ShoppingCartProduct(SupplierProduct supplierProduct, Integer howMany) {
         this.setProductId(supplierProduct.getProductId());
         this.setProductName(supplierProduct.getProductName());
+        this.setProductDescription(supplierProduct.getProductDescription());
         this.setProductCategory(supplierProduct.getProductCategory());
         this.setProductCategory(supplierProduct.getProductCategory());
         this.setProductCategoryId(supplierProduct.getProductCategoryId());

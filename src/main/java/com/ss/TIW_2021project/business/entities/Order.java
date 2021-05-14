@@ -1,15 +1,18 @@
 package com.ss.TIW_2021project.business.entities;
 
+import com.ss.TIW_2021project.business.entities.supplier.Supplier;
+
 import java.util.Date;
 import java.util.List;
 
 public class Order {
 
     private Integer orderId = null;
-    private String orderSupplier = null;
-    private List<Product> orderProductsList = null;
+    private User user = null;
+    private Supplier orderSupplier = null;
+    private List<ShoppingCartProduct> orderProductsList = null;
     private Float orderAmount = null;
-    private Float orderShippingCosts = null;
+    private Float orderShippingFees = null;
     private Date deliveryDate = null;
     private ShippingAddress shippingAddress = null;
 
@@ -20,17 +23,25 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public String getOrderSupplier() {
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Supplier getOrderSupplier() {
         return orderSupplier;
     }
-    public void setOrderSupplier(String orderSupplier) {
+    public void setOrderSupplier(Supplier orderSupplier) {
         this.orderSupplier = orderSupplier;
     }
 
-    public List<Product> getOrderProductsList() {
+    public List<ShoppingCartProduct> getOrderProductsList() {
         return orderProductsList;
     }
-    public void setOrderProductsList(List<Product> orderProductsList) {
+    public void setOrderProductsList(List<ShoppingCartProduct> orderProductsList) {
         this.orderProductsList = orderProductsList;
     }
 
@@ -41,11 +52,11 @@ public class Order {
         this.orderAmount = orderAmount;
     }
 
-    public Float getOrderShippingCosts() {
-        return orderShippingCosts;
+    public Float getOrderShippingFees() {
+        return orderShippingFees;
     }
-    public void setOrderShippingCosts(Float orderShippingCosts) {
-        this.orderShippingCosts = orderShippingCosts;
+    public void setOrderShippingFees(Float orderShippingFees) {
+        this.orderShippingFees = orderShippingFees;
     }
 
     public Date getDeliveryDate() {

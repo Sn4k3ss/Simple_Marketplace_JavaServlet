@@ -1,7 +1,7 @@
 package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.User;
-import com.ss.TIW_2021project.business.services.UsersService;
+import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -66,11 +66,11 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        UsersService usersService = new UsersService(getServletContext());
+        UserService userService = new UserService(getServletContext());
         User user;
 
         try {
-            user = usersService.checkCredentials(email, password);
+            user = userService.checkCredentials(email, password);
         } catch (SQLException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Login error: Not Possible to check credentials");
             return;

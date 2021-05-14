@@ -1,11 +1,9 @@
 package com.ss.TIW_2021project.web.controller;
 
-import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
-import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.services.UsersService;
+import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -18,7 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet(
         name = "shoppingCartController",
@@ -40,25 +37,28 @@ public class ShoppingCartController extends HttpServlet {
         CartService cartService = new CartService(getServletContext());
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
 
-        UsersService usersService = new UsersService(getServletContext());
+        UserService userService = new UserService(getServletContext());
 
         User user = (User) req.getSession().getAttribute("user");
 
         //This list can be empty if the user hasn't still set a shipping address
-        //TODO ne prende solo 1
-        List<ShippingAddress> userShippingAddresses = null;
+
         try {
-            userShippingAddresses = usersService.getShippingAddresses(user.getUserId());
+           user.setShippingAddresses(userService.getShippingAddresses(user.getUserId()));
         } catch (UnavailableException e) {
-            //error while retrieving the user shipping address
+            //error while retrieving the user shipping addresses
         }
 
+        if(user.getShippingAddresses().isEmpty()) {
+            System.out.println("Lo user in questione non ha un indirizzo di spedizione settato");
+            return;
+        }
 
 
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("shoppingCart", shoppingCart);
-        webContext.setVariable("shoppingAddresses", userShippingAddresses);
+        webContext.setVariable("shoppingAddresses", user.getShippingAddresses());
         templateEngine.process("shoppingCart", webContext, resp.getWriter());
 
     }

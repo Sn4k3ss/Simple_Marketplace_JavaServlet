@@ -7,13 +7,14 @@ import com.ss.TIW_2021project.business.entities.User;
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class UsersService {
+public class UserService {
 
     private ServletContext servletContext;
 
-    public UsersService(ServletContext servletContext) {
+    public UserService(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
@@ -59,5 +60,22 @@ public class UsersService {
         } catch (SQLException ex) {
             throw new UnavailableException("Error while interacting with the database");
         }
+    }
+
+    public ShippingAddress getShippingAddress(Integer userId, Integer userShippingAddressId) throws UnavailableException {
+        UsersDAO usersDAO = new UsersDAO(servletContext);
+        List<ShippingAddress> shippingAddressList = new ArrayList<>();
+        try {
+            shippingAddressList = usersDAO.getShippingAddresses(userId);
+        } catch (SQLException ex) {
+            throw new UnavailableException("Error while interacting with the database");
+        }
+
+        for (ShippingAddress address: shippingAddressList) {
+            if (address.getShippingAddressId().equals(userShippingAddressId))
+                return address;
+        }
+
+        return null;
     }
 }

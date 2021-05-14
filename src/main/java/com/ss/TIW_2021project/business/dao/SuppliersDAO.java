@@ -37,43 +37,25 @@ public class SuppliersDAO {
     /**
      * Gets supplier by id.
      *
-     * @param idSupplier the idSupplier
-     * @return the supplier by id
+     * @param supplierId the supplierId
+     * @return the supplier
      * @throws SQLException the sql exception
      */
-    public Supplier getSupplierById(Integer idSupplier) throws SQLException, UnavailableException {
+    public Supplier getSupplierById(Integer supplierId) throws SQLException, UnavailableException {
 
         Supplier supplier = new Supplier();
 
-        String query = "SELECT * FROM suppliers WHERE supplierId = ? ";
+        String query = "" +
+                "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin,\n" +
+                "        sP.`range`, sP.minItem, sP.maxItem, sP.price\n" +
+                "FROM suppliers as sup\n" +
+                "    JOIN shippingPolicy sP on sup.supplierId = sP.supplierId\n" +
+                "WHERE sup.supplierId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, idSupplier);
-            try (ResultSet result = preparedStatement.executeQuery();) {
-                if (result.next()) {
-                    supplier.setSupplierId(result.getInt(1));
-                    supplier.setSupplierName(result.getString(2));
-                    supplier.setSupplierRating(result.getFloat(3));
-
-                    //this handles the null value returned whenever the
-                    Float tmp = result.getFloat(4);
-                    if(result.wasNull())
-                        supplier.setFreeShippingMinAmount(Float.valueOf(0f));
-                    else
-                        supplier.setFreeShippingMinAmount(tmp);
-
-
-                }
-                //inutile
-                result.close();
-            }
-            //inutile
-            preparedStatement.close();
-        } finally {
-            try {
-                ConnectionFactory.closeConnection(this.connection);
-            } catch (SQLException e) {
-                throw new UnavailableException("Couldn't close the connection");
+            preparedStatement.setInt(1, supplierId);
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                supplier = buildSuppliersList(resultSet).get(0);
             }
         }
 

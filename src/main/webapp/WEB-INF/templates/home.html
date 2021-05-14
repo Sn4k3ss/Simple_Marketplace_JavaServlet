@@ -59,11 +59,11 @@
         </tr>
         </thead>
 
-        <tbody th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
-        <tr>
+        <tbody>
+        <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
             <td>
                 <!-- form reso cliccabile e modificato con css -->
-                <form th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
+                <form th:action=" ${#request.contextPath} + '/home' " class="inline" method="POST" >
                     <!-- il tag input vine utilizzato per mandare parametri nella richiesta -->
                     <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
                     <input type="submit" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">

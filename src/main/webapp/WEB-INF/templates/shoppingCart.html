@@ -27,8 +27,7 @@
 
 <div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartList.asMap())}">
   <table class="styled-table" style="width:100%">
-    <!-- se il carrello è vuoto non mostrare la tabella -->
-    <caption style="lighting-color: #04AA6D">CART</caption>
+    <caption style="lighting-color: #04aa6d">CART</caption>
       <thead>
         <tr>
           <th scope="col">Product name</th>
@@ -52,14 +51,13 @@
               <tr>
                 <th scope="col">Supplier</th>
                 <th scope="col">Rating</th>
-                <th scope="col">Ranges</th>
               </tr>
               </thead>
               <tr>
                 <td th:text="${supplierInfo.supplierName}"> Venditore 0</td>
                 <td th:text="${supplierInfo.supplierRating}"> 0</td>
                 <td>
-                  <table th:with="rangeCounter=0">
+                  <table>
                     <thead>
                     <tr>
                       <th scope="col">Range</th>
@@ -69,7 +67,7 @@
                     </tr>
                     </thead>
                     <tr th:each="range : ${supplierInfo.supplierShippingPolicy.ranges}">
-                      <td th:text="${rangeCounter+1}">1</td>
+                      <td th:text="${supplierInfo.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
                       <td th:text="${range.minAmount}">1</td>
                       <td th:text="${range.maxAmount}">5</td>
                       <td th:text="${range.cost}">100,99</td>
@@ -80,18 +78,26 @@
             </table>
           </td>
       </tr>
-      <tr th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
+      <tr th:class="active-row" th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
         <td th:text="'Total amount on ' + ${supplierInfo.supplierName} + ': ' + ${totalamount}">Costo totale per venditore</td>
-        <td th:if="${ totalamount <= supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
-      </tr>
-      <tr>
+        <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
+        <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount }" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
         <td>
-          <form th:action="${#request.contextPath} + '/placeOrder'" method="POST">
+          <form  th:action="${#request.contextPath} + '/placeOrder'" method="POST">
+            <label th:for="addreesId">Select an address
+              <select th:name="userShippingAddressId">
+                <option th:each="address : ${shoppingAddresses}" th:value="${address.shippingAddressId}"
+                        th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}"
+                        th:selected="${address.shippingAddressId == 1}">
+                </option>
+              </select>
+            </label>
             <input type="hidden"  name="supplierId" th:value="${supplierId}" >
             <input type="submit" value="Place order">
           </form>
         </td>
       </tr>
+
 
 
 

@@ -21,14 +21,14 @@
   <a th:href="@{/logout}">Logout</a>
 </div>
 
-<h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
+<h1>Here's your orders, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 
 
 
-<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartList.asMap())}">
-  <table style="width:100%">
+<div th:if="${not #lists.isEmpty(orders)}">
+  <table th:class="styled-table" style="width:100%">
     <!-- se il carrello è vuoto non mostrare la tabella -->
-    <caption style="lighting-color: #04AA6D">CART</caption>
+    <caption style="lighting-color: #04AA6D">ORDERS</caption>
       <thead>
         <tr>
           <th scope="col">First col</th>
