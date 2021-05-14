@@ -1,6 +1,5 @@
 package com.ss.TIW_2021project.business.entities;
 
-import java.nio.file.Path;
 
 public class Product {
 

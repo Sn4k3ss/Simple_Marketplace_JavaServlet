@@ -34,7 +34,7 @@ public class CartService {
         return shoppingCart;
     }
 
-    public ShoppingCart addToCart(HttpSession session, SupplierProduct supplierProduct) {
+    public ShoppingCart addToCart(HttpSession session, SupplierProduct supplierProduct, Integer howMany) {
 
 
         ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
@@ -44,7 +44,7 @@ public class CartService {
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
-        shoppingCart.addProductToCart(supplierProduct);
+        shoppingCart.addProductToCart(supplierProduct, howMany);
 
         return shoppingCart;
     }

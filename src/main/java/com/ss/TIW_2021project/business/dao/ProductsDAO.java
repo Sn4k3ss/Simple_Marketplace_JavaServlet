@@ -119,7 +119,7 @@ public class ProductsDAO {
                 "JOIN products p ON p.productId = pc.productId " +
                 "JOIN suppliers s ON pc.supplierId = s.supplierId " +
                 "JOIN productsCategory C on C.categoryId = p.categoryId " +
-                "ORDER BY b.timestamp desc";
+                "ORDER BY b.timestamp desc, pc.productCost";
 
 
         PreparedStatement preparedStatement = connection.prepareStatement(query);

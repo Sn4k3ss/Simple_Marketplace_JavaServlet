@@ -7,43 +7,71 @@ import com.google.common.collect.Multimaps;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class ShoppingCart {
 
-    //TODO all'interno dello shoppingCart si potrebbero utilizzare degli indici per riferirsi ai vari prodotti inseriti
-    //In questa lista i prodotti hanno solo:    -productId
-    //                                          -supplierId
-    //                                          -supplierProductCost
-
-
-
     //A simple MultiMap with supplierId as key mapped to multiple products
-    private Multimap<Integer, SupplierProduct> shoppingCartList = null;
-    private Multimap<Integer, SupplierProduct> sortedBySupplierCart = null;
+    private Multimap<Integer, ShoppingCartProduct> shoppingCartList = null;
+    private Multimap<Integer, ShoppingCartProduct> sortedBySupplierCart = null;
+
+    private Map<Integer, Float> totalAmountBySupplier = null;
 
 
+
+    public ShoppingCart(){
+    }
 
     /**
      * Instantiates a new Products catalogue.
      *
-     * @param productsList a {@link List<SupplierProduct> productsList from wich the catalogue wee'll be generated}
+     * @param productsList a {@link List<SupplierProduct> productsList from which the catalogue will be generated}
      */
-    public ShoppingCart(List<SupplierProduct> productsList) {
-        shoppingCartList = ArrayListMultimap.create();
+    public ShoppingCart(List<ShoppingCartProduct> productsList) {
+        this.shoppingCartList = ArrayListMultimap.create();
 
-        for (SupplierProduct supProd : productsList) {
+        for (ShoppingCartProduct supProd : productsList) {
             shoppingCartList.put(supProd.getSupplierId(), supProd);
         }
+
+        this.totalAmountBySupplier = new HashMap<>();
     }
 
-    public void addProductToCart(SupplierProduct supplierProduct) {
-        shoppingCartList.put(supplierProduct.getSupplierId(), supplierProduct);
+    public void addProductToCart(SupplierProduct supplierProduct, Integer howMany) {
+
+        //This checks that a product from a specific supplier isn't alreay in the shopping cart
+        boolean alreadyInShoppingCart = false;
+
+        List<ShoppingCartProduct> shoppingCartProducts = new ArrayList<>(shoppingCartList.get(supplierProduct.getSupplierId()));
+
+        for(ShoppingCartProduct prod : shoppingCartProducts){
+            if (prod.getProductId().equals(supplierProduct.getProductId())) {
+                alreadyInShoppingCart = true;
+                int tmp = prod.getHowMany();
+                tmp+=howMany;
+                prod.setHowMany(tmp);
+                prod.setTotalAmount((float)tmp * prod.getSupplierProductCost());
+            }
+        }
+
+        if (!alreadyInShoppingCart) {
+            ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(supplierProduct, howMany);
+            shoppingCartList.put(shoppingCartProduct.getSupplierId(), shoppingCartProduct);
+        }
+
+        //update the total of the current supplier
+        Float totalAmoount = 0f;
+        Integer supplierId = supplierProduct.getSupplierId();
+        for (ShoppingCartProduct prod : shoppingCartList.get(supplierId))
+            totalAmoount+= prod.getTotalAmount();
+        totalAmountBySupplier.put(supplierId, totalAmoount);
+
     }
 
 
-    public Multimap<Integer, SupplierProduct> getShoppingCartList() {
+    public Multimap<Integer, ShoppingCartProduct> getShoppingCartList() {
         return shoppingCartList;
     }
 
@@ -52,20 +80,28 @@ public class ShoppingCart {
      *
      * @return a multimap sorted by key mapped to supplierId (from 1 to maxSupplierId)
      */
-    public Multimap<Integer, SupplierProduct> sortShoppingCart() {
+    public Multimap<Integer, ShoppingCartProduct> sortShoppingCart() {
 
-        List<SupplierProduct> supplierProducts = new ArrayList<>();
+        List<ShoppingCartProduct> supplierProducts = new ArrayList<>();
 
         for(Integer supplierId: shoppingCartList.keySet())
             supplierProducts.addAll(shoppingCartList.get(supplierId));
 
 
-        Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getSupplierId;
+        Function<ShoppingCartProduct, Integer> productIdFunc = ShoppingCartProduct::getSupplierId;
         sortedBySupplierCart = Multimaps.index(supplierProducts.listIterator(), productIdFunc);
         return sortedBySupplierCart;
     }
 
-    public Multimap<Integer, SupplierProduct> getSortedBySupplierCart() {
+    public Multimap<Integer, ShoppingCartProduct> getSortedBySupplierCart() {
         return sortedBySupplierCart;
+    }
+
+    public Map<Integer, Float> getTotalAmountBySupplier() {
+        return totalAmountBySupplier;
+    }
+
+    public void setTotalAmountBySupplier(Map<Integer, Float> totalAmountBySupplier) {
+        this.totalAmountBySupplier = totalAmountBySupplier;
     }
 }

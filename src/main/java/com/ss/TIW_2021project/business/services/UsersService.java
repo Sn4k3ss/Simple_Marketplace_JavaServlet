@@ -1,6 +1,7 @@
 package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.UsersDAO;
+import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.User;
 
 import javax.servlet.ServletContext;
@@ -47,5 +48,16 @@ public class UsersService {
         UsersDAO usersDao = new UsersDAO(servletContext);
         return usersDao.getAllUsers();
 
+    }
+
+    public List<ShippingAddress> getShippingAddresses(Integer userId) throws UnavailableException {
+
+        UsersDAO usersDAO = new UsersDAO(servletContext);
+
+        try {
+            return usersDAO.getShippingAddresses(userId);
+        } catch (SQLException ex) {
+            throw new UnavailableException("Error while interacting with the database");
+        }
     }
 }

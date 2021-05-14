@@ -5,7 +5,7 @@
     <title>Search</title>
 
     <link rel="stylesheet" type="text/css" media="all"
-          href="../css/search.css" th:href="@{/css/search.css}" />
+          href="../css/myStyle.css" th:href="@{/css/myStyle.css}" />
 </head>
 
 
@@ -20,7 +20,7 @@
 </div>
 
 <div>
-    <table style="width:100%">
+    <table th:class="styled-table" style="width:100%">
         <caption>Products from the marketplace</caption>
         <thead>
             <tr>
@@ -32,11 +32,8 @@
             </tr>
         </thead>
 
-        <tbody th:each="productId : ${products.supplierProductMultiMap.keySet()}">
-
-            <!-- TODO/FIX -->
-            <!-- se il prodotto del catalogo ha lo stesso id del prodotto selezionato allora mostra tutti i venditori "electedProductId == productId"-->
-            <tr th:each="productInfo1 : ${products.supplierProductMultiMap.get(productId)}" >
+        <tbody th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
+            <tr class="active-row">
                 <td>
                     <!-- form reso cliccabile e modificato con css -->
                     <form th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
@@ -56,45 +53,66 @@
                         <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
                         <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
                         <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
-                        <input type="submit"                                    value="Add to cart" />
+                        <input type="submit"                                    value="One-click buy" />
                     </form>
                 </td>
-            </tr>
-
-            <!-- altrimenti mostra solamente le informazioni essenziali del prodotto  "electedProductId != productId"
-            <tr th:each="productInfo2 : ${products.supplierProductMultiMap.get(productId)}" >
                 <td>
-                    <!- - form reso cliccabile e modificato con css - ->
-                    <form method="POST" action="products/showProductInfo" class="inline">
-                        <!- - il tag input vine utilizzato per mandare parametri nella richiesta - ->
-                        <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
-                        <input type="submit" name="productName" th:value="${productInfo2.productName}" value="Nome prodotto" class="link-button">
-                        <!- - il tag button può essere utilizzato per inserire STATICAMENTE il testo del link - ->
-                        <!- - <button type="submit" class="link-button"> Testo del link</button> - ->
-                        <!- - inserire più 'type=submit' fa comparire più bottoni - ->
-                    </form>
+                    <table th:if="${selectedProductId.equals(productInfo1.productId)}" th:each="supplierProduct : ${products.supplierProductMultiMap.get(productId)}">
+                        <caption>Suppliers</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">Supplier</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Rating</th>
+                            <th scope="col">Range</th>
+                            <th scope="col">Add to cart</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td th:text="${supplierProduct.supplier.supplierName}"> Venditore 0</td>
+                            <td th:text="${supplierProduct.supplierProductCost}">2000.00</td>
+                            <td th:text="${supplierProduct.supplier.supplierRating}">0.0</td>
+                            <td>
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Range</th>
+                                        <th scope="col">minItem</th>
+                                        <th scope="col">maxItem</th>
+                                        <th scope="col">cost</th>
+                                    </tr>
+                                    </thead>
+                                    <tr th:each="range : ${supplierProduct.supplier.supplierShippingPolicy.ranges}" >
+                                        <td th:text="${supplierProduct.supplier.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
+                                        <td th:text="${range.minAmount}">1</td>
+                                        <td th:text="${range.maxAmount}">5</td>
+                                        <td th:text="${range.cost}">100,99</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <form th:action="${#request.contextPath} + '/products/AddToCart'" method="POST">
+                                    <label for="howMany">How many:</label>
+                                    <select name="howMany" id="howMany">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                    </select>
+                                    <input type="hidden" th:value="${supplierProduct.productId}"    name="productId" />
+                                    <input type="hidden" th:value="${supplierProduct.supplierId}"   name="supplierId" />
+                                    <input type="hidden" th:value="${supplierProduct.supplierProductCost}"   name="supplierProductCost" />
+                                    <input type="submit" value="Add to cart">
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
-                <td th:text="${productInfo2.productDescription} + 'ciao'"></td>
-                <td th:text="${productInfo2.supplierProductCost}"></td>  <!- - if product.isOnDiscount 'illimuna prezzo' - ->
-                <td th:text="${productInfo2.supplierName}"></td>
-                <td>
-                    <form action="AddToCart" th:object="${productInfo2}" method="POST">
-                        <input type="hidden" th:value="${productInfo2.productId}" name="productId" />
-                        <input type="hidden" th:value="${productInfo2.supplierId}" name="supplierId" />
-                        <input type="hidden" th:value="${productInfo2.supplierProductCost}" name="supplierProductCost" />
-                        <input type="submit"                                    value="Add to cart" />
-                    </form>
-                </td>
-            </tr>
-            -->
-
-            <!-- mock-up content -->
-            <tr th:remove="all">
-                <td>Nome template</td>
-                <td>Description template</td>
-                <td>Cost template</td>
-                <td>Supplier template</td>
-                <td> <form action="#" method="post"> </form></td>
             </tr>
         </tbody>
     </table>

@@ -4,27 +4,65 @@
 
 <head>
   <title>Marketplace App</title>
+  <meta charset="UTF-8">
 
   <link rel="stylesheet" type="text/css" media="all"
-        href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+        href="../CSS/myStyle.css" th:href="@{/css/myStyle.css}" />
 </head>
 
 <body>
 
-<h1>Welcome to Our Company <span th:text="${session.user.userName}">NomeProva</span></h1>
-<h2>Web Site Main Ingredients:</h2>
-
-<p>Pages (HTML)</p>
-<p>Style Sheets (CSS)</p>
-<p>Computer Code (JavaScript)</p>
-<p>Live Data (Files and Databases)</p>
-
 
 <div class="topnav">
+  <p>Link veloci</p>
   <a th:href="@{/home}">Home</a>
-  <a th:href="@{/cart}">Home</a>
-  <a th:href="@{/orders}">Orders</a>
+  <a th:href="@{/shoppingCart}">Shopping cart</a>
+  <a th:href="@{/orders}">My Orders</a>
+  <a th:href="@{/logout}">Logout</a>
 </div>
+
+<h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
+
+
+
+<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartList.asMap())}">
+  <table style="width:100%">
+    <!-- se il carrello è vuoto non mostrare la tabella -->
+    <caption style="lighting-color: #04AA6D">CART</caption>
+      <thead>
+        <tr>
+          <th scope="col">First col</th>
+          <th scope="col">Second col</th>
+          <th scope="col">third col</th>
+        </tr>
+      </thead>
+    <tbody>
+    <tr>
+      <td>Something</td>
+    </tr>
+    </tbody>
+
+
+  </table>
+
+
+</div>
+
+
+<p>
+<h4>User info</h4>
+This is your e-mail:
+  <span th:text="${session.user.email}">amadeus.wgang@gmail.com </span> <br>
+  Name:
+  <span th:text="${session.user.userName}">Amadeus</span> <br>
+  Surname:
+  <span th:text="${session.user.userSurname}">Mozart</span> <br>
+  Id:
+  <span th:text="${session.user.userId}">0</span> <br>
+  Your country is: <span th:text="${#locale.country}">IT</span>
+</p>
+
+
 
 </body>
 </html>

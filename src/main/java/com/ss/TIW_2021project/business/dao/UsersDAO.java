@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
@@ -10,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class UsersDAO {
@@ -86,6 +89,72 @@ public class UsersDAO {
         }
 
         return userList;
+    }
+
+    /**
+     *  This method builds a {@link List<ShippingAddress> shippingAddresses list} by
+     *  executing a query with the userId passed as parameter
+     *
+     * @param userId the userId which shoppingAddresses are going to be retrieved from the db
+     * @return a list that contains all the user's shipping addresses, or an empty collection if none is present
+     * @throws SQLException if an error occurred while interacting with the db
+     */
+    public List<ShippingAddress> getShippingAddresses(Integer userId) throws SQLException {
+
+        List<ShippingAddress> userShippingAddresses = new ArrayList<>();
+
+        String query = "" +
+                "SELECT sA.userId, userAddressId, recipient, address, city, state, phone " +
+                "FROM users as user " +
+                "   JOIN shippingAddresses sA on user.userId = sA.userId " +
+                "WHERE user.userId = 1";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                userShippingAddresses = buildUserAddresses(resultSet);
+            } catch (SQLException ex) {
+                //Error on executing query
+                throw ex;
+            }
+        } catch (SQLException ex) {
+            //error on prepareStatement
+            throw ex;
+        }
+
+        return userShippingAddresses;
+
+    }
+
+
+    /**
+     * This method builds a {@link List<ShippingAddress> shippingAddresses list}
+     *
+     * @param resultSet resultSet
+     * @return a list that contains all the shipping addresses present in the {@link ResultSet resultSet}, or
+     *          an empty collection if {@link ResultSet#next()} is false
+     * @throws SQLException if an error occurred while interacting with the db
+     */
+    private List<ShippingAddress> buildUserAddresses(ResultSet resultSet) throws SQLException {
+
+        List<ShippingAddress> userShippingAddresses = new ArrayList<>();
+        ShippingAddress tmp = new ShippingAddress();
+
+
+        while (resultSet.next()) {
+            tmp = new ShippingAddress();
+            tmp.setUserId(resultSet.getInt("userId"));
+            tmp.setShippingAddressId(resultSet.getInt("userAddressId"));
+            tmp.setRecipient(resultSet.getString("recipient"));
+            tmp.setAddress(resultSet.getString("address"));
+            tmp.setCity(resultSet.getString("city"));
+            tmp.setState(resultSet.getString("state"));
+            tmp.setPhone(resultSet.getString("phone"));
+
+            userShippingAddresses.add(tmp);
+        }
+
+        return userShippingAddresses;
     }
 }
 

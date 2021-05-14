@@ -54,6 +54,15 @@ public class AddToCart extends HttpServlet {
         //TODO
         //to be handled the session check before getting the attr
 
+        Integer howMany;
+
+        try {
+            howMany= Integer.parseInt(req.getParameter("howMany"));
+        } catch (NumberFormatException e) {
+            //se errore nell'invio del parametro setta a 1 e chi s'è visto s'è visto
+            howMany = 1;
+        }
+
         ProductsCatalogue lastUserProducts = (ProductsCatalogue) req.getSession().getAttribute("last_user_products");
         ProductsCatalogue productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
 
@@ -83,7 +92,7 @@ public class AddToCart extends HttpServlet {
 
 
         CartService cartService = new CartService(getServletContext());
-        ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), product);
+        ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), product, howMany);
 
 
         String path = getServletContext().getContextPath() + "/shoppingCart";
