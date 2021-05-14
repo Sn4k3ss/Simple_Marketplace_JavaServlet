@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(
         name = "ShowProductInfo",
@@ -50,7 +52,17 @@ public class ShowProductInfo extends HttpServlet {
             //TO BE HANDLED
         }
 
-        ProductsCatalogue productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
+
+        ProductsCatalogue productsFromQuery;
+
+        if ( req.getSession().getAttribute("products_from_query") != null ) {
+            productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
+
+        } else {
+            System.out.println("something ain't right");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
 
         //redirect to the search page with the products retrieved displayed in a table
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

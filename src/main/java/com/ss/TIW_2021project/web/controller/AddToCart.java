@@ -1,8 +1,12 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.entities.Product;
+import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.CartService;
+import com.ss.TIW_2021project.business.services.ProductService;
+import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.utils.ServletUtility;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
@@ -16,6 +20,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(
         name = "AddToCart",
@@ -45,6 +51,18 @@ public class AddToCart extends HttpServlet {
         //                      -supplierId
         //                      -supplierProductCost
 
+        //TODO
+        //to be handled the session check before getting the attr
+
+        ProductsCatalogue lastUserProducts = (ProductsCatalogue) req.getSession().getAttribute("last_user_products");
+        ProductsCatalogue productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
+
+        List<ProductsCatalogue> catalogues = new ArrayList<>();
+        if (lastUserProducts != null)
+            catalogues.add(lastUserProducts);
+        if (productsFromQuery != null)
+            catalogues.add(productsFromQuery);
+
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UnavailableException e) {
@@ -53,12 +71,25 @@ public class AddToCart extends HttpServlet {
             return;
         }
 
+        ProductService productService = new ProductService(getServletContext());
+        SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
+
+        if(product == null) {
+            System.out.println("Where did you get that product?");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+
+
         CartService cartService = new CartService(getServletContext());
-        ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), supplierProduct);
+        ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), product);
 
 
         String path = getServletContext().getContextPath() + "/shoppingCart";
         resp.sendRedirect(path);
     }
+
+
 
 }

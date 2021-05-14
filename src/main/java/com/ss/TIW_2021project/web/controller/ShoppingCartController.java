@@ -38,6 +38,11 @@ public class ShoppingCartController extends HttpServlet {
         //seems useless
         shoppingCart.sortShoppingCart();
 
+        //the products in the shopping cart only have the productId, the supplierId, and the their cost
+        //we've got to fill the other values
+        ProductService productService = new ProductService(getServletContext());
+
+
 
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());

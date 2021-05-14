@@ -4,6 +4,7 @@ import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
+import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -33,10 +34,12 @@ public class HomeController extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService(getServletContext());
+        SupplierService supplierService = new SupplierService(getServletContext());
         ProductsCatalogue retrievedProducts = null;
 
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
+            supplierService.setSuppliersToProducts(retrievedProducts);
         } catch (UnavailableException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().println("Not possible to get last user's products");
@@ -45,6 +48,8 @@ public class HomeController extends HttpServlet {
             //retrievedProducts = new ArrayList<>();
             return;
         }
+
+        req.getSession().setAttribute("last_user_products", retrievedProducts);
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

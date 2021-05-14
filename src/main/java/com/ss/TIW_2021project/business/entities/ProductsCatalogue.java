@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.*;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,8 +13,6 @@ public class ProductsCatalogue {
 
     //A simple MultiMap with productId as key mapped to multiple supplier
     private Multimap<Integer, SupplierProduct> supplierProductMultiMap = null;
-
-    private TreeMultimap<Integer, SupplierProduct> testList = null;
 
 
     /**

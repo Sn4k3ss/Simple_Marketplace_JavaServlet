@@ -4,6 +4,7 @@ import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.dao.SuppliersDAO;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
+import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
@@ -123,11 +124,37 @@ public class ProductService {
 
 
         //Data una lista conntenente diversi prodotti venduti da diversi venditori, raggruppa per prodotti lasciando il venditore col prezzo più basso
-        private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
+    private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
         return new ArrayList<>(productsList.stream()
                 .collect(Collectors.toMap(Product::getProductId,
                                             Function.identity(),
                                             (p1, p2) -> p1.getOriginalProductCost()<= p2.getOriginalProductCost()? p1 : p2))
                 .values());
+    }
+
+
+    /**
+     * This method takes a list of {@link ProductsCatalogue catalogues} and a {@link SupplierProduct supplierProduct} and look for
+     * the supplierProduct inside of the catalogues
+     *
+     * @param catalogues a list of catalogue
+     * @param paramProd the product we're looking for
+     * @return the product if is found in the catalogues, null otherwise
+     */
+    public SupplierProduct lookForProduct(List<ProductsCatalogue> catalogues, SupplierProduct paramProd) {
+
+        for (ProductsCatalogue catalogue : catalogues) {
+            for(Integer productId : catalogue.getSupplierProductMultiMap().keySet())
+                for(SupplierProduct product : catalogue.getSupplierProductMultiMap().get(productId)) {
+                    if (paramProd.getSupplierId().equals(product.getSupplierId())
+                            && paramProd.getProductId().equals(product.getProductId())
+                            && paramProd.getSupplierProductCost().equals(product.getSupplierProductCost()))
+                        return product;
+                }
+
+        }
+
+        return null;
+
     }
 }

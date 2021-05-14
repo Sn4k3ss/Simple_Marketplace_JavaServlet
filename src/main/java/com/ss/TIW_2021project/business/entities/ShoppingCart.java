@@ -65,4 +65,7 @@ public class ShoppingCart {
         return sortedBySupplierCart;
     }
 
+    public Multimap<Integer, SupplierProduct> getSortedBySupplierCart() {
+        return sortedBySupplierCart;
+    }
 }

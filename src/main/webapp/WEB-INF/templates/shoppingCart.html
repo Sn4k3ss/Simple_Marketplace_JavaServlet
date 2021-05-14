@@ -31,22 +31,50 @@
     <caption>CART</caption>
       <thead>
         <tr>
-          <th scope="col">Product ID</th>
-          <th scope="col">Supplier ID</th>
-          <th scope="col">supplierProductCost</th>
+          <th scope="col">Product name</th>
+          <th scope="col">Product Description</th>
+          <th scope="col">Category</th>
+          <th scope="col">Cost</th>
         </tr>
       </thead>
-    <tbody th:remove="all-but-first" th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}">
-      <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}">
-        <td th:text="${product.productId}">
-        <td th:text="${product.supplierId}"></td>
+    <tbody th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartList.get(supplierId)[0].supplier}" >
+
+    <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}">
+        <td th:text="${product.productName}"></td>
+        <td th:text="${product.productDescription}"></td>
+        <td th:text="${product.productCategory}"></td>
         <td th:text="${product.supplierProductCost}"></td>
-      </tr>
-    <tr>
+        <td>
+          <table>
+            <thead>
+            <tr>
+              <th scope="col">Supplier</th>
+              <th scope="col">Rating</th>
+              <th scope="col">minItem</th>
+              <th scope="col">maxItem</th>
+              <th scope="col">range</th>
+            </tr>
+            </thead>
+            <tr th:each="range : ${supplierInfo.supplierShippingPolicy.ranges}">
+              <td th:text="${supplierInfo.supplierName}">
+              <td th:text="${supplierInfo.supplierRating}"></td>
+              <td th:text="${range.minAmount}"></td>
+              <td th:text="${range.maxAmount}"></td>
+              <td th:text="${range.cost}"></td>
+            </tr>
+          </table>
+        </td>
+    </tr>
+
+
+
+    <!-- mockup content -->
+    <tr th:remove="all">
       <td>A product id</td>
       <td>A supplier id</td>
       <td>A product's cost</td>
     </tr>
+
     </tbody>
   </table>
 </div>

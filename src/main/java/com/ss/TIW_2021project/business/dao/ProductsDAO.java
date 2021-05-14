@@ -126,9 +126,8 @@ public class ProductsDAO {
         preparedStatement.setInt(1, userId);
 
         ResultSet resultSet = preparedStatement.executeQuery();
+
         productsList = buildProductsList(resultSet);
-
-
         return new ProductsCatalogue(productsList);
 
     }
@@ -303,7 +302,7 @@ public class ProductsDAO {
 
 
             if (resultSet.getBoolean("onDiscount")) {
-                supplierProduct.setOnDiscount(true);    //we know that from the query
+                supplierProduct.setOnDiscount(true);
                 supplierProduct.setOriginalProductCost(resultSet.getFloat("originalProductCost"));
             }
 
