@@ -17,15 +17,13 @@
 
 <h2>User info</h2>
 
-<p>This is your e-mail:
-  <span th:text="${userInfo.email}">amadeus.wgang@gmail.com </span> <br>
-  Name:
-  <span th:text="${userInfo.userName}">Amadeus</span> <br>
-  Surname:
-  <span th:text="${userInfo.userSurname}">Mozart</span> <br>
-  Id:
-  <span th:text="${userInfo.userId}">0</span> <br>
-  Your country is: <span th:text="${#locale.country}">IT</span>
+<p th:with="address=${userInfo.getShippingAddresses().get(0)}">
+    This is your e-mail:<span th:text="${userInfo.email}">amadeus.wgang@gmail.com </span> <br>
+    Name: <span th:text="${userInfo.userName}">Amadeus</span> <br>
+    Surname: <span th:text="${userInfo.userSurname}">Mozart</span> <br>
+    Id: <span th:text="${userInfo.userId}">0</span> <br>
+    Your country is: <span th:text="${#locale.country}">AT</span> <br>
+    Your default Shipping Address: <span th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}">Via della nota d'oro, Vienna, Austria</span>
 </p>
 
 
@@ -38,7 +36,7 @@
 </div>
 
 <div>
-    <form action="search/products" method="POST">
+    <form action="search/products" method="GET">
         <p>Cosa vuoi cercare di bello? </p>
         <input type="text" th:placeholder="'Oasis..'" name="keyword" >
         <input class="styled-form-button" type="submit" value="vai!">

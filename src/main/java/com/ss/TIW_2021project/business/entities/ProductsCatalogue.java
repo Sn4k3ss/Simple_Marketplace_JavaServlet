@@ -22,8 +22,9 @@ public class ProductsCatalogue {
 
     /**
      * Instantiates a new Products catalogue.
+     * !!!Sorted by productId!!!
      *
-     * @param productsList a {@link List<SupplierProduct> productsList from wich the catalogue wee'll be generated}
+     * @param productsList a {@link List<SupplierProduct> productsList from which the catalogue will be generated}
      */
     public ProductsCatalogue(List<SupplierProduct> productsList) {
         Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getProductId;

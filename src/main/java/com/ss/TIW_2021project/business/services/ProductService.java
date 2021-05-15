@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
 import com.ss.TIW_2021project.business.dao.SuppliersDAO;
+import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
@@ -156,5 +157,9 @@ public class ProductService {
 
         return null;
 
+    }
+
+    public void setProductInfoOnOrder(List<Order> orders) {
+        //TODO
     }
 }

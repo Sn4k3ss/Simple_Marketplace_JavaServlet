@@ -2,7 +2,7 @@ package com.ss.TIW_2021project.business.entities;
 
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Order {
@@ -13,7 +13,7 @@ public class Order {
     private List<ShoppingCartProduct> orderProductsList = null;
     private Float orderAmount = null;
     private Float orderShippingFees = null;
-    private Date deliveryDate = null;
+    private LocalDate deliveryDate = null;
     private ShippingAddress shippingAddress = null;
 
     public Integer getOrderId() {
@@ -59,10 +59,10 @@ public class Order {
         this.orderShippingFees = orderShippingFees;
     }
 
-    public Date getDeliveryDate() {
+    public LocalDate getDeliveryDate() {
         return deliveryDate;
     }
-    public void setDeliveryDate(Date deliveryDate) {
+    public void setDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 

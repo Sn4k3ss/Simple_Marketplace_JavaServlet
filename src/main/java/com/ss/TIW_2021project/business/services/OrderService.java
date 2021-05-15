@@ -6,9 +6,11 @@ import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 public class OrderService {
 
@@ -19,7 +21,7 @@ public class OrderService {
     }
 
 
-    public Order createOrder(List<ShoppingCartProduct> productsList, User user, ShippingAddress shippingAddress,Float productsOnlyCost, Float shippingFees) {
+    public Order createOrder(List<ShoppingCartProduct> productsList, User user, ShippingAddress shippingAddress,Float productsOnlyCost, Float shippingFees, LocalDate deliveryDate) {
 
         Order newOrder = new Order();
 
@@ -27,15 +29,7 @@ public class OrderService {
         Supplier sup = prod.getSupplier();
 
         newOrder.setOrderSupplier(prod.getSupplier());
-
-        //setting deliveryDate
-        Date today = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
-        calendar.add(Calendar.DAY_OF_MONTH, 5);
-        Date fiveDaysLater = calendar.getTime();
-        newOrder.setDeliveryDate(fiveDaysLater);
-
+        newOrder.setDeliveryDate(deliveryDate);
         newOrder.setUser(user);
         newOrder.setShippingAddress(shippingAddress);
         newOrder.setOrderAmount(productsOnlyCost + shippingFees);
@@ -49,15 +43,26 @@ public class OrderService {
 
         OrdersDAO ordersDAO = new OrdersDAO(servletContext);
 
-        ordersDAO.placeOrder(newOrder);
+        try {
+            ordersDAO.placeOrder(newOrder);
+        } catch (SQLException ex) {
+            //TODO
+            ex.printStackTrace();
+        }
 
     }
 
     public List<Order> retrieveUserOrders(Integer userId) throws UnavailableException {
+        List<Order> orders;
 
         OrdersDAO ordersDAO = new OrdersDAO(servletContext);
 
-        return ordersDAO.getAllUserOrders(userId);
+        try {
+             orders = ordersDAO.retrieveUserOrders(userId);
+        } catch (SQLException exception) {
+            throw new UnavailableException("Error while loading user orders");
+        }
 
+        return orders;
     }
 }

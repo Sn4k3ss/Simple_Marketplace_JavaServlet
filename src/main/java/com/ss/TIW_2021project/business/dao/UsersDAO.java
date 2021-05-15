@@ -24,6 +24,33 @@ public class UsersDAO {
     }
 
 
+    public User getUserById(Integer userId) throws SQLException, UnavailableException {
+
+        User userRetrieved = null;
+
+        String query = "SELECT * FROM users WHERE userId = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+            preparedStatement.setInt(1, userId);
+
+            try (ResultSet result = preparedStatement.executeQuery();) {
+
+                while (result.next()) {
+                    userRetrieved = new User();
+                    userRetrieved.setUserId(result.getInt("userId"));
+                    userRetrieved.setEmail(result.getString("email"));
+                    userRetrieved.setPassword(result.getString("password"));
+                    userRetrieved.setUserName(result.getString("userName"));
+                    userRetrieved.setUserSurname(result.getString("userSurname"));
+
+                }
+            }
+        }
+
+        return userRetrieved;
+    }
+
+
     public User getUser(String email, String password) throws SQLException, UnavailableException {
 
         User userRetrieved = null;
@@ -107,9 +134,10 @@ public class UsersDAO {
                 "SELECT sA.userId, userAddressId, recipient, address, city, state, phone " +
                 "FROM users as user " +
                 "   JOIN shippingAddresses sA on user.userId = sA.userId " +
-                "WHERE user.userId = 1";
+                "WHERE user.userId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+            preparedStatement.setInt(1, userId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 userShippingAddresses = buildUserAddresses(resultSet);
@@ -156,5 +184,7 @@ public class UsersDAO {
 
         return userShippingAddresses;
     }
+
+
 }
 

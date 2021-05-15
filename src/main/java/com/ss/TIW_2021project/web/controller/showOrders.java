@@ -1,10 +1,10 @@
 package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.Order;
-import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
-import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
+import com.ss.TIW_2021project.business.services.ProductService;
+import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(
-        name = "Order",
+        name = "showOrders",
         description = "This is my first annotated servlet",
-        urlPatterns = {("/orders"),("/myOrders")}
+        urlPatterns = {("/orders"),("/showOrders")}
 )
-public class Orders extends HttpServlet {
+public class showOrders extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
@@ -42,10 +42,24 @@ public class Orders extends HttpServlet {
         OrderService orderService = new OrderService(getServletContext());
         List<Order> orders = orderService.retrieveUserOrders(user.getUserId());
 
+        //serve per prendere le informazioni di User
+        UserService userService = new UserService(getServletContext());
+        userService.setUserInfoOnOrder(orders);
+        //serve prendere informazioni sul venditore
+        SupplierService supplierService = new SupplierService(getServletContext());
+        supplierService.setSupplierIndoOnOrder(orders);
+        //serve per prendere informazioni sui prodotti dell'ordine
+        ProductService productService = new ProductService(getServletContext());
+        productService.setProductInfoOnOrder(orders);
+
+        //TODO da implementare
+
+
+
+
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("orders", orders);
         templateEngine.process("orders", webContext, resp.getWriter());
     }
-
 }

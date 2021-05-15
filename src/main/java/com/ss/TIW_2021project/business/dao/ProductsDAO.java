@@ -200,8 +200,7 @@ public class ProductsDAO {
      */
     public void setProductDisplayed(Integer userId, Integer productId) throws SQLException {
 
-        //FIXME error while executing query
-        //intellij reports error in the syntax
+
         String query = "INSERT INTO productsHistory (productId, userId) " +
                 "VALUES(?, ?) " +
                 "ON DUPLICATE KEY UPDATE timestamp = current_timestamp ";

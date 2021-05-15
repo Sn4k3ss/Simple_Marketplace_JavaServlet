@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import java.util.ArrayList;
@@ -115,5 +116,15 @@ public class ShoppingCart {
 
         return productsLists;
 
+    }
+
+    /**
+     * This method remove all the products by the {@link Supplier supplier} with the same supplierId passed as parameter
+     *
+     * @param supplierId the supplierId which all the products need to be removed
+     */
+    public void emptyShoppingCart(Integer supplierId) {
+        this.shoppingCartList.removeAll(supplierId);
+        this.totalAmountBySupplier.remove(supplierId);
     }
 }

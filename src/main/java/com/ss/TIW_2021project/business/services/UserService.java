@@ -1,6 +1,7 @@
 package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.dao.UsersDAO;
+import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.User;
 
@@ -77,5 +78,27 @@ public class UserService {
         }
 
         return null;
+    }
+
+    /**
+     * THIS METHOD REQUIRES THAT ALL THE ORDERS IN THE LIST ARE FROM THE SAME USER
+     *
+     * @param orders
+     *
+     */
+
+
+    public void setUserInfoOnOrder(List<Order> orders) throws UnavailableException {
+        UsersDAO usersDAO = new UsersDAO(servletContext);
+        User user;
+        try {
+            user = usersDAO.getUserById(orders.get(0).getUser().getUserId());
+        } catch (SQLException exception) {
+            throw new UnavailableException("Error while getting info about user");
+        }
+
+        for(Order order : orders)
+            order.setUser(user);
+
     }
 }

@@ -8,6 +8,14 @@ public class Supplier {
     private ShippingPolicy supplierShippingPolicy = null;
     private Float freeShippingMinAmount = null;
 
+    public Supplier(){
+
+    }
+
+    public Supplier(Integer supplierId) {
+        this.supplierId = supplierId;
+    }
+
     public Integer getSupplierId() {
         return supplierId;
     }

@@ -5,6 +5,7 @@ import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
+import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -50,6 +51,14 @@ public class HomeController extends HttpServlet {
         }
 
         req.getSession().setAttribute("last_user_products", retrievedProducts);
+
+
+        try {
+            UserService userService = new UserService(getServletContext());
+            user.setShippingAddresses(userService.getShippingAddresses(user.getUserId()));
+        } catch (UnavailableException e) {
+            e.printStackTrace();
+        }
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());

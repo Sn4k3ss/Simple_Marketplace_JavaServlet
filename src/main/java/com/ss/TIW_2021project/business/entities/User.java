@@ -11,6 +11,11 @@ public class User {
     private String password = null;
     private List<ShippingAddress> shippingAddresses = null;
 
+    public User() {}
+    public User(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getUserId() {
         return userId;
     }

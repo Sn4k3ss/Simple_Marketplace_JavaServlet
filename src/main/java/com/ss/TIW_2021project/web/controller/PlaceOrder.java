@@ -7,15 +7,14 @@ import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.context.WebContext;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(
@@ -53,15 +52,18 @@ public class PlaceOrder extends HttpServlet {
         SupplierService supplierService = new SupplierService(getServletContext());
         Float totalAmountAtSupplier = shoppingCart.getTotalAmountBySupplier(supplierId);
         Float shippingFees = supplierService.computeShippingFees(shoppingCart.getProductsFromSupplier(supplierId), supplierId, totalAmountAtSupplier);
+        LocalDate deliveryDate = supplierService.computeDeliveryDate(shippingAddress, supplierId);
         List<ShoppingCartProduct> productsList = shoppingCart.getProductsFromSupplier(supplierId);
 
 
         OrderService orderService = new OrderService(getServletContext());
-        Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees);
+        Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees, deliveryDate);
         orderService.placeOrder(newOrder);
 
+        //Once the order is placed now we can remove that supplier from the shoppingCart
+        shoppingCart.emptyShoppingCart(supplierId);
 
-        String path = getServletContext().getContextPath() + "/orders";
+        String path = getServletContext().getContextPath() + "/showOrders";
         resp.sendRedirect(path);
     }
 }
