@@ -3,12 +3,14 @@ package com.ss.TIW_2021project.business.entities;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
 
     private Integer orderId = null;
     private User user = null;
+    private LocalDateTime orderPlacementDate = null;
     private Supplier orderSupplier = null;
     private List<ShoppingCartProduct> orderProductsList = null;
     private Float orderAmount = null;
@@ -26,9 +28,15 @@ public class Order {
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDateTime getOrderPlacementDate() {
+        return orderPlacementDate;
+    }
+    public void setOrderPlacementDate(LocalDateTime orderPlacementDate) {
+        this.orderPlacementDate = orderPlacementDate;
     }
 
     public Supplier getOrderSupplier() {

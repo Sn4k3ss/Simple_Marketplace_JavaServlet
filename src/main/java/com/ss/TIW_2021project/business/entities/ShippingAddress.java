@@ -10,6 +10,15 @@ public class ShippingAddress {
     private String state = null;
     private String phone = null;
 
+    public ShippingAddress() {
+        super();
+    }
+
+    public ShippingAddress(Integer userShippingAddress) {
+        this.shippingAddressId = userShippingAddress;
+    }
+
+
     public Integer getUserId() {
         return userId;
     }

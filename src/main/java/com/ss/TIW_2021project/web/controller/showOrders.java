@@ -44,15 +44,13 @@ public class showOrders extends HttpServlet {
 
         //serve per prendere le informazioni di User
         UserService userService = new UserService(getServletContext());
-        userService.setUserInfoOnOrder(orders);
-        //serve prendere informazioni sul venditore
+        userService.setUserInfoOnOrders(orders);
+        //serve prendere informazioni di Supplier
         SupplierService supplierService = new SupplierService(getServletContext());
-        supplierService.setSupplierIndoOnOrder(orders);
-        //serve per prendere informazioni sui prodotti dell'ordine
+        supplierService.setSupplierInfoOnOrders(orders);
+        //serve per prendere informazioni su ShoppingCartProduct
         ProductService productService = new ProductService(getServletContext());
-        productService.setProductInfoOnOrder(orders);
-
-        //TODO da implementare
+        productService.setProductInfoOnOrders(orders);
 
 
 

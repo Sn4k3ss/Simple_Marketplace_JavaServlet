@@ -23,6 +23,10 @@
         <param-name>dbDriver</param-name>
         <param-value>com.mysql.jdbc.Driver</param-value>
     </context-param>
+    <context-param>
+        <param-name>s3tiwBucket</param-name>
+        <param-value>https://tiw21marketplace.s3.eu-south-1.amazonaws.com/</param-value>
+    </context-param>
 
 
     <filter>

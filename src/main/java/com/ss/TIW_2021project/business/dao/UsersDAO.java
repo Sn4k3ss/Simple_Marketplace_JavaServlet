@@ -15,35 +15,68 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The type Users dao.
+ */
 public class UsersDAO {
 
     private Connection connection;
 
+    /**
+     * Instantiates a new Users dao.
+     *
+     * @param servletContext the servlet context
+     * @throws UnavailableException the unavailable exception
+     */
     public UsersDAO(ServletContext servletContext) throws UnavailableException {
         connection = ConnectionFactory.getConnection(servletContext);
     }
 
 
+    /**
+     * Return the user with the corresponding id; NO PASSWORD INCLUDED
+     *
+     * @param userId the user id
+     * @return the user
+     * @throws SQLException         the sql exception
+     * @throws UnavailableException the unavailable exception
+     */
     public User getUserById(Integer userId) throws SQLException, UnavailableException {
 
         User userRetrieved = null;
 
-        String query = "SELECT * FROM users WHERE userId = ?";
+        String userQuery = "SELECT * FROM users WHERE userId = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, userId);
+        String addressesQuery = "" +
+                "SELECT sA.userId, userAddressId, recipient, address, city, state, phone " +
+                "from users " +
+                "    join shippingAddresses sA on users.userId = sA.userId " +
+                "where sA.userId = ?";
 
-            try (ResultSet result = preparedStatement.executeQuery();) {
+        try (
+                PreparedStatement userQueryStm = connection.prepareStatement(userQuery);
+                PreparedStatement addressesQueryStm = connection.prepareStatement(addressesQuery);
+
+                ) {
+
+            userQueryStm.setInt(1, userId);
+            addressesQueryStm.setInt(1, userId);
+
+            try (
+                    ResultSet result = userQueryStm.executeQuery();
+                    ResultSet shipAddrRes = addressesQueryStm.executeQuery();
+                    ) {
 
                 while (result.next()) {
                     userRetrieved = new User();
                     userRetrieved.setUserId(result.getInt("userId"));
                     userRetrieved.setEmail(result.getString("email"));
-                    userRetrieved.setPassword(result.getString("password"));
+                    //userRetrieved.setPassword(result.getString("password"));
                     userRetrieved.setUserName(result.getString("userName"));
                     userRetrieved.setUserSurname(result.getString("userSurname"));
-
                 }
+
+                userRetrieved.setShippingAddresses(buildUserAddresses(shipAddrRes));
             }
         }
 
@@ -51,6 +84,15 @@ public class UsersDAO {
     }
 
 
+    /**
+     * Gets user.
+     *
+     * @param email    the email
+     * @param password the password
+     * @return the user
+     * @throws SQLException         the sql exception
+     * @throws UnavailableException the unavailable exception
+     */
     public User getUser(String email, String password) throws SQLException, UnavailableException {
 
         User userRetrieved = null;
@@ -61,7 +103,7 @@ public class UsersDAO {
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
 
-            try (ResultSet result = preparedStatement.executeQuery();) {
+            try ( ResultSet result = preparedStatement.executeQuery();) {
 
                 while (result.next()) {
                     userRetrieved = new User();
@@ -70,8 +112,6 @@ public class UsersDAO {
                     userRetrieved.setPassword(result.getString("password"));
                     userRetrieved.setUserName(result.getString("userName"));
                     userRetrieved.setUserSurname(result.getString("userSurname"));
-
-                    //TODO shipping address to be got here is a possibility
 
                 }
             }
@@ -87,6 +127,13 @@ public class UsersDAO {
         return userRetrieved;
     }
 
+    /**
+     * Gets all users.
+     *
+     * @return the all users
+     * @throws UnavailableException the unavailable exception
+     * @throws SQLException         the sql exception
+     */
     public List<User> getAllUsers() throws UnavailableException, SQLException {
 
         List<User> userList = new ArrayList<>();
@@ -119,8 +166,8 @@ public class UsersDAO {
     }
 
     /**
-     *  This method builds a {@link List<ShippingAddress> shippingAddresses list} by
-     *  executing a query with the userId passed as parameter
+     * This method builds a {@link List<ShippingAddress> shippingAddresses list} by
+     * executing a query with the userId passed as parameter
      *
      * @param userId the userId which shoppingAddresses are going to be retrieved from the db
      * @return a list that contains all the user's shipping addresses, or an empty collection if none is present

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 
 <head>
   <title>Marketplace App</title>
@@ -15,37 +15,29 @@
 
 <h1>Welcome to our marketplace <span th:text="${session.user.userName}">Amadeus</span></h1>
 
-<h2>User info</h2>
-
-<p th:with="address=${userInfo.getShippingAddresses().get(0)}">
-    This is your e-mail:<span th:text="${userInfo.email}">amadeus.wgang@gmail.com </span> <br>
-    Name: <span th:text="${userInfo.userName}">Amadeus</span> <br>
-    Surname: <span th:text="${userInfo.userSurname}">Mozart</span> <br>
-    Id: <span th:text="${userInfo.userId}">0</span> <br>
-    Your country is: <span th:text="${#locale.country}">AT</span> <br>
-    Your default Shipping Address: <span th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}">Via della nota d'oro, Vienna, Austria</span>
-</p>
-
-
-<div class="topnav">
-  <p>Link veloci</p>
+<!-- Quick links-->
+<div class="styled-quick-links">
+  <p>Quick links</p>
   <a th:href="@{/home}">Home</a>
   <a th:href="@{/shoppingCart}">Shopping cart</a>
   <a th:href="@{/orders}">My Orders</a>
   <a th:href="@{/logout}">Logout</a>
 </div>
 
-<div>
+<br>
+<!-- Search form-->
+
+<p class="styled-form-button">
     <form action="search/products" method="GET">
         <p>Cosa vuoi cercare di bello? </p>
-        <input type="text" th:placeholder="'Oasis..'" name="keyword" >
-        <input class="styled-form-button" type="submit" value="vai!">
+        <input th:placeholder="'Oasis..'" name="keyword" >
+        <input class="go-search-button" type="submit" value="vai!">
     </form>
-</div>
+
 
 
 <div>
-    <table th:class="styled-table">
+    <table class="styled-table">
         <caption>Seen recently</caption>
         <thead>
         <tr>
@@ -61,7 +53,7 @@
         <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
             <td>
                 <!-- form reso cliccabile e modificato con css -->
-                <form th:action=" ${#request.contextPath} + '/home' " class="inline" method="POST" >
+                <form th:action=" ${#request.contextPath} + '/home' " method="POST" >
                     <!-- il tag input vine utilizzato per mandare parametri nella richiesta -->
                     <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
                     <input type="submit" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">
@@ -146,6 +138,17 @@
         </tbody>
     </table>
 </div>
+
+<h3>User info</h3>
+
+<p th:class="bold_info" th:with="address=${userInfo.getShippingAddresses().get(0)}">
+    This is your e-mail:<span th:text="${userInfo.email}">amadeus.wgang@gmail.com </span> <br>
+    Name: <span th:text="${userInfo.userName}">Amadeus</span> <br>
+    Surname: <span th:text="${userInfo.userSurname}">Mozart</span> <br>
+    Id: <span th:text="${userInfo.userId}">0</span> <br>
+    Your country is: <span th:text="${#locale.country}">AT</span> <br>
+    Your default Shipping Address: <span th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}">Via della nota d'oro, Vienna, Austria</span>
+</p>
 
 </body>
 </html>

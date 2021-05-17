@@ -36,5 +36,12 @@ public class ServletUtility {
 
     }
 
+    public static String getImage(HttpServletRequest req, String bucketKey) {
+
+        String s3bucket = req.getServletContext().getInitParameter("s3tiwBucket");
+
+        return s3bucket.concat(bucketKey);
+
+    }
 
 }

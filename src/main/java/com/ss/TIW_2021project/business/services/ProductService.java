@@ -159,7 +159,16 @@ public class ProductService {
 
     }
 
-    public void setProductInfoOnOrder(List<Order> orders) {
-        //TODO
+    public void setProductInfoOnOrders(List<Order> orders) throws UnavailableException {
+        ProductsDAO productsDAO = new ProductsDAO(servletContext);
+
+        try {
+            productsDAO.setProductsInfo(orders);
+        } catch (SQLException exception) {
+            throw new UnavailableException("Error while retrieving info on products in order");
+
+        }
+
+
     }
 }

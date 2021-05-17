@@ -1,11 +1,78 @@
+
+/* font */
+@font-face {
+    font-family: 'formula1display-bold';
+    src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-bold-webfont.woff2') format('woff2'),
+    url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'formula1display-regular';
+    src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-regular-webfont.woff2') format('woff2'),
+    url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'formula1display-wide';
+    src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-wide-webfont.woff2') format('woff2'),
+    url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-wide-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/* background image */
+body   {
+    background-image: url("https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/background_image.jpg");
+    background-color: #afd9d2;
+}
+
+html {
+    font-family: formula1display-regular, serif;
+}
+
+.text {
+    width: 33.3%;
+    float:left;
+    font-family: formula1display-regular, serif;
+}
+
+.text input {
+    width: 33.3%;
+    float:left;
+    font-family: formula1display-regular, serif;
+}
+
+.styled-form-button {
+    float: left;
+    padding-left: 20px;
+    display: block;
+}
+
+.styled-form-button p, input {
+    width: auto;
+    font-family: formula1display-regular, serif;
+}
+
+
+
 /* Add a black background color to the top navigation */
-.topnav {
+.styled-quick-links {
     background-color: #04AA6D;
     overflow: hidden;
+    font-family: formula1display-regular, serif;
+    float: left;
+    padding-left: 20px;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
+.styled-quick-links a {
     float: left;
     color: #f2f2f2;
     text-align: center;
@@ -15,29 +82,25 @@
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
+.styled-quick-links a:hover {
     background-color: #ddd;
     color: black;
 }
 
 /* Add a color to the active/current link */
-.topnav a.active {
+.styled-quick-links a.active {
     background-color: #04AA6D;
     color: white;
-}
-
-/* Right-aligned section inside the top navigation */
-.topnav-right {
-    float: right;
 }
 
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
-    font-family: sans-serif;
+    font-family: formula1display-regular, serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    table-layout: auto;
 }
 
 .styled-table thead tr {
@@ -74,10 +137,9 @@
 }
 
 
-.styled-form-button {
+.go-search-button {
     width: 150px;
     height: 50px;
-    border: none;
     border: solid thin #009879;
     border-radius: 5px;
     background: rgba(255, 255, 255,0);
@@ -85,7 +147,24 @@
 }
 
 
-.styled-form-button :hover{
+.go-search-button :hover{
     background:black;
     color:white;
+}
+
+
+
+@font-face {
+    font-family: myFirstFont;
+    src: url("https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/background_image.jpg");
+}
+
+
+.bold_info {
+
+}
+
+.bold_info span {
+    font-family: formula1display-bold, Serif;
+    font-size: 20px;
 }

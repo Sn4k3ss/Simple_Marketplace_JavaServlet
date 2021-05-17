@@ -2,7 +2,6 @@ package com.ss.TIW_2021project.business.dao;
 
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
 import javax.servlet.ServletContext;
@@ -10,7 +9,6 @@ import javax.servlet.UnavailableException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,14 +52,15 @@ public class OrdersDAO {
 
         List<Order> orders;
 
-        String query = "SELECT *\n" +
-                "FROM orders\n" +
-                "WHERE userId = ?";
+        String ordersListQuery = "SELECT * " +
+                "FROM orders ord " +
+                "WHERE userId = ? " +
+                "ORDER BY ord.orderPlacementDate desc";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, userId);
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                orders = buildOrdersList(resultSet);
+        try (PreparedStatement ordersListStm = connection.prepareStatement(ordersListQuery);) {
+            ordersListStm.setInt(1, userId);
+            try (ResultSet ordersRS = ordersListStm.executeQuery();) {
+                orders = buildOrdersList(ordersRS);
 
             }
         } catch (SQLException ex) {
@@ -151,16 +150,48 @@ public class OrdersDAO {
 
         List<Order> orders = new ArrayList<>();
 
+        String orderProductsListQuery = "" +
+                "SELECT oP.orderId, oP.supplierId, userId, userAddressId, " +
+                "       orderAmount, shippingFees, deliveryDate, " +
+                "       productId, unitCost, quantity " +
+                "FROM orders ord " +
+                "JOIN orderProducts oP on ord.orderId = oP.orderId " +
+                "WHERE ord.orderId = ?";
+
         Order order;
 
         while (resultSet.next()) {
             order = new Order();
             order.setOrderId(resultSet.getInt("orderId"));
             order.setUser(new User(resultSet.getInt("userId")));
+            order.setShippingAddress(new ShippingAddress(resultSet.getInt("userAddressId")));
+            order.setOrderPlacementDate(resultSet.getObject("orderPlacementDate", Timestamp.class).toLocalDateTime());
             order.setOrderSupplier(new Supplier(resultSet.getInt("supplierId")));
             order.setOrderAmount(resultSet.getFloat("orderAmount"));
             order.setOrderShippingFees(resultSet.getFloat("shippingFees"));
             order.setDeliveryDate(resultSet.getObject("deliveryDate", LocalDate.class));
+
+            List<ShoppingCartProduct> orderProductsList = new ArrayList<>();
+            ShoppingCartProduct prod;
+            try (PreparedStatement orderProductsListQueryStm = connection.prepareStatement(orderProductsListQuery);)
+            {
+                orderProductsListQueryStm.setInt(1, order.getOrderId());
+                try (ResultSet orderProductsRS = orderProductsListQueryStm.executeQuery();) {
+
+                    while(orderProductsRS.next()) {
+                        prod = new ShoppingCartProduct();
+                        prod.setProductId(orderProductsRS.getInt("productId"));
+                        prod.setSupplierProductCost(orderProductsRS.getFloat("unitCost"));
+                        prod.setHowMany(orderProductsRS.getInt("quantity"));
+                        prod.setSupplierId(orderProductsRS.getInt("supplierId"));
+
+                        orderProductsList.add(prod);
+                    }
+                }
+
+            }
+
+            order.setOrderProductsList(orderProductsList);
 
             orders.add(order);
         }

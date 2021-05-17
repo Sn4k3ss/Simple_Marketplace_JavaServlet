@@ -1,19 +1,17 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
+import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
-import org.checkerframework.checker.units.qual.C;
+import com.sun.mail.imap.protocol.MODSEQ;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.Date;
 
 public class ProductsDAO {
 
@@ -127,7 +125,7 @@ public class ProductsDAO {
 
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        productsList = buildProductsList(resultSet);
+        productsList = buildSupplierProductsList(resultSet);
         return new ProductsCatalogue(productsList);
 
     }
@@ -177,7 +175,7 @@ public class ProductsDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, categoryId);
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                productsList = buildProductsList(resultSet);
+                productsList = buildSupplierProductsList(resultSet);
             }
 
         } catch (SQLException ex) {
@@ -261,7 +259,7 @@ public class ProductsDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
 
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                productsList = buildProductsList(resultSet);
+                productsList = buildSupplierProductsList(resultSet);
 
             }
         } catch (SQLException ex) {
@@ -282,7 +280,7 @@ public class ProductsDAO {
      * @return a {@link List<Product> products list} containing every product in {@link ResultSet resultSet}
      * @throws SQLException if error while reading from columns
      */
-    private List<SupplierProduct> buildProductsList(ResultSet resultSet) throws SQLException {
+    private List<SupplierProduct> buildSupplierProductsList(ResultSet resultSet) throws SQLException {
         List<SupplierProduct> productsList = new ArrayList<>();
 
         SupplierProduct supplierProduct;
@@ -313,5 +311,39 @@ public class ProductsDAO {
     }
 
 
+    public void setProductsInfo(List<Order> orders) throws SQLException {
 
+        String prodQuery = "" +
+                "SELECT productName, pC.categoryId ,productDescription, categoryName, photoPath " +
+                "FROM products " +
+                "JOIN productsCategory pC on pC.categoryId = products.categoryId " +
+                "WHERE productId = ?";
+
+        for (Order order : orders) {
+            for (ShoppingCartProduct shoppingCartProduct : order.getOrderProductsList()) {
+
+                try (PreparedStatement prodQueryStm = connection.prepareStatement(prodQuery);)
+                {
+                    prodQueryStm.setInt(1, shoppingCartProduct.getProductId());
+                    try (ResultSet prodRs = prodQueryStm.executeQuery();) {
+                        buildProductInfo(prodRs, shoppingCartProduct);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private void buildProductInfo(ResultSet prodRs, ShoppingCartProduct prod) throws SQLException {
+
+        while (prodRs.next()) {
+            prod.setProductName(prodRs.getString("productName"));
+            prod.setProductDescription(prodRs.getString("productDescription"));
+            prod.setProductCategoryId(prodRs.getInt("categoryId"));
+            prod.setProductCategory(prodRs.getString("categoryName"));
+            prod.setProductImagePath(prodRs.getString("photoPath"));
+        }
+
+    }
 }

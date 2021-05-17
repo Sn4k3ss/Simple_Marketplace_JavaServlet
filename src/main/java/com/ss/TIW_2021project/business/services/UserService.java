@@ -88,8 +88,9 @@ public class UserService {
      */
 
 
-    public void setUserInfoOnOrder(List<Order> orders) throws UnavailableException {
+    public void setUserInfoOnOrders(List<Order> orders) throws UnavailableException {
         UsersDAO usersDAO = new UsersDAO(servletContext);
+
         User user;
         try {
             user = usersDAO.getUserById(orders.get(0).getUser().getUserId());
@@ -97,8 +98,11 @@ public class UserService {
             throw new UnavailableException("Error while getting info about user");
         }
 
-        for(Order order : orders)
+        for(Order order : orders) {
+            int userShippingAddressId = order.getShippingAddress().getShippingAddressId();
             order.setUser(user);
+            order.setShippingAddress(user.getShippingAddresses().get(userShippingAddressId -1));
+        }
 
     }
 }

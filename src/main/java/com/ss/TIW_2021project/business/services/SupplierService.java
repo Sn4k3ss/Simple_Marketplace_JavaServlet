@@ -131,7 +131,8 @@ public class SupplierService {
             throw new UnavailableException("Error while getting the supplier");
         }
 
-        //TODO da implementare, per il momento la data di spedizione è hard-coded a 5 giorni di distanza dalla data di effettuamento dell'ordine
+        //TODO da implementare, per il momento la data di spedizione è hard-coded
+        // a 5 giorni di distanza dalla data di effettuamento dell'ordine
 
         //setting deliveryDate
         Date today = new Date();
@@ -146,7 +147,22 @@ public class SupplierService {
 
     }
 
-    public void setSupplierIndoOnOrder(List<Order> orders) {
-        //TODO
+    public void setSupplierInfoOnOrders(List<Order> orders) throws UnavailableException {
+
+        Integer supplierId = orders.get(0).getOrderSupplier().getSupplierId();
+        Supplier orderSupplier = new Supplier();
+
+        SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
+
+        try {
+            orderSupplier = suppliersDAO.getSupplierById(supplierId);
+        } catch (SQLException exception) {
+            throw new UnavailableException("Error while getting info about supplier");
+        }
+
+        for(Order order : orders) {
+            order.setOrderSupplier(orderSupplier);
+        }
+
     }
 }

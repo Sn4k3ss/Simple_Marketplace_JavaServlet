@@ -2,6 +2,7 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+
 <head>
   <title>Marketplace App</title>
   <meta charset="UTF-8">
@@ -13,8 +14,8 @@
 <body>
 
 
-<div class="topnav">
-  <p>Link veloci</p>
+<div class="styled-quick-links">
+  <p>Quick links</p>
   <a th:href="@{/home}">Home</a>
   <a th:href="@{/shoppingCart}">Shopping cart</a>
   <a th:href="@{/orders}">My Orders</a>
@@ -26,26 +27,57 @@
 
 
 <div th:if="${not #lists.isEmpty(orders)}">
-  <table th:class="styled-table" style="width:100%">
+  <table th:class="styled-table" style="width: auto">
     <!-- se il carrello è vuoto non mostrare la tabella -->
     <caption style="lighting-color: #04AA6D">ORDERS</caption>
       <thead>
         <tr>
-          <th scope="col">First col</th>
-          <th scope="col">Second col</th>
-          <th scope="col">third col</th>
+          <th scope="col">Order id</th>
+          <th scope="col">Order placement date</th>
+          <th scope="col">Supplier</th>
+          <th scope="col">Order amount</th>
+          <th scope="col">Shipping fees</th>
+          <th scope="col">Delivery date</th>
+          <th scope="col">Address</th>
         </tr>
       </thead>
-    <tbody>
+
+    <tbody th:each="order : ${orders}">
     <tr>
-      <td>Something</td>
+      <td th:text="${order.orderId}">#0</td>
+      <td th:text="${order.orderPlacementDate}">1-1-1970 00:00</td>
+      <td th:text="${order.orderSupplier.supplierName}">AMZN</td>
+      <td th:text="${order.orderAmount}">€999.99</td>
+      <td th:text="${order.orderShippingFees}">€0.0</td>
+      <td th:text="${order.deliveryDate}">1-1-1970 00:01</td>
+      <td th:text="${order.shippingAddress.recipient} + ' ' + ${order.shippingAddress.address} +  ' '
+                    + ${order.shippingAddress.city} +  ' ' + ${order.shippingAddress.state} +  ' '
+                    + ${order.shippingAddress.phone}"> Heinz Strasse, Vienna Osterreich
+      </td>
+    </tr>
+    <tr>
+      <td colspan="6">
+      <table th:class="styled-table" style="width:100%">
+        <caption style="lighting-color: #04AA6D">PRODUCTS</caption>
+        <thead>
+        <tr>
+          <th scope="col">Product name</th>
+          <th scope="col">Product description</th>
+          <th scope="col">Product's category</th>
+          <th scope="col">Product cost</th>
+        </tr>
+        </thead>
+        <tr th:each="product : ${order.orderProductsList}">
+          <td rowspan="2" th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
+          <td rowspan="3" th:text="${product.productDescription}">Scarpe bellissime</td>
+          <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
+          <td th:text="${product.supplierProductCost}">€99999.99</td>
+        </tr>
+        </td>
+      </table>
     </tr>
     </tbody>
-
-
   </table>
-
-
 </div>
 
 

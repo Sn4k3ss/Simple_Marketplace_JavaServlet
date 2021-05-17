@@ -6,6 +6,7 @@ import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.services.UserService;
+import com.ss.TIW_2021project.business.utils.ServletUtility;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -38,6 +39,10 @@ public class HomeController extends HttpServlet {
         SupplierService supplierService = new SupplierService(getServletContext());
         ProductsCatalogue retrievedProducts = null;
 
+        String backgroundImagePath = ServletUtility.getImage(req, "images/website/background_image.jpg");
+
+
+
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
             supplierService.setSuppliersToProducts(retrievedProducts);
@@ -64,6 +69,7 @@ public class HomeController extends HttpServlet {
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("userInfo", user);
         webContext.setVariable("products", retrievedProducts);
+        webContext.setVariable("backgroundImage", backgroundImagePath);
         templateEngine.process("home", webContext, resp.getWriter());
 
     }
