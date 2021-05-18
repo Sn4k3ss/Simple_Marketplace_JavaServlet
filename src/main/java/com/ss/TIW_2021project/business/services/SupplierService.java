@@ -8,6 +8,7 @@ import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.ItemRangeCost;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
@@ -54,11 +55,11 @@ public class SupplierService {
 
 
     /**
-     * Given a {@link ProductsCatalogue catalogue} this method
-     * @param retrievedProducts
+     * Given a {@link ProductsCatalogue catalogue} this method provides the {@link Supplier supplier entity} to every products inside of it
+     * @param catalogue the catalogue
      * @throws UnavailableException
      */
-    public void setSuppliersToProducts(ProductsCatalogue retrievedProducts) throws UnavailableException {
+    public void setSuppliersToProductsInCatalogue(ProductsCatalogue catalogue) throws UnavailableException {
 
         SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
         List<Supplier> suppliers;
@@ -70,8 +71,8 @@ public class SupplierService {
             throw  new UnavailableException("Error while retrieving info about the suppliers from db");
         }
 
-        for(Integer prodId : retrievedProducts.getSupplierProductMultiMap().keySet()) {
-            List<SupplierProduct> prodsSameId = new ArrayList<>(List.copyOf(retrievedProducts.getSupplierProductMultiMap().get(prodId)));
+        for(Integer prodId : catalogue.getSupplierProductMultiMap().keySet()) {
+            List<SupplierProduct> prodsSameId = new ArrayList<>(List.copyOf(catalogue.getSupplierProductMultiMap().get(prodId)));
 
             for ( SupplierProduct prod : prodsSameId) {
 
@@ -87,6 +88,15 @@ public class SupplierService {
 
     }
 
+    /**
+     * This method compute the shipping fees based on {@link ShippingPolicy supplier's policy}
+     *
+     * @param productsFromSupplier the products list
+     * @param supplierId the supplier Id
+     * @param totalAmountAtSupplier total amount
+     * @return the shipping cost
+     * @throws UnavailableException
+     */
     public Float computeShippingFees(List<ShoppingCartProduct> productsFromSupplier, Integer supplierId, Float totalAmountAtSupplier) throws UnavailableException {
 
         Supplier supplier;
@@ -116,7 +126,7 @@ public class SupplierService {
     }
 
     /**
-     *  This method is used to get the delivery date when submitting an order from a supplier
+     *  This method compute the delivery date based on {@link Supplier}
      *
      * @param shippingAddress
      * @param supplierId
@@ -132,7 +142,7 @@ public class SupplierService {
         }
 
         //TODO da implementare, per il momento la data di spedizione è hard-coded
-        // a 5 giorni di distanza dalla data di effettuamento dell'ordine
+        // a 5 giorni di distanza dalla data di effettuazione dell'ordine
 
         //setting deliveryDate
         Date today = new Date();

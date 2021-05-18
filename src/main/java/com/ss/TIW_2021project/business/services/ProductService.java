@@ -99,7 +99,7 @@ public class ProductService {
             randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
         } catch (SQLException exception) {
             exception.printStackTrace();
-            throw new UnavailableException("Error while retrieving the last five products seen by the user");
+            throw new UnavailableException("Error while retrieving five random products");
         }
 
         return randomDiscountedProducts;

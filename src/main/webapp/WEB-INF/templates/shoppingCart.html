@@ -30,7 +30,7 @@
     <caption style="lighting-color: #04aa6d">CART</caption>
       <thead>
         <tr>
-          <th scope="col">Product name</th>
+          <th colspan="2" scope="col">Product name</th>
           <th scope="col">Product Description</th>
           <th scope="col">Category</th>
           <th scope="col">Cost</th>
@@ -40,6 +40,9 @@
     <tbody th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartList.get(supplierId)[0].supplier}" >
 
       <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}" >
+        <td class="table-image">
+          <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+        </td>
           <td th:text="${product.productName}">Nome prodotto</td>
           <td th:text="${product.productDescription}">Descrizione prodotto</td>
           <td th:text="${product.productCategory}">Categoria del prodotto</td>

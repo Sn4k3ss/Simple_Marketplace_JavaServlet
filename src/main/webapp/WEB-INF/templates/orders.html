@@ -61,15 +61,18 @@
         <caption style="lighting-color: #04AA6D">PRODUCTS</caption>
         <thead>
         <tr>
-          <th scope="col">Product name</th>
+          <th colspan="2" scope="col">Product name</th>
           <th scope="col">Product description</th>
           <th scope="col">Product's category</th>
           <th scope="col">Product cost</th>
         </tr>
         </thead>
         <tr th:each="product : ${order.orderProductsList}">
-          <td rowspan="2" th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
-          <td rowspan="3" th:text="${product.productDescription}">Scarpe bellissime</td>
+          <td class="table-image">
+            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+          </td>
+          <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
+          <td th:text="${product.productDescription}">Scarpe bellissime</td>
           <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
           <td th:text="${product.supplierProductCost}">€99999.99</td>
         </tr>

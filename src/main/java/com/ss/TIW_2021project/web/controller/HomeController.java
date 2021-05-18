@@ -2,7 +2,6 @@ package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.services.UserService;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/home")
 public class HomeController extends HttpServlet {
@@ -45,11 +43,11 @@ public class HomeController extends HttpServlet {
 
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
-            supplierService.setSuppliersToProducts(retrievedProducts);
+            supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
         } catch (UnavailableException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().println("Not possible to get last user's products");
-            //una possibile soluzione: piuttosto che far fallire la chaimata alla doGet della servlet
+            //una possibile soluzione: piuttosto che far fallire la chiamata alla doGet della servlet
             //si potrebbe gestire l'eccezione in modo tale che la tabellla con i prodotti recenti non venga visualizzata
             //retrievedProducts = new ArrayList<>();
             return;
@@ -69,7 +67,6 @@ public class HomeController extends HttpServlet {
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("userInfo", user);
         webContext.setVariable("products", retrievedProducts);
-        webContext.setVariable("backgroundImage", backgroundImagePath);
         templateEngine.process("home", webContext, resp.getWriter());
 
     }

@@ -170,7 +170,8 @@ public class ProductsDAO {
                 "       ORDER BY RAND() " +
                 "       LIMIT 5) prod " +
                 "JOIN suppliers s on s.supplierId = pc1.supplierId " +
-                "WHERE pc1.productId = prod.productId ";
+                "WHERE pc1.productId = prod.productId " +
+                "ORDER BY productCost ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             preparedStatement.setInt(1, categoryId);
@@ -183,9 +184,7 @@ public class ProductsDAO {
             throw ex;
         }
 
-        ProductsCatalogue catalogue = new ProductsCatalogue(productsList);
-
-        return catalogue;
+        return new ProductsCatalogue(productsList);
     }
 
 
@@ -254,7 +253,7 @@ public class ProductsDAO {
                 "JOIN productsCategory as C ON p.categoryId= C.categoryId " +
                 "JOIN suppliers as S ON pc.supplierId=S.supplierId " +
                 "WHERE REGEXP_LIKE(p.productName, '"+ keyword +"') OR REGEXP_LIKE(p.productDescription, '" + keyword + "')" +
-                "ORDER BY p.productId ";
+                "ORDER BY pc.productCost, p.productId ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
 

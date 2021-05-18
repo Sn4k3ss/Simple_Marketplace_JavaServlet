@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.business.entities;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
+import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import java.util.ArrayList;
@@ -16,9 +17,6 @@ public class ProductsCatalogue {
 
     //A simple MultiMap with productId as key mapped to multiple supplier
     private Multimap<Integer, SupplierProduct> supplierProductMultiMap = null;
-    //A multiMap where the first value from key is the product that cost less
-    private Multimap<Integer, SupplierProduct> sortedByMinPrice = null;
-
 
     /**
      * Instantiates a new Products catalogue.
@@ -27,8 +25,18 @@ public class ProductsCatalogue {
      * @param productsList a {@link List<SupplierProduct> productsList from which the catalogue will be generated}
      */
     public ProductsCatalogue(List<SupplierProduct> productsList) {
+
+        supplierProductMultiMap = MultimapBuilder.linkedHashKeys().arrayListValues().build();
+
+        for (SupplierProduct prod : productsList) {
+            supplierProductMultiMap.put(prod.getProductId(), prod);
+        }
+
+        /*
         Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getProductId;
         supplierProductMultiMap = Multimaps.index(productsList.listIterator(), productIdFunc);
+
+         */
     }
 
     /**
@@ -62,22 +70,6 @@ public class ProductsCatalogue {
         int productsInCatalogue = supplierProductMultiMap.asMap().size();
 
         return productsInCatalogue >= num;
-    }
-
-
-    /**
-     *
-     *
-     */
-    public void sortByPrice() {
-        List<SupplierProduct> products = new ArrayList<>();
-
-        for (Integer prodId : supplierProductMultiMap.keySet())
-            products.addAll(supplierProductMultiMap.get(prodId));
-
-        Multimap<Integer, SupplierProduct> sorted = ArrayListMultimap.create();
-
-
     }
 
 }

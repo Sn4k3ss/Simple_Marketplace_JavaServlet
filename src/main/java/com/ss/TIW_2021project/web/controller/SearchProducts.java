@@ -1,7 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
@@ -50,7 +49,7 @@ public class SearchProducts extends HttpServlet {
 
         try {
             retrievedProducts = productService.getRelevantProducts(keyword);
-            supplierService.setSuppliersToProducts(retrievedProducts);
+            supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
 
         } catch (UnavailableException e) {
             //ERRORE SERVLET

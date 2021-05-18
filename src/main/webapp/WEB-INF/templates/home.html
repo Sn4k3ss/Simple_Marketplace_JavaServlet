@@ -24,15 +24,15 @@
   <a th:href="@{/logout}">Logout</a>
 </div>
 
-<br>
-<!-- Search form-->
 
-<p class="styled-form-button">
+<!-- Search form-->
+<div class="styled-form-button">
     <form action="search/products" method="GET">
         <p>Cosa vuoi cercare di bello? </p>
         <input th:placeholder="'Oasis..'" name="keyword" >
         <input class="go-search-button" type="submit" value="vai!">
     </form>
+</div>
 
 
 
@@ -41,7 +41,7 @@
         <caption>Seen recently</caption>
         <thead>
         <tr>
-            <th scope="col">Product</th>
+            <th colspan="2" scope="col">Product</th>
             <th scope="col">Description</th>
             <th scope="col">Cost</th>
             <th scope="col">Supplier</th>
@@ -51,6 +51,9 @@
 
         <tbody>
         <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
+            <td class="table-image">
+                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
+            </td>
             <td>
                 <!-- form reso cliccabile e modificato con css -->
                 <form th:action=" ${#request.contextPath} + '/home' " method="POST" >
