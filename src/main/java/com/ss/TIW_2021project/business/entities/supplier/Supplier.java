@@ -7,6 +7,7 @@ public class Supplier {
     private Float supplierRating = null;
     private ShippingPolicy supplierShippingPolicy = null;
     private Float freeShippingMinAmount = null;
+    private String imagePath = null;
 
     public Supplier(){
 
@@ -49,5 +50,13 @@ public class Supplier {
     }
     public void setFreeShippingMinAmount(Float freeShippingMinAmount) {
         this.freeShippingMinAmount = freeShippingMinAmount;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

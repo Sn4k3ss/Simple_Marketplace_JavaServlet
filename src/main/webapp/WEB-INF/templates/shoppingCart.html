@@ -12,14 +12,22 @@
 
 <body>
 
+<header>
+  <div>
 
-<div class="styled-quick-links">
-  <p>Quick links</p>
-  <a th:href="@{/home}">Home</a>
-  <a th:href="@{/shoppingCart}">Shopping cart</a>
-  <a th:href="@{/orders}">My Orders</a>
-  <a th:href="@{/logout}">Logout</a>
-</div>
+    <a th:href="@{/TIW/home}" class="logo">
+      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
+    </a>
+
+    <div class="header-right">
+      <a th:href="@{/home}">Home</a>
+      <a th:href="@{/shoppingCart}" class="active">Shopping cart</a>
+      <a th:href="@{/orders}">My Orders</a>
+      <a th:href="@{/logout}">Logout</a>
+    </div>
+
+  </div>
+</header>
 
 <h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 
@@ -40,7 +48,7 @@
     <tbody th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartList.get(supplierId)[0].supplier}" >
 
       <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}" >
-        <td class="table-image">
+        <td class="table-product-img">
           <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
         </td>
           <td th:text="${product.productName}">Nome prodotto</td>
@@ -52,11 +60,14 @@
             <table>
               <thead>
               <tr>
-                <th scope="col">Supplier</th>
+                <th colspan="2" scope="col">Supplier</th>
                 <th scope="col">Rating</th>
               </tr>
               </thead>
               <tr>
+                <td th:class="table-supplier-img">
+                  <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${product.supplier.imagePath}" alt="Product image"/>
+                </td>
                 <td th:text="${supplierInfo.supplierName}"> Venditore 0</td>
                 <td th:text="${supplierInfo.supplierRating}"> 0</td>
                 <td>

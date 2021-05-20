@@ -27,16 +27,77 @@
 
 }
 
-/* background image */
-body   {
-    background-image: url("https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/background_image.jpg");
-    background-color: #afd9d2;
-}
 
 html {
     font-family: formula1display-regular, serif;
 }
 
+
+body   {
+    /*  background-image: url("https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/background-image.jpg");    */
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: auto;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 20px 10px;
+}
+
+header a {
+    float: left;
+    color: black;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px; 
+    line-height: 25px;
+    border-radius: 4px;
+  }
+
+header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+header a.logo img {
+    max-width: 70px;
+    height: auto;
+    
+
+}
+
+header a:hover {
+  background-color: #04aa6d23;
+  color: black;
+}
+
+header a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.header-right {
+  float: right;
+}
+
+@media screen and (max-width: 500px) {
+    .header a {
+      float: none;
+      display: block;
+      text-align: left;
+    }
+    
+    .header-right {
+      float: none;
+    }
+  }
+
+
+/*
 .text {
     width: 33.3%;
     float:left;
@@ -48,6 +109,8 @@ html {
     float:left;
     font-family: formula1display-regular, serif;
 }
+
+ */
 
 .styled-form-button {
     padding-left: 40px;
@@ -66,9 +129,6 @@ html {
 .styled-quick-links {
     background-color: #04AA6D;
     overflow: hidden;
-    font-family: formula1display-regular, serif;
-    float: left;
-    padding-left: 20px;
 }
 
 /* Style the links inside the navigation bar */
@@ -76,9 +136,9 @@ html {
     float: left;
     color: #f2f2f2;
     text-align: center;
-    padding: 14px 16px;
+    padding: 10px 10px;
     text-decoration: none;
-    font-size: 17px;
+    font-size: medium;
 }
 
 /* Change the color of links on hover */
@@ -89,7 +149,7 @@ html {
 
 /* Add a color to the active/current link */
 .styled-quick-links a.active {
-    background-color: #04AA6D;
+    background-color: #1e1e1e;
     color: white;
 }
 
@@ -97,10 +157,10 @@ html {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
-    font-family: formula1display-regular, serif;
     min-width: 400px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     table-layout: auto;
+    width: 100%;
 }
 
 .styled-table thead tr {
@@ -137,6 +197,96 @@ html {
 }
 
 
+.styled-order-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    table-layout: auto;
+    width: 100%;
+}
+
+.styled-order-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-order-table th,
+.styled-order-table td {
+    padding: 12px 15px;
+}
+
+.styled-order-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-order-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-order-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-order-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.styled-order-table caption {
+    font-weight: bold;
+    font-size: x-large;
+    color: #009879;
+    padding-bottom: 1%;
+}
+
+.styled-product-in-order-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.8em;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    table-layout: auto;
+    width: 90%;
+}
+
+.styled-product-in-order-table thead tr {
+    background-color: #028168;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-product-in-order-table th,
+.styled-product-in-order-table td {
+    padding: 10px 10px;
+}
+
+.styled-product-in-order-table tbody tr {
+    border-bottom: 10px solid #dddddd;
+}
+
+.styled-product-in-order-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-product-in-order-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-product-in-order-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.styled-product-in-order-table caption {
+    font-weight: bold;
+    font-size: large;
+    color: #028168;
+    padding-bottom: 5px;
+}
+
 .go-search-button {
     width: 150px;
     height: 50px;
@@ -153,24 +303,26 @@ html {
 }
 
 
-
-@font-face {
-    font-family: myFirstFont;
-    src: url("https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/background_image.jpg");
-}
-
-
-.bold_info {
-
-}
-
 .bold_info span {
     font-family: formula1display-bold, serif;
     font-size: 20px;
 }
 
 
-.table-image img {
+.table-product-img img {
+    width:300px;
+    height: 300px;
+    object-fit: contain;
+    border: 0px solid #ddd;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.table-product-img img:hover {
+    box-shadow: 1px 1px 15px 2px #028168;
+}
+
+.table-supplier-img img {
     width:304px;
     height:228px;
     object-fit: contain;
@@ -179,6 +331,6 @@ html {
     padding: 5px;
 }
 
-.table-image img:hover {
+.table-supplier-img img:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }

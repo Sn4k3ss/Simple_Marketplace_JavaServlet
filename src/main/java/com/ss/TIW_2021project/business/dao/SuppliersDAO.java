@@ -46,10 +46,10 @@ public class SuppliersDAO {
         Supplier supplier = new Supplier();
 
         String query = "" +
-                "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin,\n" +
-                "        sP.`range`, sP.minItem, sP.maxItem, sP.price\n" +
-                "FROM suppliers as sup\n" +
-                "    JOIN shippingPolicy sP on sup.supplierId = sP.supplierId\n" +
+                "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin, sup.imagePath, " +
+                "        sP.`range`, sP.minItem, sP.maxItem, sP.price " +
+                "FROM suppliers as sup " +
+                "    JOIN shippingPolicy sP on sup.supplierId = sP.supplierId " +
                 "WHERE sup.supplierId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
@@ -69,7 +69,7 @@ public class SuppliersDAO {
     public List<Supplier> retrieveSuppliersInfo() throws SQLException {
         List<Supplier> suppliers = new ArrayList<>();
 
-        String query = "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin," +
+        String query = "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin, sup.imagePath, " +
                 "               sP.`range`, sP.minItem, sP.maxItem, sP.price" +
                 "       FROM suppliers as sup " +
                 "           JOIN shippingPolicy sP on sup.supplierId = sP.supplierId";
@@ -100,6 +100,7 @@ public class SuppliersDAO {
                 supplier.setSupplierName(resultSet.getString("supplierName"));
                 supplier.setSupplierRating(resultSet.getFloat("supplierRating"));
                 supplier.setFreeShippingMinAmount(resultSet.getFloat("freeShippingMin"));
+                supplier.setImagePath(resultSet.getString("imagePath"));
             }
 
             if( resultSet.getInt("range") == 1 ) {

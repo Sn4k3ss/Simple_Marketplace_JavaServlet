@@ -11,13 +11,23 @@
 
 <body>
 
-<div class="styled-quick-links">
-    <p>Quick links</p>
-    <a th:href="@{/home}">Home</a>
-    <a th:href="@{/shoppingCart}">Shopping cart</a>
-    <a th:href="@{/orders}">My Orders</a>
-    <a th:href="@{/logout}">Logout</a>
-</div>
+<header>
+    <div>
+
+        <a th:href="@{/TIW/home}" class="logo">
+            <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
+        </a>
+
+        <div class="header-right">
+            <a th:href="@{/home}">Home</a>
+            <a th:href="@{/shoppingCart}">Shopping cart</a>
+            <a th:href="@{/orders}">My Orders</a>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+
+    </div>
+</header>
+
 
 <div>
     <table th:class="styled-table" style="width:100%">
@@ -27,14 +37,14 @@
                 <th colspan="2" scope="col">Product</th>
                 <th scope="col">Description</th>
                 <th scope="col">Cost</th>
-                <th scope="col">Supplier</th>
+                <th colspan="2" scope="col">Supplier</th>
                 <th scope="col">Add to cart</th>
             </tr>
         </thead>
 
         <tbody>
             <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
-                <td class="table-image">
+                <td class="table-product-img">
                     <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
                 </td>
                 <td>
@@ -50,6 +60,9 @@
                 </td>
                 <td th:text="${productInfo1.productDescription}"></td>
                 <td th:text="${productInfo1.supplierProductCost}"></td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+                <td class="table-supplier-img">
+                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image"/>
+                </td>
                 <td th:text="${productInfo1.supplierName}"></td>
                 <td>
                     <form th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${productInfo1}" method="POST">

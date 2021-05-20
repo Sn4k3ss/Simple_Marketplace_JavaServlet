@@ -13,24 +13,34 @@
 
 <body>
 
+<header>
+  <div>
 
-<div class="styled-quick-links">
-  <p>Quick links</p>
-  <a th:href="@{/home}">Home</a>
-  <a th:href="@{/shoppingCart}">Shopping cart</a>
-  <a th:href="@{/orders}">My Orders</a>
-  <a th:href="@{/logout}">Logout</a>
+    <a th:href="@{/TIW/home}" class="logo">
+      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
+    </a>
+
+    <div class="header-right">
+      <a th:href="@{/home}">Home</a>
+      <a th:href="@{/shoppingCart}">Shopping cart</a>
+      <a th:href="@{/orders}" class="active">My Orders</a>
+      <a th:href="@{/logout}">Logout</a>
+    </div>
+
+  </div>
+</header>
+
+<div>
+  <br>
+  <h1>Here's your orders, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 </div>
 
-<h1>Here's your orders, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 
-
-
-<div th:if="${not #lists.isEmpty(orders)}">
-  <table th:class="styled-table" style="width: auto">
+<div th:if="${not #lists.isEmpty(orders)}" style="display: block">
+  <table th:each="order : ${orders}" th:class="styled-order-table">
     <!-- se il carrello è vuoto non mostrare la tabella -->
     <caption style="lighting-color: #04AA6D">ORDERS</caption>
-      <thead>
+      <thead >
         <tr>
           <th scope="col">Order id</th>
           <th scope="col">Order placement date</th>
@@ -42,46 +52,51 @@
         </tr>
       </thead>
 
-    <tbody th:each="order : ${orders}">
-    <tr>
-      <td th:text="${order.orderId}">#0</td>
-      <td th:text="${order.orderPlacementDate}">1-1-1970 00:00</td>
-      <td th:text="${order.orderSupplier.supplierName}">AMZN</td>
-      <td th:text="${order.orderAmount}">€999.99</td>
-      <td th:text="${order.orderShippingFees}">€0.0</td>
-      <td th:text="${order.deliveryDate}">1-1-1970 00:01</td>
-      <td th:text="${order.shippingAddress.recipient} + ' ' + ${order.shippingAddress.address} +  ' '
-                    + ${order.shippingAddress.city} +  ' ' + ${order.shippingAddress.state} +  ' '
-                    + ${order.shippingAddress.phone}"> Heinz Strasse, Vienna Osterreich
-      </td>
-    </tr>
-    <tr>
-      <td colspan="6">
-      <table th:class="styled-table" style="width:100%">
-        <caption style="lighting-color: #04AA6D">PRODUCTS</caption>
-        <thead>
+    <tbody>
         <tr>
-          <th colspan="2" scope="col">Product name</th>
-          <th scope="col">Product description</th>
-          <th scope="col">Product's category</th>
-          <th scope="col">Product cost</th>
-        </tr>
-        </thead>
-        <tr th:each="product : ${order.orderProductsList}">
-          <td class="table-image">
-            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+          <td th:text="${order.orderId}">#0</td>
+          <td th:text="${order.orderPlacementDate}">1-1-1970 00:00</td>
+          <td th:text="${order.orderSupplier.supplierName}">AMZN</td>
+          <td th:text="${order.orderAmount}">€999.99</td>
+          <td th:text="${order.orderShippingFees}">€0.0</td>
+          <td th:text="${order.deliveryDate}">1-1-1970 00:01</td>
+          <td th:text="${order.shippingAddress.recipient} + ' ' + ${order.shippingAddress.address} +  ' '
+                        + ${order.shippingAddress.city} +  ' ' + ${order.shippingAddress.state} +  ' '
+                        + ${order.shippingAddress.phone}"> Heinz Strasse, Vienna Osterreich
           </td>
-          <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
-          <td th:text="${product.productDescription}">Scarpe bellissime</td>
-          <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
-          <td th:text="${product.supplierProductCost}">€99999.99</td>
+
+          <table class="styled-product-in-order-table">
+            <caption style="lighting-color: #04AA6D">PRODUCTS</caption>
+              <thead>
+                <tr>
+                  <th colspan="2" scope="col">Product name</th>
+                  <th scope="col">Product description</th>
+                  <th scope="col">Product's category</th>
+                  <th scope="col">Product cost</th>
+                </tr>
+              </thead>
+                  <tbody>
+                    <tr th:each="product : ${order.orderProductsList}">
+                      <td class="table-product-img">
+                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+                      </td>
+                      <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
+                      <td th:text="${product.productDescription}">Scarpe bellissime</td>
+                      <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
+                      <td th:text="${product.supplierProductCost}">€99999.99</td>
+                    </tr>
+                  </tbody>
+            </table>
         </tr>
-        </td>
-      </table>
-    </tr>
     </tbody>
   </table>
 </div>
+
+
+<div th:if="${#lists.isEmpty(orders)}" style="display: block">
+  <p>You didn't place any order yet</p>
+</div>
+
 
 
 <p>
