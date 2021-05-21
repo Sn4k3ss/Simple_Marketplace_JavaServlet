@@ -46,8 +46,7 @@ public class OrderService {
         try {
             ordersDAO.placeOrder(newOrder);
         } catch (SQLException ex) {
-            //TODO
-            ex.printStackTrace();
+            throw new UnavailableException("Not possible to place an order");
         }
 
     }

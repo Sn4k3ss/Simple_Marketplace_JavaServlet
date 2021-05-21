@@ -127,11 +127,20 @@ public class OrdersDAO {
             connection.commit();
 
         } catch (SQLException ex) {
-            //errore during the productsHistory Table update
-            throw ex;
+            //utilizzare un logger
+            //JDBCTutorialUtilities.printSQLException(e);
+            if (connection != null) {
+                try {
+                    System.err.print("Transaction is being rolled back");
+                    connection.rollback();
+                } catch (SQLException excep) {
+                    //utilizzare un logger
+                    //JDBCTutorialUtilities.printSQLException(excep);
+                }
+            }
+
         }
 
-        System.out.println("Ordine inserito");
 
     }
 

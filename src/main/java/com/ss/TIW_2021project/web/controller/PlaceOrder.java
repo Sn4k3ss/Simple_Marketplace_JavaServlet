@@ -37,7 +37,7 @@ public class PlaceOrder extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer supplierId = Integer.parseInt(req.getParameter("supplierId"));
         Integer userShippingAddressId = Integer.parseInt(req.getParameter("userShippingAddressId"));
@@ -46,19 +46,27 @@ public class PlaceOrder extends HttpServlet {
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
         User user = (User) req.getSession(false).getAttribute("user");
 
-        UserService userService = new UserService(getServletContext());
-        ShippingAddress shippingAddress = userService.getShippingAddress(user.getUserId(), userShippingAddressId);
 
-        SupplierService supplierService = new SupplierService(getServletContext());
-        Float totalAmountAtSupplier = shoppingCart.getTotalAmountBySupplier(supplierId);
-        Float shippingFees = supplierService.computeShippingFees(shoppingCart.getProductsFromSupplier(supplierId), supplierId, totalAmountAtSupplier);
-        LocalDate deliveryDate = supplierService.computeDeliveryDate(shippingAddress, supplierId);
-        List<ShoppingCartProduct> productsList = shoppingCart.getProductsFromSupplier(supplierId);
+        try {
+            UserService userService = new UserService(getServletContext());
+            ShippingAddress shippingAddress = userService.getShippingAddress(user.getUserId(), userShippingAddressId);
+
+            SupplierService supplierService = new SupplierService(getServletContext());
+            Float totalAmountAtSupplier = shoppingCart.getTotalAmountBySupplier(supplierId);
+            Float shippingFees = supplierService.computeShippingFees(shoppingCart.getProductsFromSupplier(supplierId), supplierId, totalAmountAtSupplier);
+            LocalDate deliveryDate = supplierService.computeDeliveryDate(shippingAddress, supplierId);
+            List<ShoppingCartProduct> productsList = shoppingCart.getProductsFromSupplier(supplierId);
 
 
-        OrderService orderService = new OrderService(getServletContext());
-        Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees, deliveryDate);
-        orderService.placeOrder(newOrder);
+            OrderService orderService = new OrderService(getServletContext());
+            Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees, deliveryDate);
+            orderService.placeOrder(newOrder);
+        } catch (ServletException e) {
+            //To be handled
+            //TODO
+
+
+        }
 
         //Once the order is placed now we can remove that supplier from the shoppingCart
         shoppingCart.emptyShoppingCart(supplierId);
