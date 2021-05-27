@@ -1,15 +1,14 @@
 package com.ss.TIW_2021project.business.services;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.OrdersDAO;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 import javax.servlet.ServletContext;
-import javax.servlet.UnavailableException;
-import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 public class OrderService {
@@ -21,7 +20,12 @@ public class OrderService {
     }
 
 
-    public Order createOrder(List<ShoppingCartProduct> productsList, User user, ShippingAddress shippingAddress,Float productsOnlyCost, Float shippingFees, LocalDate deliveryDate) {
+    public Order createOrder(List<ShoppingCartProduct> productsList,
+                             User user,
+                             ShippingAddress shippingAddress,
+                             Float productsOnlyCost,
+                             Float shippingFees,
+                             LocalDate deliveryDate) {
 
         Order newOrder = new Order();
 
@@ -39,27 +43,25 @@ public class OrderService {
         return newOrder;
     }
 
-    public void placeOrder(Order newOrder) throws UnavailableException {
-
-        OrdersDAO ordersDAO = new OrdersDAO(servletContext);
+    public void placeOrder(Order newOrder) throws ServiceException {
 
         try {
+            OrdersDAO ordersDAO = new OrdersDAO(servletContext);
             ordersDAO.placeOrder(newOrder);
-        } catch (SQLException ex) {
-            throw new UnavailableException("Not possible to place an order");
+        } catch (DAOException | UtilityException ex) {
+            throw new ServiceException(ServiceException._PLACE_ORDER_ERROR);
         }
 
     }
 
-    public List<Order> retrieveUserOrders(Integer userId) throws UnavailableException {
+    public List<Order> retrieveUserOrders(Integer userId) throws ServiceException {
         List<Order> orders;
 
-        OrdersDAO ordersDAO = new OrdersDAO(servletContext);
-
         try {
-             orders = ordersDAO.retrieveUserOrders(userId);
-        } catch (SQLException exception) {
-            throw new UnavailableException("Error while loading user orders");
+            OrdersDAO ordersDAO = new OrdersDAO(servletContext);
+            orders = ordersDAO.retrieveUserOrders(userId);
+        } catch (DAOException | UtilityException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_ORDERS);
         }
 
         return orders;

@@ -1,19 +1,17 @@
 package com.ss.TIW_2021project.business.utils;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+
 import javax.servlet.ServletContext;
-import javax.servlet.UnavailableException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 
 public class ConnectionFactory {
 
 
-    public static Connection getConnection(ServletContext servletContext) throws UnavailableException {
+    public static Connection getConnection(ServletContext servletContext) throws UtilityException {
 
         Connection connection = null;
 
@@ -23,19 +21,23 @@ public class ConnectionFactory {
             String USER = servletContext.getInitParameter("dbUser");
             String PASSWORD = servletContext.getInitParameter("dbPassword");
             String driver = servletContext.getInitParameter("dbDriver");
-            Class.forName(driver);	// Per verificare che il driver sia stato caricato
+            Class.forName(driver);
 
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new UnavailableException("Couldn't get db connection");
+            throw new UtilityException(UtilityException._ERROR_GETTING_CONN);
         }
         return connection;
     }
 
-    public static void closeConnection(Connection connection) throws SQLException {
+    public static void closeConnection(Connection connection) throws UtilityException {
         if (connection != null) {
-            connection.close();
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new UtilityException(UtilityException._ERROR_CLOSING_CONN);
+            }
         }
     }
 

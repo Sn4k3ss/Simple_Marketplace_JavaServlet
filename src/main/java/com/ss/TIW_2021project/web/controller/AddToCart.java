@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
@@ -74,8 +75,7 @@ public class AddToCart extends HttpServlet {
 
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
-        } catch (UnavailableException e) {
-            System.out.println(e.getMessage());
+        } catch (UtilityException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }

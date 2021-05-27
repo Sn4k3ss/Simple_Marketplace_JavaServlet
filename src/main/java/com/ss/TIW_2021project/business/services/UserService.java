@@ -1,5 +1,8 @@
 package com.ss.TIW_2021project.business.services;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.UsersDAO;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
@@ -28,13 +31,20 @@ public class UserService {
      * @throws UnavailableException if can't get connection to db
      * @throws SQLException         mySQL exception
      */
-    public User checkCredentials(String email, String password) throws UnavailableException, SQLException {
+    public User checkCredentials(String email, String password) throws ServiceException {
 
-        UsersDAO usersDao = new UsersDAO(servletContext);
-        User userRetrieved = usersDao.getUser(email, password);
+        UsersDAO usersDao;
+        User userRetrieved;
+
+        try {
+            usersDao = new UsersDAO(servletContext);
+            userRetrieved = usersDao.getUser(email, password);
+            userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
+        } catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_CHECK_CREDENTIALS);
+        }
 
         if (userRetrieved != null) {
-
             if (email.equals(userRetrieved.getEmail()) && password.equals(userRetrieved.getPassword()))
                 return userRetrieved;
             else
@@ -45,31 +55,34 @@ public class UserService {
     }
 
 
-    public List<User> getAllUsers() throws UnavailableException, SQLException {
-
-        UsersDAO usersDao = new UsersDAO(servletContext);
-        return usersDao.getAllUsers();
-
-    }
-
-    public List<ShippingAddress> getShippingAddresses(Integer userId) throws UnavailableException {
-
-        UsersDAO usersDAO = new UsersDAO(servletContext);
+    public List<User> getAllUsers() throws ServiceException {
 
         try {
-            return usersDAO.getShippingAddresses(userId);
-        } catch (SQLException ex) {
-            throw new UnavailableException("Error while interacting with the database");
+            UsersDAO usersDao = new UsersDAO(servletContext);
+            return usersDao.getAllUsers();
+        } catch ( UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
     }
 
-    public ShippingAddress getShippingAddress(Integer userId, Integer userShippingAddressId) throws UnavailableException {
-        UsersDAO usersDAO = new UsersDAO(servletContext);
+    public List<ShippingAddress> getShippingAddresses(Integer userId) throws ServiceException {
+
+        try {
+            UsersDAO usersDAO = new UsersDAO(servletContext);
+            return usersDAO.getShippingAddresses(userId);
+        } catch (DAOException | UtilityException ex) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
+        }
+    }
+
+    public ShippingAddress getShippingAddress(Integer userId, Integer userShippingAddressId) throws ServiceException {
+
         List<ShippingAddress> shippingAddressList = new ArrayList<>();
         try {
+            UsersDAO usersDAO = new UsersDAO(servletContext);
             shippingAddressList = usersDAO.getShippingAddresses(userId);
-        } catch (SQLException ex) {
-            throw new UnavailableException("Error while interacting with the database");
+        } catch (UtilityException | DAOException ex) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
 
         for (ShippingAddress address: shippingAddressList) {
@@ -88,14 +101,14 @@ public class UserService {
      */
 
 
-    public void setUserInfoOnOrders(List<Order> orders) throws UnavailableException {
-        UsersDAO usersDAO = new UsersDAO(servletContext);
-
+    public void setUserInfoOnOrders(List<Order> orders) throws ServiceException {
         User user;
+
         try {
+            UsersDAO usersDAO = new UsersDAO(servletContext);
             user = usersDAO.getUserById(orders.get(0).getUser().getUserId());
-        } catch (SQLException exception) {
-            throw new UnavailableException("Error while getting info about user");
+        } catch (DAOException | UtilityException exception) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
 
         for(Order order : orders) {

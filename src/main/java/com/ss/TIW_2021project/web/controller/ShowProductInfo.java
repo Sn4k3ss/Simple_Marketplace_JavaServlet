@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
@@ -43,15 +44,14 @@ public class ShowProductInfo extends HttpServlet {
 
         Integer productId = Integer.parseInt(req.getParameter("productId"));
         ProductService productService = new ProductService(getServletContext());
-
         User user = (User) req.getSession().getAttribute("user");
+
         try {
             productService.setProductDisplayed(user.getUserId(), productId);
-        } catch (UnavailableException ex) {
-            //TODO
-            //TO BE HANDLED
+        } catch (ServiceException ex) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't update user last product");
+            return;
         }
-
 
         ProductsCatalogue productsFromQuery;
 
@@ -59,8 +59,7 @@ public class ShowProductInfo extends HttpServlet {
             productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
 
         } else {
-            System.out.println("something ain't right");
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something ain't right");
             return;
         }
 

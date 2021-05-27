@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.OrderService;
@@ -38,21 +39,29 @@ public class showOrders extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, UnavailableException {
 
         User user = (User) req.getSession().getAttribute("user");
+        List<Order> orders;
 
-        OrderService orderService = new OrderService(getServletContext());
-        List<Order> orders = orderService.retrieveUserOrders(user.getUserId());
+        try {
 
-        //serve per prendere le informazioni di User
-        UserService userService = new UserService(getServletContext());
-        userService.setUserInfoOnOrders(orders);
-        //serve prendere informazioni di Supplier
-        SupplierService supplierService = new SupplierService(getServletContext());
-        supplierService.setSupplierInfoOnOrders(orders);
-        //serve per prendere informazioni su ShoppingCartProduct
-        ProductService productService = new ProductService(getServletContext());
-        productService.setProductInfoOnOrders(orders);
+            OrderService orderService = new OrderService(getServletContext());
+            orders = orderService.retrieveUserOrders(user.getUserId());
 
+            //serve per prendere le informazioni di User
+            //senza prendere lo user dal db si potrebbe settare quello già disponibile nella sessione
+            UserService userService = new UserService(getServletContext());
+            userService.setUserInfoOnOrders(orders);
 
+            //serve prendere informazioni di Supplier
+            SupplierService supplierService = new SupplierService(getServletContext());
+            supplierService.setSupplierInfoOnOrders(orders);
+
+            //serve per prendere informazioni su ShoppingCartProduct
+            ProductService productService = new ProductService(getServletContext());
+            productService.setProductInfoOnOrders(orders);
+        } catch (ServiceException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't get infos about orders");
+            return;
+        }
 
 
         ServletContext servletContext = getServletContext();

@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
@@ -37,31 +38,15 @@ public class HomeController extends HttpServlet {
         SupplierService supplierService = new SupplierService(getServletContext());
         ProductsCatalogue retrievedProducts = null;
 
-        String backgroundImagePath = ServletUtility.getImage(req, "images/website/background_image.jpg");
-
-
-
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
             supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
-        } catch (UnavailableException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().println("Not possible to get last user's products");
-            //una possibile soluzione: piuttosto che far fallire la chiamata alla doGet della servlet
-            //si potrebbe gestire l'eccezione in modo tale che la tabellla con i prodotti recenti non venga visualizzata
-            //retrievedProducts = new ArrayList<>();
+        } catch (ServiceException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't get user's last products");
             return;
         }
 
         req.getSession().setAttribute("last_user_products", retrievedProducts);
-
-
-        try {
-            UserService userService = new UserService(getServletContext());
-            user.setShippingAddresses(userService.getShippingAddresses(user.getUserId()));
-        } catch (UnavailableException e) {
-            e.printStackTrace();
-        }
 
 
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
@@ -71,8 +56,4 @@ public class HomeController extends HttpServlet {
 
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
-    }
 }

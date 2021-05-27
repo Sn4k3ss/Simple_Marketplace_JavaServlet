@@ -1,19 +1,14 @@
 package com.ss.TIW_2021project.business.services;
 
+import com.ss.TIW_2021project.business.Exceptions.*;
 import com.ss.TIW_2021project.business.dao.ProductsDAO;
-import com.ss.TIW_2021project.business.dao.SuppliersDAO;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
-import com.ss.TIW_2021project.business.entities.ShoppingCart;
-import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.ServletContext;
-import javax.servlet.UnavailableException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,24 +21,17 @@ public class ProductService {
         this.servletContext = servletContext;
     }
 
+    public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws ServiceException {
+        List<SupplierProduct> products = null;
 
-    public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws UnavailableException, SQLException {
+        try {
+            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            products = productsDAO.getProductsBySupplier(idSupplier);
+        } catch (DAOException | UtilityException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
+        }
 
-        ProductsDAO productsDAO = new ProductsDAO(servletContext);
-
-        List<SupplierProduct> products = productsDAO.getProductsBySupplier(idSupplier);
-
-        if(products != null)
-            return products;
-        else
-            return new ArrayList<>();
-    }
-
-    public List<Product> getProductUnderX(Float maxAmount) {
-
-        //TODO
-
-        return null;
+        return products != null ? products : new ArrayList<>();
     }
 
     /**
@@ -52,17 +40,17 @@ public class ProductService {
      * @param keyword the keyword that needs to be in name or description
      * @return a list of relevant products
      */
-    public ProductsCatalogue getRelevantProducts(String keyword) throws UnavailableException {
+    public ProductsCatalogue getRelevantProducts(String keyword) throws ServiceException {
+        ProductsCatalogue retrievedProducts = null;
 
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
-
-            ProductsCatalogue retrievedProducts = productsDAO.getProductsMatching(keyword);
-
-            return retrievedProducts;
-        } catch (SQLException e) {
-            throw  new UnavailableException("Error while retrieving from databse");
+            retrievedProducts = productsDAO.getProductsMatching(keyword);
+        } catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
+
+        return retrievedProducts;
     }
 
     /**
@@ -73,52 +61,40 @@ public class ProductService {
      * @param userId the user id
      * @return the last last products seen by the user.
      */
-    public ProductsCatalogue getLastUserProducts(Integer userId) throws UnavailableException {
-
-
+    public ProductsCatalogue getLastUserProducts(Integer userId) throws ServiceException {
         ProductsDAO productsDAO = null;
-        productsDAO = new ProductsDAO(this.servletContext);
-
         ProductsCatalogue mostRecentProducts = null;
 
         try {
+            productsDAO = new ProductsDAO(this.servletContext);
             mostRecentProducts = productsDAO.getLastUserProduct(userId);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            //Ma facciamo continuare l'esecuzione per provare a prendere almeno i 5 prodotti in offerta da una categoria casuale
+        }  catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
         if (mostRecentProducts != null && mostRecentProducts.containsAtLeast(5)) {
             return mostRecentProducts;
         }
 
-
-
         ProductsCatalogue randomDiscountedProducts = null;
         try {
             randomDiscountedProducts = productsDAO.getRandomDiscountedProducts();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            throw new UnavailableException("Error while retrieving five random products");
+        }  catch (DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
         return randomDiscountedProducts;
-
     }
 
 
 
-    public void setProductDisplayed(Integer userId, int productId) throws UnavailableException {
+    public void setProductDisplayed(Integer userId, int productId) throws ServiceException {
 
         try {
             ProductsDAO productsDAO = new ProductsDAO(servletContext);
             productsDAO.setProductDisplayed(userId, productId);
-
-        } catch (SQLException ex) {
-            //se arriva una sqlexception allora il problema è nella query
-            //se è una unavailable exception allora il problema sta nella connessione al db
-            //exception.printStackTrace();
-            throw new UnavailableException("Error while interacting with database");
+        }  catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_UPDATE_USERS_LAST_PRODUCTS);
         }
 
     }
@@ -159,16 +135,13 @@ public class ProductService {
 
     }
 
-    public void setProductInfoOnOrders(List<Order> orders) throws UnavailableException {
-        ProductsDAO productsDAO = new ProductsDAO(servletContext);
+    public void setProductInfoOnOrders(List<Order> orders) throws ServiceException {
 
         try {
+            ProductsDAO productsDAO = new ProductsDAO(servletContext);
             productsDAO.setProductsInfo(orders);
-        } catch (SQLException exception) {
-            throw new UnavailableException("Error while retrieving info on products in order");
-
+        } catch (DAOException | UtilityException exception) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
-
-
     }
 }

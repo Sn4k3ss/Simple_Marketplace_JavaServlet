@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.business.utils;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
 import javax.servlet.UnavailableException;
@@ -17,9 +18,9 @@ public class ServletUtility {
      *
      * @param req from which to get the parameter to build a 'light' version of a {@link SupplierProduct supplierProduct}
      * @return the newly created product
-     * @throws UnavailableException if error while getting parameter from req
+     * @throws UtilityException if error while getting parameter from req
      */
-    public static SupplierProduct buildProductFromRequest(HttpServletRequest req) throws UnavailableException {
+    public static SupplierProduct buildProductFromRequest(HttpServletRequest req) throws UtilityException {
 
         SupplierProduct newProduct = new SupplierProduct();
 
@@ -30,7 +31,7 @@ public class ServletUtility {
         if (newProduct.getProductId() == null
                 || newProduct.getSupplierId() == null
                 || newProduct.getSupplierProductCost() == null)
-            throw new UnavailableException("Error while retrieving info for the product to be added to cart");
+            throw new UtilityException(UtilityException._ERROR_GETTING_PROD_FROM_REQ);
 
         return newProduct;
 

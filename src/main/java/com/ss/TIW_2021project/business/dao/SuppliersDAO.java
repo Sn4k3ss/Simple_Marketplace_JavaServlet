@@ -1,10 +1,10 @@
 package com.ss.TIW_2021project.business.dao;
 
-import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.supplier.ItemRangeCost;
 import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
 import javax.servlet.ServletContext;
@@ -29,7 +29,7 @@ public class SuppliersDAO {
      * @throws UnavailableException the unavailable exception
      * @param servletContext
      */
-    public SuppliersDAO(ServletContext servletContext) throws UnavailableException {
+    public SuppliersDAO(ServletContext servletContext) throws UtilityException {
         connection = ConnectionFactory.getConnection(servletContext);
     }
 
@@ -41,9 +41,9 @@ public class SuppliersDAO {
      * @return the supplier
      * @throws SQLException the sql exception
      */
-    public Supplier getSupplierById(Integer supplierId) throws SQLException, UnavailableException {
+    public Supplier getSupplierById(Integer supplierId) throws DAOException {
 
-        Supplier supplier = new Supplier();
+        Supplier supplier = null;
 
         String query = "" +
                 "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin, sup.imagePath, " +
@@ -56,7 +56,14 @@ public class SuppliersDAO {
             preparedStatement.setInt(1, supplierId);
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 supplier = buildSuppliersList(resultSet).get(0);
+
+            } catch (SQLException exception) {
+                //error while executing Query
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
+        } catch (SQLException exception) {
+            //error while preparing the query
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
 
         return supplier;
@@ -66,8 +73,8 @@ public class SuppliersDAO {
      * This method simply returns a list containg all the {@link Supplier suppliers} with their respective infos
      *
      */
-    public List<Supplier> retrieveSuppliersInfo() throws SQLException {
-        List<Supplier> suppliers = new ArrayList<>();
+    public List<Supplier> retrieveSuppliersInfo() throws DAOException {
+        List<Supplier> suppliers = null;
 
         String query = "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin, sup.imagePath, " +
                 "               sP.`range`, sP.minItem, sP.maxItem, sP.price" +
@@ -77,7 +84,14 @@ public class SuppliersDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 suppliers = buildSuppliersList(resultSet);
+
+            } catch (SQLException exception) {
+                //error while executing Query
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
+        } catch (SQLException exception) {
+            //error while preparing the query
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
         return suppliers;
     }

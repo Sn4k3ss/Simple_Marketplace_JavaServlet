@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
@@ -37,20 +38,10 @@ public class ShoppingCartController extends HttpServlet {
         CartService cartService = new CartService(getServletContext());
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
 
-        UserService userService = new UserService(getServletContext());
-
         User user = (User) req.getSession().getAttribute("user");
 
-        //This list can be empty if the user hasn't still set a shipping address
-
-        try {
-           user.setShippingAddresses(userService.getShippingAddresses(user.getUserId()));
-        } catch (UnavailableException e) {
-            //error while retrieving the user shipping addresses
-        }
-
-        if(user.getShippingAddresses().isEmpty()) {
-            System.out.println("Lo user in questione non ha un indirizzo di spedizione settato");
+        if (user.getShippingAddresses().isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "User has no shipping address ");
             return;
         }
 

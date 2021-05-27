@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
@@ -45,30 +46,26 @@ public class PlaceOrder extends HttpServlet {
         CartService cartService = new CartService(getServletContext());
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
         User user = (User) req.getSession(false).getAttribute("user");
+        ShippingAddress shippingAddress = user.getShippingAddresses().stream()
+                .filter(x -> x.getShippingAddressId().equals(userShippingAddressId)).findFirst().orElse(null);
 
+        SupplierService supplierService = new SupplierService(getServletContext());
+        OrderService orderService = new OrderService(getServletContext());
 
         try {
-            UserService userService = new UserService(getServletContext());
-            ShippingAddress shippingAddress = userService.getShippingAddress(user.getUserId(), userShippingAddressId);
 
-            SupplierService supplierService = new SupplierService(getServletContext());
             Float totalAmountAtSupplier = shoppingCart.getTotalAmountBySupplier(supplierId);
             Float shippingFees = supplierService.computeShippingFees(shoppingCart.getProductsFromSupplier(supplierId), supplierId, totalAmountAtSupplier);
             LocalDate deliveryDate = supplierService.computeDeliveryDate(shippingAddress, supplierId);
             List<ShoppingCartProduct> productsList = shoppingCart.getProductsFromSupplier(supplierId);
 
-
-            OrderService orderService = new OrderService(getServletContext());
             Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees, deliveryDate);
             orderService.placeOrder(newOrder);
-        } catch (ServletException e) {
-            //To be handled
-            //TODO
-
-
+        } catch (ServiceException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't place your order");
+            return;
         }
 
-        //Once the order is placed now we can remove that supplier from the shoppingCart
         shoppingCart.emptyShoppingCart(supplierId);
 
         String path = getServletContext().getContextPath() + "/showOrders";

@@ -97,21 +97,6 @@ header a.active {
   }
 
 
-/*
-.text {
-    width: 33.3%;
-    float:left;
-    font-family: formula1display-regular, serif;
-}
-
-.text input {
-    width: 33.3%;
-    float:left;
-    font-family: formula1display-regular, serif;
-}
-
- */
-
 .styled-form-button {
     padding-left: 40px;
     display: block;

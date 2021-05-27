@@ -1,5 +1,7 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
@@ -25,7 +27,7 @@ public class OrdersDAO {
      * @param servletContext the servlet context
      * @throws UnavailableException the unavailable exception
      */
-    public OrdersDAO(ServletContext servletContext) throws UnavailableException {
+    public OrdersDAO(ServletContext servletContext) throws UtilityException {
         connection = ConnectionFactory.getConnection(servletContext);
     }
 
@@ -48,7 +50,7 @@ public class OrdersDAO {
      * @return all user orders or an empty collection it there isn't any
      * @throws SQLException the sql exception
      */
-    public List<Order> retrieveUserOrders(Integer userId) throws SQLException {
+    public List<Order> retrieveUserOrders(Integer userId) throws DAOException {
 
         List<Order> orders;
 
@@ -62,9 +64,11 @@ public class OrdersDAO {
             try (ResultSet ordersRS = ordersListStm.executeQuery();) {
                 orders = buildOrdersList(ordersRS);
 
+            } catch (SQLException exception) {
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-        } catch (SQLException ex) {
-            throw ex;
+        } catch (SQLException | DAOException exception) {
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
 
         return orders;
@@ -76,7 +80,7 @@ public class OrdersDAO {
      * @param newOrder the new order
      * @throws SQLException the sql exception
      */
-    public void placeOrder(Order newOrder) throws SQLException {
+    public void placeOrder(Order newOrder) throws DAOException {
 
         int localOrderId = 0;
 
@@ -126,27 +130,20 @@ public class OrdersDAO {
             //committo i cambiamenti in entrambe le tabelle
             connection.commit();
 
-        } catch (SQLException ex) {
-            //utilizzare un logger
-            //JDBCTutorialUtilities.printSQLException(e);
+        } catch (SQLException e) {
+            //errore da loggare
             if (connection != null) {
                 try {
-                    System.err.print("Transaction is being rolled back");
                     connection.rollback();
-                } catch (SQLException excep) {
-                    //utilizzare un logger
-                    //JDBCTutorialUtilities.printSQLException(excep);
+                } catch (SQLException ex) {
+                    //errore da loggare
                 }
             }
-
+            throw new DAOException(DAOException._FAIL_TO_INSERT);
         }
 
 
     }
-
-
-
-
 
     /**
      * Build an {@link List<Order> ordersList} given the ResultSet from query

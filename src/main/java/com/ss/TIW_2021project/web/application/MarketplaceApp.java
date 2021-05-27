@@ -41,8 +41,8 @@ public class MarketplaceApp {
         // be automatically updated when modified.
         templateResolver.setCacheable(true);
 
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
+        templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
 
 
         this.controllersByURL = new HashMap<>();
@@ -51,13 +51,11 @@ public class MarketplaceApp {
         this.controllersByURL.put("/login", new LoginController());
 
         /*
-
         this.controllersByURL.put("/product/comments", new ProductCommentsController());
         this.controllersByURL.put("/order/list", new OrderListController());
         this.controllersByURL.put("/order/details", new OrderDetailsController());
         this.controllersByURL.put("/subscribe", new SubscribeController());
         this.controllersByURL.put("/userprofile", new UserProfileController());
-
          */
 
     }

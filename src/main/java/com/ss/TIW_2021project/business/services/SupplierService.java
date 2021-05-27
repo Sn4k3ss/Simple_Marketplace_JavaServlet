@@ -1,5 +1,8 @@
 package com.ss.TIW_2021project.business.services;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.SuppliersDAO;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
@@ -12,7 +15,6 @@ import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 
 import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -34,23 +36,16 @@ public class SupplierService {
      * TODO
      * @param supplierId
      * @return
-     * @throws UnavailableException
-     * @throws SQLException
+     * @throws ServiceException
      */
-    public Supplier getSupplierById(Integer supplierId) throws UnavailableException, SQLException {
-        SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
-        return suppliersDAO.getSupplierById(supplierId);
-    }
+    public Supplier getSupplierById(Integer supplierId) throws ServiceException {
 
-    /**
-     * TODO
-     * @return
-     */
-    public List<Supplier> getSuppliersHaveFreeShipping() {
-
-        //TODO connessione alla base di dati e ...
-
-        return null;
+        try {
+            SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
+            return suppliersDAO.getSupplierById(supplierId);
+        } catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
+        }
     }
 
 
@@ -59,16 +54,15 @@ public class SupplierService {
      * @param catalogue the catalogue
      * @throws UnavailableException
      */
-    public void setSuppliersToProductsInCatalogue(ProductsCatalogue catalogue) throws UnavailableException {
-
-        SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
+    public void setSuppliersToProductsInCatalogue(ProductsCatalogue catalogue) throws ServiceException {
         List<Supplier> suppliers;
 
         try {
+            SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
             suppliers = suppliersDAO.retrieveSuppliersInfo();
 
-        } catch (SQLException ex) {
-            throw  new UnavailableException("Error while retrieving info about the suppliers from db");
+        } catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
         }
 
         for(Integer prodId : catalogue.getSupplierProductMultiMap().keySet()) {
@@ -84,8 +78,6 @@ public class SupplierService {
                 prod.setSupplier(s);
             }
         }
-
-
     }
 
     /**
@@ -97,15 +89,13 @@ public class SupplierService {
      * @return the shipping cost
      * @throws UnavailableException
      */
-    public Float computeShippingFees(List<ShoppingCartProduct> productsFromSupplier, Integer supplierId, Float totalAmountAtSupplier) throws UnavailableException {
+    public Float computeShippingFees(List<ShoppingCartProduct> productsFromSupplier,
+                                     Integer supplierId,
+                                     Float totalAmountAtSupplier)
+            throws ServiceException {
 
-        Supplier supplier;
-        try {
-            supplier = getSupplierById(supplierId);
-        } catch (UnavailableException | SQLException e) {
-            throw new UnavailableException("error wile getting the supplier info");
-            //TODO to be handled
-        }
+        Supplier supplier = getSupplierById(supplierId);
+
 
         if (totalAmountAtSupplier >= supplier.getFreeShippingMinAmount())
             return 0f;
@@ -132,17 +122,13 @@ public class SupplierService {
      * @param supplierId
      * @return
      */
-    public LocalDate computeDeliveryDate(ShippingAddress shippingAddress, Integer supplierId) throws UnavailableException {
-
-        SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
-        try {
-            Supplier supplier = suppliersDAO.getSupplierById(supplierId);
-        } catch (SQLException exception) {
-            throw new UnavailableException("Error while getting the supplier");
-        }
+    public LocalDate computeDeliveryDate(ShippingAddress shippingAddress, Integer supplierId) throws ServiceException {
+        Supplier supplier = getSupplierById(supplierId);
 
         //TODO da implementare, per il momento la data di spedizione è hard-coded
         // a 5 giorni di distanza dalla data di effettuazione dell'ordine
+
+
 
         //setting deliveryDate
         Date today = new Date();
@@ -157,18 +143,10 @@ public class SupplierService {
 
     }
 
-    public void setSupplierInfoOnOrders(List<Order> orders) throws UnavailableException {
+    public void setSupplierInfoOnOrders(List<Order> orders) throws ServiceException {
 
         Integer supplierId = orders.get(0).getOrderSupplier().getSupplierId();
-        Supplier orderSupplier = new Supplier();
-
-        SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
-
-        try {
-            orderSupplier = suppliersDAO.getSupplierById(supplierId);
-        } catch (SQLException exception) {
-            throw new UnavailableException("Error while getting info about supplier");
-        }
+        Supplier orderSupplier = getSupplierById(supplierId);
 
         for(Order order : orders) {
             order.setOrderSupplier(orderSupplier);

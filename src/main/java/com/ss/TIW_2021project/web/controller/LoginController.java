@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
@@ -37,7 +38,7 @@ public class LoginController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 
         String email;
@@ -57,12 +58,10 @@ public class LoginController extends HttpServlet {
                 invalidCredentials("Login error: Credentials can't be empty", req, resp);
                 return;
             }
-
         } catch (NullPointerException e) {
             e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             invalidCredentials("Somthing went wrong, please try again", req, resp);
-
             return;
         }
 
@@ -71,14 +70,11 @@ public class LoginController extends HttpServlet {
 
         try {
             user = userService.checkCredentials(email, password);
-        } catch (SQLException e) {
+        } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Login error: Not Possible to check credentials");
             return;
         }
 
-
-        // If the user exists, add info to the session and go to home page, otherwise
-        // show login page with error message
 
         if (user == null) {
             invalidCredentials("Login error: Incorrect email or password", req, resp);

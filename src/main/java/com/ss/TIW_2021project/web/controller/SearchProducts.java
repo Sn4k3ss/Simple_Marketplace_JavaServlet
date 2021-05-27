@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller;
 
+import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
@@ -8,7 +9,6 @@ import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,21 +39,29 @@ public class SearchProducts extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer selectedProductId = 0;
-        String keyword = req.getParameter("keyword");
 
         ProductService productService = new ProductService(req.getServletContext());
         SupplierService supplierService = new SupplierService(req.getServletContext());
 
-        //Product are duplicated but with different suppliers
         ProductsCatalogue retrievedProducts = null;
 
         try {
+            String keyword = req.getParameter("keyword");
+
+            if (keyword == null) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Search string can't be null");
+                return;
+            } else if (keyword.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Search string can't be empty");
+                return;
+            }
+
             retrievedProducts = productService.getRelevantProducts(keyword);
             supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
 
-        } catch (UnavailableException e) {
-            //ERRORE SERVLET
-            //TODO.....
+        } catch (ServiceException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't execute your request");
+            return;
         }
 
 

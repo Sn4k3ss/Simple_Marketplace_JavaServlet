@@ -1,5 +1,7 @@
 package com.ss.TIW_2021project.business.dao;
 
+import com.ss.TIW_2021project.business.Exceptions.UtilityException;
+import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
@@ -11,8 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ public class UsersDAO {
      * @param servletContext the servlet context
      * @throws UnavailableException the unavailable exception
      */
-    public UsersDAO(ServletContext servletContext) throws UnavailableException {
+    public UsersDAO(ServletContext servletContext) throws UtilityException {
         connection = ConnectionFactory.getConnection(servletContext);
     }
 
@@ -41,7 +41,7 @@ public class UsersDAO {
      * @throws SQLException         the sql exception
      * @throws UnavailableException the unavailable exception
      */
-    public User getUserById(Integer userId) throws SQLException, UnavailableException {
+    public User getUserById(Integer userId) throws DAOException {
 
         User userRetrieved = null;
 
@@ -55,29 +55,35 @@ public class UsersDAO {
 
         try (
                 PreparedStatement userQueryStm = connection.prepareStatement(userQuery);
-                PreparedStatement addressesQueryStm = connection.prepareStatement(addressesQuery);
-
-                ) {
-
+                PreparedStatement addressesQueryStm = connection.prepareStatement(addressesQuery)
+        ) {
             userQueryStm.setInt(1, userId);
             addressesQueryStm.setInt(1, userId);
-
             try (
-                    ResultSet result = userQueryStm.executeQuery();
+                    ResultSet rs = userQueryStm.executeQuery();
                     ResultSet shipAddrRes = addressesQueryStm.executeQuery();
-                    ) {
-
-                while (result.next()) {
+            ) {
+                while (rs.next()) {
                     userRetrieved = new User();
-                    userRetrieved.setUserId(result.getInt("userId"));
-                    userRetrieved.setEmail(result.getString("email"));
+                    userRetrieved.setUserId(rs.getInt("userId"));
+                    userRetrieved.setEmail(rs.getString("email"));
                     //userRetrieved.setPassword(result.getString("password"));
-                    userRetrieved.setUserName(result.getString("userName"));
-                    userRetrieved.setUserSurname(result.getString("userSurname"));
+                    userRetrieved.setUserName(rs.getString("userName"));
+                    userRetrieved.setUserSurname(rs.getString("userSurname"));
                 }
 
-                userRetrieved.setShippingAddresses(buildUserAddresses(shipAddrRes));
+                if (userRetrieved != null)
+                    userRetrieved.setShippingAddresses(buildUserAddresses(shipAddrRes));
+
+
+            } catch (SQLException exception) {
+                //error while executing Query
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
+
+        } catch (SQLException exception) {
+            //error while preparing the query
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
 
         return userRetrieved;
@@ -93,7 +99,7 @@ public class UsersDAO {
      * @throws SQLException         the sql exception
      * @throws UnavailableException the unavailable exception
      */
-    public User getUser(String email, String password) throws SQLException, UnavailableException {
+    public User getUser(String email, String password) throws DAOException {
 
         User userRetrieved = null;
 
@@ -103,7 +109,7 @@ public class UsersDAO {
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
 
-            try ( ResultSet result = preparedStatement.executeQuery();) {
+            try (ResultSet result = preparedStatement.executeQuery();) {
 
                 while (result.next()) {
                     userRetrieved = new User();
@@ -114,16 +120,12 @@ public class UsersDAO {
                     userRetrieved.setUserSurname(result.getString("userSurname"));
 
                 }
+            } catch (SQLException exception) {
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-        } finally {
-        try {
-            ConnectionFactory.closeConnection(this.connection);
-        } catch (SQLException e) {
-            throw new UnavailableException("Couldn't close the connection");
+        } catch (SQLException exception) {
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
-    }
-
-
         return userRetrieved;
     }
 
@@ -134,7 +136,7 @@ public class UsersDAO {
      * @throws UnavailableException the unavailable exception
      * @throws SQLException         the sql exception
      */
-    public List<User> getAllUsers() throws UnavailableException, SQLException {
+    public List<User> getAllUsers() throws DAOException {
 
         List<User> userList = new ArrayList<>();
 
@@ -153,13 +155,12 @@ public class UsersDAO {
                     user.setUserSurname(result.getString("userSurname"));
                     userList.add(user);
                 }
+
+            } catch (SQLException exception) {
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-        }  finally {
-            try {
-                ConnectionFactory.closeConnection(this.connection);
-            } catch (SQLException e) {
-                throw new UnavailableException("Couldn't close the connection");
-            }
+        } catch (SQLException | DAOException exception) {
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
 
         return userList;
@@ -173,7 +174,7 @@ public class UsersDAO {
      * @return a list that contains all the user's shipping addresses, or an empty collection if none is present
      * @throws SQLException if an error occurred while interacting with the db
      */
-    public List<ShippingAddress> getShippingAddresses(Integer userId) throws SQLException {
+    public List<ShippingAddress> getShippingAddresses(Integer userId) throws DAOException {
 
         List<ShippingAddress> userShippingAddresses = new ArrayList<>();
 
@@ -188,13 +189,12 @@ public class UsersDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 userShippingAddresses = buildUserAddresses(resultSet);
-            } catch (SQLException ex) {
-                //Error on executing query
-                throw ex;
+
+            } catch (SQLException exception) {
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-        } catch (SQLException ex) {
-            //error on prepareStatement
-            throw ex;
+        } catch (SQLException exception) {
+            throw new DAOException(DAOException._MALFORMED_QUERY);
         }
 
         return userShippingAddresses;
