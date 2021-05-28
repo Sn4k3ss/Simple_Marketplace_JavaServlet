@@ -1,11 +1,9 @@
 package com.ss.TIW_2021project.business.entities;
 
-import com.google.common.base.Function;
 import com.google.common.collect.*;
-import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.utils.MutliMapUtility;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +13,8 @@ import java.util.Map;
  */
 public class ProductsCatalogue {
 
-    //A simple MultiMap with productId as key mapped to multiple supplier
-    private Multimap<Integer, SupplierProduct> supplierProductMultiMap = null;
+    //A simple Map with productId as key mapped to multiple supplier
+    private Map<Integer, List<SupplierProduct>> supplierProductMap = null;
 
     /**
      * Instantiates a new Products catalogue.
@@ -26,36 +24,24 @@ public class ProductsCatalogue {
      */
     public ProductsCatalogue(List<SupplierProduct> productsList) {
 
-        supplierProductMultiMap = MultimapBuilder.linkedHashKeys().arrayListValues().build();
+        supplierProductMap = new HashMap<>();
 
         for (SupplierProduct prod : productsList) {
-            supplierProductMultiMap.put(prod.getProductId(), prod);
+            MutliMapUtility.addToList(supplierProductMap, prod.getProductId(), prod);
         }
 
-        /*
-        Function<SupplierProduct, Integer> productIdFunc = SupplierProduct::getProductId;
-        supplierProductMultiMap = Multimaps.index(productsList.listIterator(), productIdFunc);
-
-         */
     }
 
-    /**
-     * Gets supplier product multi map.
-     *
-     * @return the supplier product multi map
-     */
-    public Multimap<Integer, SupplierProduct> getSupplierProductMultiMap() {
-        return supplierProductMultiMap;
+    //removing guava
+    public Map<Integer, List<SupplierProduct>> getSupplierProductMap() {
+        return supplierProductMap;
     }
 
-    /**
-     * Sets supplier product multi map.
-     *
-     * @param supplierProductMultiMap the supplier product multi map
-     */
-    public void setSupplierProductMultiMap(Multimap<Integer, SupplierProduct> supplierProductMultiMap) {
-        this.supplierProductMultiMap = supplierProductMultiMap;
+    public void setSupplierProductMap(Map<Integer, List<SupplierProduct>> supplierProductMap) {
+        this.supplierProductMap = supplierProductMap;
     }
+    //removing guava
+
 
 
     /**
@@ -66,10 +52,7 @@ public class ProductsCatalogue {
      * @return true if the unique products are at least <code>num</code>
      */
     public boolean containsAtLeast(int num) {
-
-        int productsInCatalogue = supplierProductMultiMap.asMap().size();
-
-        return productsInCatalogue >= num;
+        return supplierProductMap.size() >= num;
     }
 
 }

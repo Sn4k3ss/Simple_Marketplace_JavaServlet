@@ -65,8 +65,8 @@ public class SupplierService {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
         }
 
-        for(Integer prodId : catalogue.getSupplierProductMultiMap().keySet()) {
-            List<SupplierProduct> prodsSameId = new ArrayList<>(List.copyOf(catalogue.getSupplierProductMultiMap().get(prodId)));
+        for(Integer prodId : catalogue.getSupplierProductMap().keySet() ) {
+            List<SupplierProduct> prodsSameId = new ArrayList<>(List.copyOf(catalogue.getSupplierProductMap().get(prodId)));
 
             for ( SupplierProduct prod : prodsSameId) {
 

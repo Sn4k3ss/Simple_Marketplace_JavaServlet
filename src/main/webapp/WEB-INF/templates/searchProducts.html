@@ -14,7 +14,7 @@
 <header>
     <div>
 
-        <a th:href="@{/TIW/home}" class="logo">
+        <a th:href="@{/home}" class="logo">
             <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
         </a>
 
@@ -43,7 +43,7 @@
         </thead>
 
         <tbody>
-            <tr th:each="productId : ${products.supplierProductMultiMap.keySet()}" th:with="productInfo1=${products.supplierProductMultiMap.get(productId)[0]}">
+            <tr th:each="productId : ${products.supplierProductMap.keySet()}" th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
                 <td class="table-product-img">
                     <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
                 </td>
@@ -73,7 +73,7 @@
                     </form>
                 </td>
                 <td>
-                    <table th:if="${selectedProductId.equals(productInfo1.productId)}" th:each="supplierProduct : ${products.supplierProductMultiMap.get(productId)}">
+                    <table th:if="${selectedProductId.equals(productInfo1.productId)}" th:each="supplierProduct : ${products.supplierProductMap.get(productId)}">
                         <caption>Suppliers</caption>
                         <thead>
                         <tr>

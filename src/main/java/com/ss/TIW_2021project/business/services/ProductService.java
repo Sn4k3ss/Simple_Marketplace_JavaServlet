@@ -121,8 +121,8 @@ public class ProductService {
     public SupplierProduct lookForProduct(List<ProductsCatalogue> catalogues, SupplierProduct paramProd) {
 
         for (ProductsCatalogue catalogue : catalogues) {
-            for(Integer productId : catalogue.getSupplierProductMultiMap().keySet())
-                for(SupplierProduct product : catalogue.getSupplierProductMultiMap().get(productId)) {
+            for(Integer productId : catalogue.getSupplierProductMap().keySet())
+                for(SupplierProduct product : catalogue.getSupplierProductMap().get(productId)) {
                     if (paramProd.getSupplierId().equals(product.getSupplierId())
                             && paramProd.getProductId().equals(product.getProductId())
                             && paramProd.getSupplierProductCost().equals(product.getSupplierProductCost()))

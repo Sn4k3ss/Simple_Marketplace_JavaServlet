@@ -5,7 +5,6 @@ import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
 import com.ss.TIW_2021project.business.services.SupplierService;
-import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 
@@ -54,7 +53,7 @@ public class PlaceOrder extends HttpServlet {
 
         try {
 
-            Float totalAmountAtSupplier = shoppingCart.getTotalAmountBySupplier(supplierId);
+            Float totalAmountAtSupplier = shoppingCart.getAmountBySupplier(supplierId);
             Float shippingFees = supplierService.computeShippingFees(shoppingCart.getProductsFromSupplier(supplierId), supplierId, totalAmountAtSupplier);
             LocalDate deliveryDate = supplierService.computeDeliveryDate(shippingAddress, supplierId);
             List<ShoppingCartProduct> productsList = shoppingCart.getProductsFromSupplier(supplierId);

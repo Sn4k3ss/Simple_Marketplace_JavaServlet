@@ -48,19 +48,11 @@ public class AddToCart extends HttpServlet {
 
         SupplierProduct supplierProduct;
 
-        //the request contains: -productId
-        //                      -supplierId
-        //                      -supplierProductCost
-
-        //TODO
-        //to be handled the session check before getting the attr
-
         Integer howMany;
 
         try {
             howMany= Integer.parseInt(req.getParameter("howMany"));
         } catch (NumberFormatException e) {
-            //se errore nell'invio del parametro setta a 1 e chi s'è visto s'è visto
             howMany = 1;
         }
 
@@ -92,7 +84,7 @@ public class AddToCart extends HttpServlet {
 
 
         CartService cartService = new CartService(getServletContext());
-        ShoppingCart shoppingCart = cartService.addToCart(req.getSession(), product, howMany);
+        cartService.addToCart(req.getSession(), product, howMany);
 
 
         String path = getServletContext().getContextPath() + "/shoppingCart";

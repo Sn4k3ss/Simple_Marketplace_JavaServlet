@@ -15,7 +15,7 @@
 <header>
   <div>
 
-    <a th:href="@{/TIW/home}" class="logo">
+    <a th:href="@{/home}" class="logo">
       <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
     </a>
 
@@ -33,7 +33,7 @@
 
 
 
-<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartList.asMap())}">
+<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartMap)}">
   <table class="styled-table" style="width:100%">
     <caption style="lighting-color: #04aa6d">CART</caption>
       <thead>
@@ -45,9 +45,9 @@
           <th scope="col">How many</th>
         </tr>
       </thead>
-    <tbody th:each="supplierId : ${shoppingCart.shoppingCartList.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartList.get(supplierId)[0].supplier}" >
+    <tbody th:each="supplierId : ${shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
 
-      <tr th:each="product : ${shoppingCart.shoppingCartList.get(supplierId)}" >
+      <tr th:each="product : ${shoppingCart.shoppingCartMap.get(supplierId)}" >
         <td class="table-product-img">
           <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
         </td>
@@ -57,7 +57,8 @@
           <td th:text="${product.supplierProductCost}">{Costo unitario}</td>
           <td th:text="${product.howMany}">Quanti nel carrello</td>
           <td>
-            <table>
+             <!--
+             <table>
               <thead>
               <tr>
                 <th colspan="2" scope="col">Supplier</th>
@@ -90,6 +91,7 @@
                 </td>
               </tr>
             </table>
+            -->
           </td>
       </tr>
       <tr th:class="active-row" th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
