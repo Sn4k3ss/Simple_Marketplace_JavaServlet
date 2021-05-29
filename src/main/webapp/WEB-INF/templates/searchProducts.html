@@ -15,7 +15,7 @@
     <div>
 
         <a th:href="@{/home}" class="logo">
-            <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
+            <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
         </a>
 
         <div class="header-right">
@@ -28,9 +28,20 @@
     </div>
 </header>
 
+<!-- Search form-->
+<div class="styled-form">
+    <br>
+    <br>
+    <form th:class="styled-form" th:action=" ${#request.contextPath} + '/search/products' " method="GET">
+        <p>Cosa vuoi cercare di bello? </p>
+        <input th:placeholder="'Oasis..'" name="keyword" >
+        <input class="button" type="submit" value="vai!">
+    </form>
+</div>
 
-<div>
-    <table th:class="styled-table" style="width:100%">
+
+<div th:if="${not #maps.isEmpty(products.supplierProductMap)}">
+    <table th:class="styled-table">
         <caption>Products from the marketplace</caption>
         <thead>
             <tr>
@@ -45,17 +56,15 @@
         <tbody>
             <tr th:each="productId : ${products.supplierProductMap.keySet()}" th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
                 <td class="table-product-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
+                    <a th:href="@{/search/products/showProductInfo(productId=${productId})}" >
+                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
+                    </a>
                 </td>
                 <td>
-                    <!-- form reso cliccabile e modificato con css -->
-                    <form th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
-                        <!-- il tag input vine utilizzato per mandare parametri nella richiesta -->
+
+                    <form th:class="styled-form" th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
                         <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
-                        <input type="submit" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">
-                        <!-- il tag button può essere utilizzato per inserire STATICAMENTE il testo del link -->
-                        <!-- <button type="submit" class="link-button"> Testo del link</button> -->
-                        <!-- inserire più 'type=submit' fa comparire più bottoni -->
+                        <input type="submit" th:class="button" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">
                     </form>
                 </td>
                 <td th:text="${productInfo1.productDescription}"></td>
@@ -65,16 +74,16 @@
                 </td>
                 <td th:text="${productInfo1.supplierName}"></td>
                 <td>
-                    <form th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${productInfo1}" method="POST">
+                    <form th:class="styled-form" th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${productInfo1}" method="POST">
                         <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
                         <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
                         <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
-                        <input type="submit"                                    value="One-click buy" />
+                        <input type="submit" th:class="button" value="One-click buy" />
                     </form>
                 </td>
                 <td>
                     <table th:if="${selectedProductId.equals(productInfo1.productId)}" th:each="supplierProduct : ${products.supplierProductMap.get(productId)}">
-                        <caption>Suppliers</caption>
+                        <caption></caption>
                         <thead>
                         <tr>
                             <th scope="col">Supplier</th>
@@ -107,7 +116,7 @@
                                 </table>
                             </td>
                             <td>
-                                <form th:action="${#request.contextPath} + '/products/AddToCart'" method="POST">
+                                <form th:class="styled-form" th:action="${#request.contextPath} + '/products/AddToCart'" method="POST">
                                     <label for="howMany">How many:</label>
                                     <select name="howMany" id="howMany">
                                         <option value="1">1</option>
@@ -123,7 +132,7 @@
                                     <input type="hidden" th:value="${supplierProduct.productId}"    name="productId" />
                                     <input type="hidden" th:value="${supplierProduct.supplierId}"   name="supplierId" />
                                     <input type="hidden" th:value="${supplierProduct.supplierProductCost}"   name="supplierProductCost" />
-                                    <input type="submit" value="Add to cart">
+                                    <input type="submit" th:class="button" value="Add to cart">
                                 </form>
                             </td>
                         </tr>
@@ -132,6 +141,12 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<div th:if="${#maps.isEmpty(products.supplierProductMap)}">
+    <br>
+    <br>
+    Sorry, couldn't find what you're looking for!
 </div>
 
 </body>

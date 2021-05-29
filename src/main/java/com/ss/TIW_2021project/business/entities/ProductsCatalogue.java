@@ -5,6 +5,7 @@ import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.MutliMapUtility;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class ProductsCatalogue {
      */
     public ProductsCatalogue(List<SupplierProduct> productsList) {
 
-        supplierProductMap = new HashMap<>();
+        supplierProductMap = new LinkedHashMap<>();
 
         for (SupplierProduct prod : productsList) {
             MutliMapUtility.addToList(supplierProductMap, prod.getProductId(), prod);

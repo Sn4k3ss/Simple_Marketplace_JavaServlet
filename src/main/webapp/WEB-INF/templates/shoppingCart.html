@@ -12,128 +12,123 @@
 
 <body>
 
-<header>
-  <div>
+  <header>
+    <div>
 
-    <a th:href="@{/home}" class="logo">
-      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
-    </a>
+      <a th:href="@{/home}" class="logo">
+        <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
+      </a>
 
-    <div class="header-right">
-      <a th:href="@{/home}">Home</a>
-      <a th:href="@{/shoppingCart}" class="active">Shopping cart</a>
-      <a th:href="@{/orders}">My Orders</a>
-      <a th:href="@{/logout}">Logout</a>
+      <div class="header-right">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/shoppingCart}" th:class="active">Shopping cart</a>
+        <a th:href="@{/orders}">My Orders</a>
+        <a th:href="@{/logout}">Logout</a>
+      </div>
+
     </div>
+  </header>
 
+  <div th:class="welcome-title">
+    <br>
+    <br>
+    <h1>Here's your shopping cart, <span th:text="${session.user.userName}">Amadeus</span>
+    </h1>
   </div>
-</header>
-
-<h1>Here's your shopping cart, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
 
 
 
-<div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartMap)}">
-  <table class="styled-table" style="width:100%">
-    <caption style="lighting-color: #04aa6d">CART</caption>
-      <thead>
-        <tr>
-          <th colspan="2" scope="col">Product name</th>
-          <th scope="col">Product Description</th>
-          <th scope="col">Category</th>
-          <th scope="col">Cost</th>
-          <th scope="col">How many</th>
-        </tr>
-      </thead>
-    <tbody th:each="supplierId : ${shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
+  <div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartMap)}">
+    <table class="styled-table" style="width:100%">
+      <caption style="lighting-color: #04aa6d">CART</caption>
+        <thead>
+          <tr>
+            <th colspan="2" scope="col">Product name</th>
+            <th scope="col">Product Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Cost</th>
+            <th scope="col">How many</th>
+          </tr>
+        </thead>
+      <tbody th:each="supplierId : ${shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
 
-      <tr th:each="product : ${shoppingCart.shoppingCartMap.get(supplierId)}" >
-        <td class="table-product-img">
-          <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
-        </td>
-          <td th:text="${product.productName}">Nome prodotto</td>
-          <td th:text="${product.productDescription}">Descrizione prodotto</td>
-          <td th:text="${product.productCategory}">Categoria del prodotto</td>
-          <td th:text="${product.supplierProductCost}">{Costo unitario}</td>
-          <td th:text="${product.howMany}">Quanti nel carrello</td>
-          <td>
-             <!--
-             <table>
-              <thead>
-              <tr>
-                <th colspan="2" scope="col">Supplier</th>
-                <th scope="col">Rating</th>
-              </tr>
-              </thead>
-              <tr>
-                <td th:class="table-supplier-img">
-                  <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${product.supplier.imagePath}" alt="Product image"/>
-                </td>
-                <td th:text="${supplierInfo.supplierName}"> Venditore 0</td>
-                <td th:text="${supplierInfo.supplierRating}"> 0</td>
-                <td>
-                  <table>
-                    <thead>
-                    <tr>
-                      <th scope="col">Range</th>
-                      <th scope="col">minItem</th>
-                      <th scope="col">maxItem</th>
-                      <th scope="col">cost</th>
-                    </tr>
-                    </thead>
-                    <tr th:each="range : ${supplierInfo.supplierShippingPolicy.ranges}">
-                      <td th:text="${supplierInfo.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
-                      <td th:text="${range.minAmount}">1</td>
-                      <td th:text="${range.maxAmount}">5</td>
-                      <td th:text="${range.cost}">100,99</td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-            -->
+        <tr th:each="product : ${shoppingCart.shoppingCartMap.get(supplierId)}" >
+          <td class="table-product-img">
+              <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
           </td>
-      </tr>
-      <tr th:class="active-row" th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
-        <td th:text="'Total amount on ' + ${supplierInfo.supplierName} + ': ' + ${totalamount}">Costo totale per venditore</td>
-        <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
-        <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount }" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
-        <td>
-          <form  th:action="${#request.contextPath} + '/placeOrder'" method="POST">
-            <label th:for="addreesId">Select an address
-              <select th:name="userShippingAddressId">
-                <option th:each="address : ${shoppingAddresses}" th:value="${address.shippingAddressId}"
-                        th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}"
-                        th:selected="${address.shippingAddressId == 1}">
-                </option>
-              </select>
-            </label>
-            <input type="hidden"  name="supplierId" th:value="${supplierId}" >
-            <input type="submit" value="Place order">
-          </form>
-        </td>
-      </tr>
+            <td th:text="${product.productName}">Nome prodotto</td>
+            <td th:text="${product.productDescription}">Descrizione prodotto</td>
+            <td th:text="${product.productCategory}">Categoria del prodotto</td>
+            <td th:text="${product.supplierProductCost}">{Costo unitario}</td>
+            <td th:text="${product.howMany}">Quanti nel carrello</td>
+            <td>
+               <!--
+               <table>
+                <thead>
+                <tr>
+                  <th colspan="2" scope="col">Supplier</th>
+                  <th scope="col">Rating</th>
+                </tr>
+                </thead>
+                <tr>
+                  <td th:class="table-supplier-img">
+                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${product.supplier.imagePath}" alt="Product image"/>
+                  </td>
+                  <td th:text="${supplierInfo.supplierName}"> Venditore 0</td>
+                  <td th:text="${supplierInfo.supplierRating}"> 0</td>
+                  <td>
+                    <table>
+                      <thead>
+                      <tr>
+                        <th scope="col">Range</th>
+                        <th scope="col">minItem</th>
+                        <th scope="col">maxItem</th>
+                        <th scope="col">cost</th>
+                      </tr>
+                      </thead>
+                      <tr th:each="range : ${supplierInfo.supplierShippingPolicy.ranges}">
+                        <td th:text="${supplierInfo.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
+                        <td th:text="${range.minAmount}">1</td>
+                        <td th:text="${range.maxAmount}">5</td>
+                        <td th:text="${range.cost}">100,99</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              -->
+            </td>
+        </tr>
+        <tr th:class="active-row" th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
+          <td th:text="'Total amount on ' + ${supplierInfo.supplierName} + ': ' + ${totalamount}">Costo totale per venditore</td>
+          <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
+          <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount }" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
+          <td>
+            <form  th:action="${#request.contextPath} + '/placeOrder'" method="POST">
+              <label th:for="addreesId">Select an address
+                <select th:name="userShippingAddressId">
+                  <option th:each="address : ${shoppingAddresses}" th:value="${address.shippingAddressId}"
+                          th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}"
+                          th:selected="${address.shippingAddressId == 1}">
+                  </option>
+                </select>
+              </label>
+              <input type="hidden"  name="supplierId" th:value="${supplierId}" >
+              <input type="submit" value="Place order">
+            </form>
+          </td>
+        </tr>
 
 
 
 
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
 
-
-<p>
-<h4>User info</h4>
-This is your e-mail:
-  <span th:text="${session.user.email}">amadeus.wgang@gmail.com </span> <br>
-  Name:
-  <span th:text="${session.user.userName}">Amadeus</span> <br>
-  Surname:
-  <span th:text="${session.user.userSurname}">Mozart</span> <br>
-  Id:
-  <span th:text="${session.user.userId}">0</span> <br>
-  Your country is: <span th:text="${#locale.country}">IT</span>
-</p>
+  <div th:if="${#maps.isEmpty(shoppingCart.shoppingCartMap)}">
+    Your shopping cart is empty!
+  </div>
 
 
 

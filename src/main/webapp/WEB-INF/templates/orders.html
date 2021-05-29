@@ -17,7 +17,7 @@
   <div>
 
     <a th:href="@{/home}" class="logo">
-      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/amazon-logo.png" alt="amazon-logo.png"/>
+      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
     </a>
 
     <div class="header-right">
@@ -30,13 +30,15 @@
   </div>
 </header>
 
-<div>
+<div th:class="welcome-title">
   <br>
-  <h1>Here's your orders, <span th:text="${session.user.userName}"> Amadeus</span> </h1>
+  <br>
+  <h1>Here are your orders, <span th:text="${session.user.userName}">Amadeus</span>
+  </h1>
 </div>
 
 
-<div th:if="${not #lists.isEmpty(orders)}" style="display: block">
+<div th:if="${not #lists.isEmpty(orders)}">
   <table th:each="order : ${orders}" th:class="styled-order-table">
     <!-- se il carrello è vuoto non mostrare la tabella -->
     <caption style="lighting-color: #04AA6D">ORDERS</caption>

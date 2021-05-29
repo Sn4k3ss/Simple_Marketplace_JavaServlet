@@ -46,6 +46,7 @@ public class showOrders extends HttpServlet {
             OrderService orderService = new OrderService(getServletContext());
             orders = orderService.retrieveUserOrders(user.getUserId());
 
+            if (!orders.isEmpty()) {
             //serve per prendere le informazioni di User
             //senza prendere lo user dal db si potrebbe settare quello già disponibile nella sessione
             UserService userService = new UserService(getServletContext());
@@ -58,6 +59,7 @@ public class showOrders extends HttpServlet {
             //serve per prendere informazioni su ShoppingCartProduct
             ProductService productService = new ProductService(getServletContext());
             productService.setProductInfoOnOrders(orders);
+            }
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't get infos about orders");
             return;

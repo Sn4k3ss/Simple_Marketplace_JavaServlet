@@ -30,7 +30,6 @@
 
 html {
     font-family: formula1display-regular, serif;
-    height: 100%;
 }
 
 
@@ -41,13 +40,11 @@ body   {
     background-attachment: fixed;
     background-position: center;
     background-size: auto;
-    height: 90%;
 }
 
 header {
     background-color: #ffffff;
-    padding: 2px 2px;
-    height: 60px;
+    padding: 20px 10px;
 }
 
 header a {
@@ -72,7 +69,7 @@ header a.logo img {
 
 header a:hover {
   background-color: #04aa6d23;
-  color: #04AA6D;
+  color: black;
 }
 
 header a.active {
@@ -80,48 +77,63 @@ header a.active {
   color: white;
 }
 
-header a.inactive {
-    color: rgba(110, 104, 104, 0.5);
-}
-
 .header-right {
   float: right;
 }
 
-.welcome-title {
-    color: #04AA6D;
-}
+@media screen and (max-width: 500px) {
+    .header a {
+      float: none;
+      display: block;
+      text-align: left;
+    }
+    
+    .header-right {
+      float: none;
+    }
+  }
 
 
-.styled-form {
-    padding-left: 10px;
+.styled-form-button {
+    padding-left: 40px;
     display: block;
 }
 
-.styled-form p, input {
-    width: fit-content;
+.styled-form-button p, input {
+    width: auto;
     font-family: formula1display-regular, serif;
+    padding-left: inherit;
 }
 
-.styled-form .button {
-    width: fit-content;
-    border: solid thin #009879;
+
+
+/* Add a black background color to the top navigation */
+.styled-quick-links {
+    background-color: #04AA6D;
+    overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.styled-quick-links a {
+    float: left;
+    color: #f2f2f2;
     text-align: center;
-    align-content: center;
-    vertical-align: middle;
-    height: auto;
-    border-radius: 5px;
-    background: #04aa6d;
-    color:white;
+    padding: 10px 10px;
+    text-decoration: none;
+    font-size: medium;
 }
 
-
-.styled-form .button:hover{
-    background:white;
-    color:#04aa6d;
-    cursor: pointer;
+/* Change the color of links on hover */
+.styled-quick-links a:hover {
+    background-color: #ddd;
+    color: black;
 }
 
+/* Add a color to the active/current link */
+.styled-quick-links a.active {
+    background-color: #1e1e1e;
+    color: white;
+}
 
 .styled-table {
     border-collapse: collapse;
@@ -133,10 +145,6 @@ header a.inactive {
     width: 100%;
 }
 
-.styled-table caption {
-    font-size: large;
-}
-
 .styled-table thead tr {
     background-color: #009879;
     color: #ffffff;
@@ -145,11 +153,11 @@ header a.inactive {
 
 .styled-table th,
 .styled-table td {
-    padding: 0.5% 0.5%;
+    padding: 12px 15px;
 }
 
 .styled-table tbody tr {
-    border-bottom: 2px solid #00987a57;
+    border-bottom: 1px solid #dddddd;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
@@ -261,6 +269,21 @@ header a.inactive {
     padding-bottom: 5px;
 }
 
+.go-search-button {
+    width: 150px;
+    height: 50px;
+    border: solid thin #009879;
+    border-radius: 5px;
+    background: rgba(255, 255, 255,0);
+    font-size: 25px;
+}
+
+
+.go-search-button :hover{
+    background:black;
+    color:white;
+}
+
 
 .bold_info span {
     font-family: formula1display-bold, serif;
@@ -269,8 +292,8 @@ header a.inactive {
 
 
 .table-product-img img {
-    width: 150px;;
-    height: 150px;
+    width:300px;
+    height: 300px;
     object-fit: contain;
     border: 0px solid #ddd;
     border-radius: 20px;
@@ -282,37 +305,14 @@ header a.inactive {
 }
 
 .table-supplier-img img {
-    width: 200px;;
-    height: 150px;
+    width:304px;
+    height:228px;
     object-fit: contain;
-    padding: 2px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 5px;
 }
 
 .table-supplier-img img:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
-}
-
-.container {
-    height: 100%;
-
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.login {
-    height: auto;
-
-
-
-
-    /* border: 2px solid rgb(0, 0, 0); */
-}
-
-.signup {
-    height: auto;
-
-    /* border: 2px solid rgb(0, 0, 0); */
 }

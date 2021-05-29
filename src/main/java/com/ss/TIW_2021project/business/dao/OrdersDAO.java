@@ -203,7 +203,7 @@ public class OrdersDAO {
         }
 
         if(orders.isEmpty())
-            return Collections.emptyList();
+            return new ArrayList<>(Collections.emptyList());
         else
             return orders;
     }

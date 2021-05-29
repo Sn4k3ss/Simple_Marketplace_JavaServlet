@@ -3,17 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Login Page</title>
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="css/myStyle.css" th:href="@{css/myStyle.css}" />
+
 </head>
+
+
 <body>
 
-<form action="login" method="POST">
+    <header>
+        <div>
+            <a th:href="@{/home}" class="logo">
+                <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
+            </a>
+            <div class="header-right">
+                <a th:href="@{/home}" class="inactive">Home</a>
+                <a th:href="@{/shoppingCart}" class="inactive">Shopping cart</a>
+                <a th:href="@{/orders}" class="inactive">My Orders</a>
+                <a th:href="@{/logout}" class="inactive">Logout</a>
+            </div>
+        </div>
+    </header>
 
-    Username: <input type="text" name="email" value="sangeniti.ss@gmail.com">
-    <br>
-    Password: <input type="password" name="password"  value="password1234">
-    <br>
-    <input type="submit" value="Login">
-</form>
+
+<div class="container">
+
+    <div class="login" >
+        <h2>Login</h2>
+        <form action="login" method="POST" class="styled-form-button" >
+            E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com">
+            <br>
+            Password: <input type="password" name="password"  value="password1234">
+            <br>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+    <div class="signup" >
+        <h2>Sign up</h2>
+        <form action="signup" method="POST" class="styled-form-button" >
+            Name: <input type="text" name="username" required>
+            <br>
+            Surname: <input type="text" name="usersurname" required >
+            <br>
+            E-mail: <input type="email" name="email" required >
+            <br>
+            Password: <input type="password" name="password"  required minlength="6">
+            <br>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</div>
+
+
+
 
 
 </body>
