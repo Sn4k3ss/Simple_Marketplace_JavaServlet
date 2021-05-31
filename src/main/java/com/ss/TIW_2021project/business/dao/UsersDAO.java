@@ -3,6 +3,7 @@ package com.ss.TIW_2021project.business.dao;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
+import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.utils.ConnectionFactory;
 
@@ -98,22 +99,83 @@ public class UsersDAO {
             preparedStatement.setString(1, email);
 
             try ( ResultSet rs = preparedStatement.executeQuery(); ) {
-
-                if (!rs.next())
-                    return true;
+                return rs.next();
 
             } catch (SQLException exception) {
                 //error while executing Query
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-
         } catch (SQLException exception) {
             //error while preparing the query
             throw new DAOException(DAOException._MALFORMED_QUERY);
         }
+    }
 
-        return false;
+    public void registerUser(String email, String password, String firstName, String lastName,
+                             String address, String addrCity, String addrState, String addrPhone) throws DAOException {
 
+        int localUserId = -1;
+
+        String recipient = firstName.concat(" ").concat(lastName);
+
+        //codice non verificato
+        String insertInUserTable = "INSERT INTO users (userName, userSurname, email, password) " +
+                "VALUES(?, ?, ?, ?) ";
+
+        String newUserId = "SELECT MAX(userId) lastUserId FROM users";
+
+        String insertAddress = "INSERT INTO shippingAddresses (userId, userAddressId, recipient, address, city, state, phone)" +
+                "VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+        try (
+                PreparedStatement userTableUpdate = connection.prepareStatement(insertInUserTable);
+                PreparedStatement getUserId = connection.prepareStatement(newUserId);
+                PreparedStatement userAddressUpdate = connection.prepareStatement(insertAddress);
+        ) {
+
+            //autocommit false
+            connection.setAutoCommit(false);
+            //inserisco l'utente nella tabella degli utenti
+            userTableUpdate.setString(1, firstName);
+            userTableUpdate.setString(2, lastName);
+            userTableUpdate.setString(3, email);
+            userTableUpdate.setString(4, password);
+            userTableUpdate.executeUpdate();
+
+            //prendo l'id dell'utente appena inserito
+            ResultSet rs = getUserId.executeQuery();
+            if (rs.next())
+                localUserId = rs.getInt("lastUserId");
+
+
+
+            userAddressUpdate.setInt(1, localUserId);
+            userAddressUpdate.setInt(2, 1);
+            userAddressUpdate.setString(3, recipient);
+            userAddressUpdate.setString(4, address);
+            userAddressUpdate.setString(5, addrCity);
+            userAddressUpdate.setString(6, addrState);
+            userAddressUpdate.setString(7, addrPhone);
+
+            userAddressUpdate.executeUpdate();
+
+
+
+            //committo i cambiamenti in entrambe le tabelle
+            connection.commit();
+
+        } catch (SQLException e) {
+            //errore da loggare
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    //errore da loggare
+                    //cannot rollback
+                }
+            }
+            throw new DAOException(DAOException._FAIL_TO_INSERT);
+        }
     }
 
     /**
@@ -257,7 +319,6 @@ public class UsersDAO {
 
         return userShippingAddresses;
     }
-
 
 }
 

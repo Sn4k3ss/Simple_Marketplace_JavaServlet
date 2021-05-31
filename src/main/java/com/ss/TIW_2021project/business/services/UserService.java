@@ -56,16 +56,36 @@ public class UserService {
 
 
 
-    public boolean emailTaken(String email) throws ServiceException {
+    public User registerUser(String email,String password,String firstName, String lastName,
+                             String address, String addrCity,String addrState,String addrPhone) throws ServiceException {
         UsersDAO usersDAO;
 
         try {
             usersDAO = new UsersDAO(servletContext);
-            return usersDAO.emailTaken(email);
+
+            if ( usersDAO.emailTaken(email) ) {
+                return null;
+            }
+
+            if ( !validAddress(firstName.concat(" ").concat(lastName), addrCity, addrState, addrPhone)) {
+                return null;
+            }
+
+            usersDAO.registerUser(email, password, firstName, lastName, address, addrCity, addrState, addrPhone);
+
+            User user = usersDAO.getUser(email, password);
+            user.setShippingAddresses(usersDAO.getShippingAddresses(user.getUserId()));
+            return user;
+
         } catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_CHECK_UNIQUE_EMAIL);
         }
 
+    }
+
+    //how to validate an address?
+    private boolean validAddress(String recipient, String city, String state, String phone) {
+        return true;
     }
 
 

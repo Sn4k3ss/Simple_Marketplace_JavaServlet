@@ -42,8 +42,9 @@ public class Signup extends HttpServlet {
 
         String email;
         String password;
-        String userName;
-        String userSurname;
+        String firstName;
+        String lastName;
+        String address;
         String addrCity;
         String addrState;
         String addrPhone;
@@ -51,22 +52,23 @@ public class Signup extends HttpServlet {
         try {
             email = req.getParameter("email");
             password = req.getParameter("password");
-            userName = req.getParameter("userName");
-            userSurname = req.getParameter("userSurname");
+            firstName = req.getParameter("firstName");
+            lastName = req.getParameter("lastName");
+            address = req.getParameter("address");
             addrCity = req.getParameter("addrCity");
             addrState = req.getParameter("addrState");
             addrPhone = req.getParameter("addrPhone");
 
-            if (email==null || password==null || userName == null || userSurname == null
-                    || addrCity == null || addrState == null || addrPhone == null) {
+            if (email==null || password==null || firstName == null || lastName == null
+                    || address == null || addrCity == null || addrState == null || addrPhone == null) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                invalidSignUpCredentials("Login error: Credentials can't be null", req, resp);
+                invalidSignUpCredentials("Signup error: Credentials can't be null", req, resp);
                 return;
             }
-            else if(email.isEmpty() || password.isEmpty() || userName.isEmpty() || userSurname.isEmpty()
-                    || addrCity.isEmpty() || addrState.isEmpty() || addrPhone.isEmpty()) {
+            else if(email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()
+                    || address.isEmpty() || addrCity.isEmpty() || addrState.isEmpty() || addrPhone.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                invalidSignUpCredentials("Login error: Credentials can't be empty", req, resp);
+                invalidSignUpCredentials("Signup error: Credentials can't be empty", req, resp);
                 return;
             }
         } catch (NullPointerException e) {
@@ -80,12 +82,9 @@ public class Signup extends HttpServlet {
         User user;
 
         try {
-            if ( userService.emailTaken(email) ) {
 
+            user = userService.registerUser(email, password, firstName, lastName, address, addrCity, addrState, addrPhone);
 
-            }
-
-            user = userService.checkCredentials(email, password);
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Login error: Not Possible to check credentials");
             return;
@@ -93,7 +92,7 @@ public class Signup extends HttpServlet {
 
 
         if (user == null) {
-            invalidSignUpCredentials("Login error: Incorrect email or password", req, resp);
+            invalidSignUpCredentials("Signup error: Check everithing is correct ", req, resp);
             return;
         }
 
