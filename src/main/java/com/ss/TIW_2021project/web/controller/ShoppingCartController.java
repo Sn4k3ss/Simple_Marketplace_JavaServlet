@@ -1,17 +1,14 @@
 package com.ss.TIW_2021project.web.controller;
 
-import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
-import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
