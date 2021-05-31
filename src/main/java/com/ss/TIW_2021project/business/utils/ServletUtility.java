@@ -3,7 +3,6 @@ package com.ss.TIW_2021project.business.utils;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
-import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
 
 /**

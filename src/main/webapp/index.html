@@ -32,26 +32,34 @@
     <div class="login" >
         <h2>Login</h2>
         <form action="login" method="POST" class="styled-form-button" >
-            E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com">
+            E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
             <br>
-            Password: <input type="password" name="password"  value="password1234">
+            Password: <input type="password" name="password"  value="password1234" required minlength="6">
             <br>
-            <input type="submit" value="Login">
+            <input type="submit" value="Login!">
         </form>
     </div>
 
     <div class="signup" >
         <h2>Sign up</h2>
         <form action="signup" method="POST" class="styled-form-button" >
-            Name: <input type="text" name="username" required>
-            <br>
-            Surname: <input type="text" name="usersurname" required >
-            <br>
+
             E-mail: <input type="email" name="email" required >
             <br>
-            Password: <input type="password" name="password"  required minlength="6">
+            Password: <input type="password" name="password" required minlength="6">
             <br>
-            <input type="submit" value="Login">
+            Name: <input type="text" name="userName" required>
+            <br>
+            Surname: <input type="text" name="userSurname" required >
+            <br>
+            City: <input type="text" name="addrCity" required>
+            <br>
+            State: <input type="text" name="addrState" required >
+            <br>
+            Phone: <input type="tel" name="addrPhone" required>
+            <br>
+            <input type="submit" value="Sign up!">
+
         </form>
     </div>
 </div>

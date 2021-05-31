@@ -38,7 +38,7 @@ public class UserService {
 
         try {
             usersDao = new UsersDAO(servletContext);
-            userRetrieved = usersDao.getUser(email, password);
+            userRetrieved = usersDao.getUser(email.toLowerCase(), password);
             userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
         } catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_CHECK_CREDENTIALS);
@@ -52,6 +52,20 @@ public class UserService {
         }
 
         return null;
+    }
+
+
+
+    public boolean emailTaken(String email) throws ServiceException {
+        UsersDAO usersDAO;
+
+        try {
+            usersDAO = new UsersDAO(servletContext);
+            return usersDAO.emailTaken(email);
+        } catch (UtilityException | DAOException e) {
+            throw new ServiceException(ServiceException._FAILED_TO_CHECK_UNIQUE_EMAIL);
+        }
+
     }
 
 

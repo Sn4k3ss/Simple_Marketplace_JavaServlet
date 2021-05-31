@@ -10,6 +10,8 @@ public class ServiceException extends Exception {
     public static final int _FAILED_TO_RETRIEVE_SUPPLIERS_INFO = 6;
     public static final int _FAILED_TO_RETRIEVE_USERS_INFO = 7;
     public static final int _FAILED_TO_UPDATE_USERS_LAST_PRODUCTS = 8;
+    public static final int _FAILED_TO_CHECK_UNIQUE_EMAIL = 9;
+
 
 
 

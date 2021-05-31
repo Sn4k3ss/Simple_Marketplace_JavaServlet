@@ -90,6 +90,32 @@ public class UsersDAO {
     }
 
 
+    public boolean emailTaken(String email) throws DAOException {
+
+        String query = "SELECT * FROM users WHERE email = ?";
+
+        try ( PreparedStatement preparedStatement = connection.prepareStatement(query); ) {
+            preparedStatement.setString(1, email);
+
+            try ( ResultSet rs = preparedStatement.executeQuery(); ) {
+
+                if (!rs.next())
+                    return true;
+
+            } catch (SQLException exception) {
+                //error while executing Query
+                throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
+            }
+
+        } catch (SQLException exception) {
+            //error while preparing the query
+            throw new DAOException(DAOException._MALFORMED_QUERY);
+        }
+
+        return false;
+
+    }
+
     /**
      * Gets user.
      *
