@@ -71,8 +71,9 @@ header a.logo img {
 }
 
 header a:hover {
-  background-color: #04aa6d23;
-  color: #04AA6D;
+    background-color: #04aa6d23;
+    color: #04AA6D;
+    transition: 0.6s ease;
 }
 
 header a.active {
@@ -120,6 +121,7 @@ header a.inactive {
     background:white;
     color:#04aa6d;
     cursor: pointer;
+    transition: 0.6s ease;
 }
 
 
@@ -279,6 +281,7 @@ header a.inactive {
 
 .table-product-img img:hover {
     box-shadow: 1px 1px 15px 2px #028168;
+    transition: 0.6s ease;
 }
 
 .table-supplier-img img {
@@ -290,6 +293,7 @@ header a.inactive {
 
 .table-supplier-img img:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+    transition: 0.6s ease;
 }
 
 .container {
