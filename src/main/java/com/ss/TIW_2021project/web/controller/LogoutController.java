@@ -1,8 +1,5 @@
 package com.ss.TIW_2021project.web.controller;
 
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
-import org.thymeleaf.ITemplateEngine;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,13 +15,6 @@ import java.io.IOException;
         value = "/logout"
 )
 public class LogoutController extends HttpServlet {
-
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

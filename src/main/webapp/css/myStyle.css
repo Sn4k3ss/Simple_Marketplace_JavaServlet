@@ -2,8 +2,14 @@
 /* font */
 @font-face {
     font-family: 'formula1display-bold';
+
+    /*
     src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-bold-webfont.woff2') format('woff2'),
     url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-bold-webfont.woff') format('woff');
+    */
+
+    src: url('../fonts/formula1-bold-webfont.woff2') format('woff2'),
+    url('../fonts/formula1-bold-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -11,8 +17,14 @@
 
 @font-face {
     font-family: 'formula1display-regular';
+
+    /*
     src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-regular-webfont.woff2') format('woff2'),
     url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-regular-webfont.woff') format('woff');
+     */
+
+    src: url('../fonts/formula1-regular-webfont.woff2') format('woff2'),
+    url('../fonts/formula1-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -20,8 +32,14 @@
 
 @font-face {
     font-family: 'formula1display-wide';
+
+    /*
     src: url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-wide-webfont.woff2') format('woff2'),
     url('https://tiw21marketplace.s3.eu-south-1.amazonaws.com/fonts/formula1-wide-webfont.woff') format('woff');
+    */
+
+    src: url('../fonts/formula1-wide-webfont.woff2') format('woff2'),
+    url('../fonts/formula1-wide-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 

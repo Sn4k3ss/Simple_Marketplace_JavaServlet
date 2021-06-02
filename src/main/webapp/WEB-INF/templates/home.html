@@ -87,7 +87,7 @@
                 <form th:class="styled-form"
                       th:action="${#request.contextPath} + '/products/AddToCart'"
                       th:object="${productInfo1}"
-                      method="POST">
+                      method="POST" >
 
                     <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
                     <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />

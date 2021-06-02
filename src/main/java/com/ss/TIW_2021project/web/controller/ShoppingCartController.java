@@ -18,7 +18,7 @@ import java.io.IOException;
 @WebServlet(
         name = "shoppingCartController",
         description = "This is my first annotated servlet",
-        urlPatterns = {("/shoppingCart"),("/myShoppingCart")}
+        urlPatterns = "/shoppingCart"
 )
 public class ShoppingCartController extends HttpServlet {
 

@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" media="all"
           href="css/myStyle.css" th:href="@{css/myStyle.css}" />
 
+    <link rel="icon" type="image/ico" href="images/website-icon.ico"/>
+
 </head>
 
 
@@ -15,7 +17,7 @@
     <header>
         <div>
             <a th:href="@{/home}" class="logo">
-                <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
+                <img src="images/website-logo.png" alt="website-logo.png"/>
             </a>
             <div class="header-right">
                 <a th:href="@{/home}" class="inactive">Home</a>
@@ -30,38 +32,42 @@
 <div class="container">
 
     <div class="login" >
-        <h2>Login</h2>
         <form action="login" method="POST" class="styled-form-button" >
-            E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
-            <br>
-            Password: <input type="password" name="password"  value="password1234" required minlength="6">
-            <br>
-            <input type="submit" value="Login!">
+            <fieldset>
+                <legend>Login form</legend>
+                E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
+                <br>
+                Password: <input type="password" name="password"  value="password1234" required minlength="6">
+                <br>
+                <input type="submit" value="Login!">
+                <p id="loginErrorMessage"></p>
+            </fieldset>
         </form>
     </div>
 
     <div class="signup" >
-        <h2>Sign up</h2>
         <form action="signup" method="POST" class="styled-form-button" >
-
-            E-mail: <input type="email" name="email" required >
-            <br>
-            Password: <input type="password" name="password" required minlength="6">
-            <br>
-            Name: <input type="text" name="firstName" required>
-            <br>
-            Surname: <input type="text" name="lastName" required >
-            <br>
-            Address: <input type="text" name="address" required>
-            <br>
-            City: <input type="text" name="addrCity" required>
-            <br>
-            State: <input type="text" name="addrState" required >
-            <br>
-            Phone: <input type="tel" name="addrPhone" required>
-            <br>
-            <input type="submit" value="Sign up!">
-
+            <fieldset>
+                <legend>Signup form</legend>
+                E-mail: <input type="email" name="email" required >
+                <br>
+                Password: <input type="password" name="password" required minlength="6">
+                <br>
+                Name: <input type="text" name="firstName" required>
+                <br>
+                Surname: <input type="text" name="lastName" required >
+                <br>
+                Address: <input type="text" name="address" required>
+                <br>
+                City: <input type="text" name="addrCity" required>
+                <br>
+                State: <input type="text" name="addrState" required >
+                <br>
+                Phone: <input type="tel" name="addrPhone" required>
+                <br>
+                <input type="submit" value="Sign up!">
+                <p id="signupErrorMessage"></p>
+            </fieldset>
         </form>
     </div>
 </div>

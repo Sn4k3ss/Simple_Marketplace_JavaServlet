@@ -6,10 +6,7 @@ import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.utils.ServletUtility;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
-import org.thymeleaf.ITemplateEngine;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,25 +17,13 @@ import java.util.List;
 
 @WebServlet(
         name = "AddToCart",
-        description = "This servlet handles the 'add to cart' action whenever is triggered",
+        description = "This servlet handles the 'add to cart' action whenever triggered",
         value = "/products/AddToCart"
 )
 public class AddToCart extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
     @Override
-    public void init() throws ServletException {
-       this.templateEngine = MarketplaceApp.getTemplateEngine();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req,resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         SupplierProduct supplierProduct;
 
@@ -62,7 +47,7 @@ public class AddToCart extends HttpServlet {
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UtilityException e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The server encountered an error parsing the request's parameters");
             return;
         }
 
@@ -70,16 +55,12 @@ public class AddToCart extends HttpServlet {
         SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
 
         if(product == null) {
-            System.out.println("Where did you get that product?");
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Where did you get that product?");
             return;
         }
 
-
-
         CartService cartService = new CartService(getServletContext());
         cartService.addToCart(req.getSession(), product, howMany);
-
 
         String path = getServletContext().getContextPath() + "/shoppingCart";
         resp.sendRedirect(path);

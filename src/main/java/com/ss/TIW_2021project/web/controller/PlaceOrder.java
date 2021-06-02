@@ -5,10 +5,7 @@ import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
 import com.ss.TIW_2021project.business.services.SupplierService;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
-import org.thymeleaf.ITemplateEngine;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,18 +20,6 @@ import java.util.List;
         value = "/placeOrder"
 )
 public class PlaceOrder extends HttpServlet {
-
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
