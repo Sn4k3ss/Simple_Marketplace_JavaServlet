@@ -1,4 +1,4 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.GoToPage;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.Order;
@@ -7,7 +7,8 @@ import com.ss.TIW_2021project.business.services.OrderService;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.services.UserService;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.business.utils.PathUtils;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -24,15 +25,15 @@ import java.util.List;
 @WebServlet(
         name = "showOrders",
         description = "This is my first annotated servlet",
-        urlPatterns = {("/orders"),("/showOrders")}
+        value = "/GoToOrders"
 )
-public class ShowOrders extends HttpServlet {
+public class GoToOrders extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
     @Override
     public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
+        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
     @Override
@@ -69,6 +70,6 @@ public class ShowOrders extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("orders", orders);
-        templateEngine.process("orders", webContext, resp.getWriter());
+        templateEngine.process(PathUtils.pathToOrdersPage, webContext, resp.getWriter());
     }
 }

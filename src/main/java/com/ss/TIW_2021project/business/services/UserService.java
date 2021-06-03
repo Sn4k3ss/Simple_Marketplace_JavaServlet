@@ -39,7 +39,8 @@ public class UserService {
         try {
             usersDao = new UsersDAO(servletContext);
             userRetrieved = usersDao.getUser(email.toLowerCase(), password);
-            userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
+            if (userRetrieved != null)
+                userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
         } catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_CHECK_CREDENTIALS);
         }

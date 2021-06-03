@@ -14,17 +14,16 @@
 <header>
     <div>
 
-        <a th:href="@{/home}" class="logo">
-            <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
+        <a th:href="@{/GoToHome}" class="logo">
+            <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
         </a>
 
         <div class="header-right">
-            <a th:href="@{/home}">Home</a>
-            <a th:href="@{/shoppingCart}">Shopping cart</a>
-            <a th:href="@{/orders}">My Orders</a>
+            <a th:href="@{/GoToHome}" class="active">Home</a>
+            <a th:href="@{/GoToShoppingCart}">Shopping cart</a>
+            <a th:href="@{/GoToOrders}">My Orders</a>
             <a th:href="@{/logout}">Logout</a>
         </div>
-
     </div>
 </header>
 
@@ -62,7 +61,7 @@
                 </td>
                 <td>
 
-                    <form th:class="styled-form" th:action=" ${#request.contextPath} + '/search/products/showProductInfo' " class="inline" method="POST" >
+                    <form th:class="styled-form" th:action=" ${#request.contextPath} + '/search/products/ShowProductInfo' " class="inline" method="POST" >
                         <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
                         <input type="submit" th:class="button" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto" class="link-button">
                     </form>

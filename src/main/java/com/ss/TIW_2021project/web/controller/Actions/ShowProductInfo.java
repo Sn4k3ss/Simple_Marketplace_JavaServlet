@@ -1,10 +1,12 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -18,7 +20,7 @@ import java.io.IOException;
 @WebServlet(
         name = "ShowProductInfo",
         description = "This servlet handle the click on a specific product to show the relative info",
-        value = "/search/products/showProductInfo"
+        value = "/search/products/ShowProductInfo"
 )
 public class ShowProductInfo extends HttpServlet {
 
@@ -26,7 +28,7 @@ public class ShowProductInfo extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
+        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
 
@@ -63,7 +65,7 @@ public class ShowProductInfo extends HttpServlet {
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("products", productsFromQuery);
         webContext.setVariable("selectedProductId", productId);
-        templateEngine.process("searchProducts", webContext, resp.getWriter());
+        templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
     }
 
 }

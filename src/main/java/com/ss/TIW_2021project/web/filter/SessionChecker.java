@@ -1,6 +1,10 @@
 package com.ss.TIW_2021project.web.filter;
 
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +15,8 @@ import java.io.IOException;
 public class SessionChecker implements Filter {
 
     private ServletContext servletContext;
-    private MarketplaceApp application;
+    private ITemplateEngine templateEngine;
+    private MarketplaceApp marketplaceApp;
 
     public SessionChecker() {
         super();
@@ -21,8 +26,9 @@ public class SessionChecker implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        this.marketplaceApp = MarketplaceApp.getInstance(filterConfig.getServletContext());
+        this.templateEngine = TemplateHandler.getTemplateEngine();
         this.servletContext = filterConfig.getServletContext();
-        this.application = new MarketplaceApp(this.servletContext);
     }
 
     @Override
@@ -30,13 +36,12 @@ public class SessionChecker implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-        String contextPath = servletContext.getContextPath();
-
 
         if (process(req,res)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            res.sendRedirect(contextPath + "/index.html");
+            req.setAttribute("error", "You are not authorized to access this page");
+            forward(req, res, PathUtils.pathToLoginPage);
         }
 
 
@@ -59,7 +64,7 @@ public class SessionChecker implements Filter {
         HttpSession session = request.getSession();
 
         boolean loggedIn = !session.isNew() && session != null && session.getAttribute("user") != null;
-        boolean loginRequest = request.getRequestURI().equals("/index.html");
+        boolean loginRequest = request.getRequestURI().equals("/login");
 
         return loggedIn || loginRequest;
     }
@@ -67,5 +72,13 @@ public class SessionChecker implements Filter {
     @Override
     public void destroy() {
         Filter.super.destroy();
+    }
+
+    public void forward(HttpServletRequest request, HttpServletResponse response, String path) throws ServletException, IOException{
+
+        ServletContext servletContext = request.getServletContext();
+        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        templateEngine.process(path, ctx, response.getWriter());
+
     }
 }

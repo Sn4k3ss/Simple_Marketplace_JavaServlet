@@ -1,4 +1,6 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
+
+import com.ss.TIW_2021project.business.utils.PathUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,10 +13,10 @@ import java.io.IOException;
 
 @WebServlet(
         name = "LogoutController",
-        description = "This is my first annotated servlet",
+        description = "This servlet invalidates the session",
         value = "/logout"
 )
-public class LogoutController extends HttpServlet {
+public class Logout extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,7 +27,7 @@ public class LogoutController extends HttpServlet {
         }
 
         String path = getServletContext().getContextPath();
-        resp.sendRedirect(path + "/index.html");
+        resp.sendRedirect(path + PathUtils.goToHomeServletPath);
     }
 
     @Override

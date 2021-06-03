@@ -13,22 +13,21 @@
 
 <body>
 
-<header>
-  <div>
+  <header>
+    <div>
+      <a th:href="@{/GoToHome}" class="logo">
+        <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
+      </a>
 
-    <a th:href="@{/home}" class="logo">
-      <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
-    </a>
+      <div class="header-right">
+        <a th:href="@{/GoToHome}" class="active">Home</a>
+        <a th:href="@{/GoToShoppingCart}">Shopping cart</a>
+        <a th:href="@{/GoToOrders}">My Orders</a>
+        <a th:href="@{/logout}">Logout</a>
+      </div>
 
-    <div class="header-right">
-      <a th:href="@{/home}">Home</a>
-      <a th:href="@{/shoppingCart}">Shopping cart</a>
-      <a th:href="@{/orders}" class="active">My Orders</a>
-      <a th:href="@{/logout}">Logout</a>
     </div>
-
-  </div>
-</header>
+  </header>
 
 <div th:class="welcome-title">
   <br>
@@ -39,9 +38,10 @@
 
 
 <div th:if="${not #lists.isEmpty(orders)}">
+  <h2 style="lighting-color: #04AA6D">Orders</h2>
   <table th:each="order : ${orders}" th:class="styled-order-table">
     <!-- se il carrello è vuoto non mostrare la tabella -->
-    <caption style="lighting-color: #04AA6D">ORDERS</caption>
+    <caption style="lighting-color: #04AA6D"></caption>
       <thead >
         <tr>
           <th scope="col">Order id</th>
@@ -68,8 +68,10 @@
           </td>
 
           <table class="styled-product-in-order-table">
-            <caption style="lighting-color: #04AA6D">PRODUCTS</caption>
-              <thead>
+            <caption style="lighting-color: #04AA6D"></caption>
+
+            <!--
+            <thead>
                 <tr>
                   <th colspan="2" scope="col">Product name</th>
                   <th scope="col">Product description</th>
@@ -77,6 +79,7 @@
                   <th scope="col">Product cost</th>
                 </tr>
               </thead>
+            -->
                   <tbody>
                     <tr th:each="product : ${order.orderProductsList}">
                       <td class="table-product-img">

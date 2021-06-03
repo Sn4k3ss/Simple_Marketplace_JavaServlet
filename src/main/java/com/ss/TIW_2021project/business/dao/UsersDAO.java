@@ -183,7 +183,7 @@ public class UsersDAO {
      *
      * @param email    the email
      * @param password the password
-     * @return the user
+     * @return the user or null if user not found
      * @throws SQLException         the sql exception
      * @throws UnavailableException the unavailable exception
      */

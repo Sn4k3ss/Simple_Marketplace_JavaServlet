@@ -1,9 +1,11 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -20,20 +22,19 @@ import java.io.IOException;
         description = "This is my first annotated servlet",
         value = "/login"
 )
-public class LoginController extends HttpServlet {
+public class Login extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
     @Override
     public void init() throws ServletException {
-       this.templateEngine = MarketplaceApp.getTemplateEngine();
+       this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
-        templateEngine.process("../../index.html", webContext, resp.getWriter());
+        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
+        resp.sendRedirect(path);
     }
 
     @Override
@@ -82,14 +83,16 @@ public class LoginController extends HttpServlet {
 
         req.getSession().setAttribute("user", user);
 
-        String path = getServletContext().getContextPath() + "/home";
+        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
         resp.sendRedirect(path);
     }
 
     private void invalidCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-        webContext.setVariable("errorMessage", errorMessage);
-        templateEngine.process("../../index", webContext, response.getWriter());
+        request.setAttribute("loginErrorMessage", errorMessage);
+        templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
+
     }
 }

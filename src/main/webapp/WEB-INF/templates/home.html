@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
 
     <link rel="stylesheet" type="text/css" media="all"
-          href="../css/search.css" th:href="@{/css/myStyle.css}" />
+          th:href="@{/css/myStyle.css}"  href="/css/myStyle.css"/>
 
 </head>
 
@@ -15,15 +15,14 @@
 
     <header>
         <div>
-
-            <a th:href="@{/home}" class="logo">
-                <img src="https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/website/website-logo.png" alt="website-logo.png"/>
+            <a th:href="@{/GoToHome}" class="logo">
+                <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
             </a>
 
             <div class="header-right">
-                <a th:href="@{/home}" class="active">Home</a>
-                <a th:href="@{/shoppingCart}">Shopping cart</a>
-                <a th:href="@{/orders}">My Orders</a>
+                <a th:href="@{/GoToHome}" class="active">Home</a>
+                <a th:href="@{/GoToShoppingCart}">Shopping cart</a>
+                <a th:href="@{/GoToOrders}">My Orders</a>
                 <a th:href="@{/logout}">Logout</a>
             </div>
 
@@ -70,7 +69,7 @@
             </td>
             <td>
                 <form th:class="styled-form"
-                      th:action=" ${#request.contextPath} + '/home' "
+                      th:action=" ${#request.contextPath} + '/GoToHome' "
                       method="GET" > <!-- Da sostituire se si vuole aprire una pagina con le info sul prodotto -->
 
                     <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">

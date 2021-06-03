@@ -1,10 +1,12 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -26,7 +28,7 @@ public class SearchProducts extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
+        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
 
@@ -71,6 +73,6 @@ public class SearchProducts extends HttpServlet {
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("products", retrievedProducts);
         webContext.setVariable("selectedProductId", selectedProductId);
-        templateEngine.process("searchProducts", webContext, resp.getWriter());
+        templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
     }
 }

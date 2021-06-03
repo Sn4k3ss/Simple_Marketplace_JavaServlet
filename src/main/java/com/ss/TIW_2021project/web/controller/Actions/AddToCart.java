@@ -1,10 +1,11 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.business.utils.ServletUtility;
 
 import javax.servlet.annotation.WebServlet;
@@ -62,7 +63,7 @@ public class AddToCart extends HttpServlet {
         CartService cartService = new CartService(getServletContext());
         cartService.addToCart(req.getSession(), product, howMany);
 
-        String path = getServletContext().getContextPath() + "/shoppingCart";
+        String path = getServletContext().getContextPath() + PathUtils.goToShoppingCartServletPath;
         resp.sendRedirect(path);
     }
 

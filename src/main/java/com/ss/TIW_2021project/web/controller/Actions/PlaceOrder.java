@@ -1,10 +1,11 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
 import com.ss.TIW_2021project.business.services.SupplierService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ import java.util.List;
 @WebServlet(
         name = "PlaceOrder",
         description = "This controller handles everything about orders",
-        value = "/placeOrder"
+        value = "/PlaceOrder"
 )
 public class PlaceOrder extends HttpServlet {
 
@@ -52,7 +53,7 @@ public class PlaceOrder extends HttpServlet {
 
         shoppingCart.emptyShoppingCart(supplierId);
 
-        String path = getServletContext().getContextPath() + "/showOrders";
+        String path = getServletContext().getContextPath() + PathUtils.goToOrdersServletPath;
         resp.sendRedirect(path);
     }
 }

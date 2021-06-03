@@ -1,11 +1,12 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.GoToPage;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.business.utils.PathUtils;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -18,8 +19,8 @@ import java.io.IOException;
 
 @WebServlet(
         name = "GoToHome",
-        description = "This servlet handles the 'add to cart' action whenever triggered",
-        value = "/home"
+        description = "This servlet handles how the home page must be processed",
+        value = "/GoToHome"
 )
 public class GoToHome extends HttpServlet {
 
@@ -27,7 +28,7 @@ public class GoToHome extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-       this.templateEngine = MarketplaceApp.getTemplateEngine();
+        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
     @Override
@@ -49,12 +50,10 @@ public class GoToHome extends HttpServlet {
 
         req.getSession().setAttribute("last_user_products", retrievedProducts);
 
-
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("userInfo", user);
         webContext.setVariable("products", retrievedProducts);
-        templateEngine.process("home", webContext, resp.getWriter());
-
+        templateEngine.process(PathUtils.pathToHomePage, webContext, resp.getWriter());
     }
 
 }

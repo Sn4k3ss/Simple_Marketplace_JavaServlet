@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+
+    <link rel="stylesheet" type="text/css" media="all"
+          href="/css/myStyle.css" th:href="@{/css/myStyle.css}" />
+
+    <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}"/>
+
+</head>
+
+
+<body>
+
+    <header>
+        <div>
+            <a th:href="@{/GoToHome}" class="logo">
+                <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
+            </a>
+        </div>
+    </header>
+
+
+<div class="container">
+
+    <div class="login" >
+        <form th:action="@{/login}" method="POST" class="styled-form-button" >
+            <fieldset>
+                <legend>Login form</legend>
+                E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
+                <br>
+                Password: <input type="password" name="password"  value="password1234" required minlength="6">
+                <br>
+                <input type="submit" value="Login!">
+                <div class="" th:if="${loginErrorMessage}">
+                    <span th:text="${loginErrorMessage}">Email or password not valid!</span>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="signup" >
+        <form th:action="@{/signup}" method="POST" class="styled-form-button" >
+            <fieldset>
+                <legend>Signup form</legend>
+                E-mail: <input type="email" name="email" required >
+                <br>
+                Password: <input type="password" name="password" required minlength="6">
+                <br>
+                Name: <input type="text" name="firstName" required>
+                <br>
+                Surname: <input type="text" name="lastName" required >
+                <br>
+                Address: <input type="text" name="address" required>
+                <br>
+                City: <input type="text" name="addrCity" required>
+                <br>
+                State: <input type="text" name="addrState" required >
+                <br>
+                Phone: <input type="tel" name="addrPhone" required>
+                <br>
+                <input type="submit" value="Sign up!">
+                <div class="" th:if="${signupErrorMessage}">
+                    <span th:text="${signupErrorMessage}">Email or password not valid!</span>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+</body>
+</html>

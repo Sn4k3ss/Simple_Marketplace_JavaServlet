@@ -1,9 +1,11 @@
-package com.ss.TIW_2021project.web.controller;
+package com.ss.TIW_2021project.web.controller.GoToPage;
 
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
+import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -16,17 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "shoppingCartController",
-        description = "This is my first annotated servlet",
-        urlPatterns = "/shoppingCart"
+        name = "ShoppingCartController",
+        description = "Controller that shows the user's shopping cart",
+        urlPatterns = "/GoToShoppingCart"
 )
-public class ShoppingCartController extends HttpServlet {
+public class GoToShoppingCart extends HttpServlet {
 
     private ITemplateEngine templateEngine;
 
     @Override
     public void init() throws ServletException {
-        this.templateEngine = MarketplaceApp.getTemplateEngine();
+        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
     @Override
@@ -47,12 +49,12 @@ public class ShoppingCartController extends HttpServlet {
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("shoppingCart", shoppingCart);
         webContext.setVariable("shoppingAddresses", user.getShippingAddresses());
-        templateEngine.process("shoppingCart", webContext, resp.getWriter());
+        templateEngine.process(PathUtils.pathToShoppingCartPage, webContext, resp.getWriter());
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        doPost(req, resp);
     }
 }
