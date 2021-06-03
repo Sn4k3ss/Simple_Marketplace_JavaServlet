@@ -4,7 +4,6 @@ import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -34,7 +33,7 @@ public class GoToShoppingCart extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         
-        CartService cartService = new CartService(getServletContext());
+        CartService cartService = new CartService();
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
 
         User user = (User) req.getSession().getAttribute("user");

@@ -44,21 +44,21 @@ public class GoToOrders extends HttpServlet {
 
         try {
 
-            OrderService orderService = new OrderService(getServletContext());
+            OrderService orderService = new OrderService();
             orders = orderService.retrieveUserOrders(user.getUserId());
 
             if (!orders.isEmpty()) {
             //serve per prendere le informazioni di User
             //senza prendere lo user dal db si potrebbe settare quello già disponibile nella sessione
-            UserService userService = new UserService(getServletContext());
+            UserService userService = new UserService();
             userService.setUserInfoOnOrders(orders);
 
             //serve prendere informazioni di Supplier
-            SupplierService supplierService = new SupplierService(getServletContext());
+            SupplierService supplierService = new SupplierService();
             supplierService.setSupplierInfoOnOrders(orders);
 
             //serve per prendere informazioni su ShoppingCartProduct
-            ProductService productService = new ProductService(getServletContext());
+            ProductService productService = new ProductService();
             productService.setProductInfoOnOrders(orders);
             }
         } catch (ServiceException e) {

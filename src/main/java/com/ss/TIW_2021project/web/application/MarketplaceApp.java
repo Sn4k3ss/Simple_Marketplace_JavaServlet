@@ -1,7 +1,10 @@
 package com.ss.TIW_2021project.web.application;
 
 
+import com.ss.TIW_2021project.business.utils.ConnectionHandler;
+
 import javax.servlet.ServletContext;
+import javax.servlet.UnavailableException;
 
 
 public class MarketplaceApp {
@@ -13,6 +16,12 @@ public class MarketplaceApp {
         super();
 
         TemplateHandler.setupTemplateEngine(servletContext);
+        
+        try {
+            ConnectionHandler.setup(servletContext);
+        } catch (UnavailableException e) {
+            e.printStackTrace();
+        }
     }
 
 

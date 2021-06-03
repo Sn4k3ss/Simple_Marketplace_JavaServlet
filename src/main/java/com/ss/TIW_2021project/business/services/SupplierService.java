@@ -13,7 +13,6 @@ import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 
-import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,10 +24,8 @@ import java.util.List;
 
 public class SupplierService {
 
-    private ServletContext servletContext;
+    public SupplierService() {
 
-    public SupplierService(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 
 
@@ -41,7 +38,7 @@ public class SupplierService {
     public Supplier getSupplierById(Integer supplierId) throws ServiceException {
 
         try {
-            SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
+            SuppliersDAO suppliersDAO = new SuppliersDAO();
             return suppliersDAO.getSupplierById(supplierId);
         } catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
@@ -58,7 +55,7 @@ public class SupplierService {
         List<Supplier> suppliers;
 
         try {
-            SuppliersDAO suppliersDAO = new SuppliersDAO(servletContext);
+            SuppliersDAO suppliersDAO = new SuppliersDAO();
             suppliers = suppliersDAO.retrieveSuppliersInfo();
 
         } catch (UtilityException | DAOException e) {

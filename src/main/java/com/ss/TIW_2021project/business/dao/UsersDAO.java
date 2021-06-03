@@ -3,11 +3,9 @@ package com.ss.TIW_2021project.business.dao;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
-import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.User;
-import com.ss.TIW_2021project.business.utils.ConnectionFactory;
+import com.ss.TIW_2021project.business.utils.ConnectionHandler;
 
-import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,11 +24,10 @@ public class UsersDAO {
     /**
      * Instantiates a new Users dao.
      *
-     * @param servletContext the servlet context
      * @throws UnavailableException the unavailable exception
      */
-    public UsersDAO(ServletContext servletContext) throws UtilityException {
-        connection = ConnectionFactory.getConnection(servletContext);
+    public UsersDAO() throws UtilityException {
+        connection = ConnectionHandler.getConnection();
     }
 
 

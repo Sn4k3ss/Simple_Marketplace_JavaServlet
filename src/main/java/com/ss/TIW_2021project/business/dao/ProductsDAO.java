@@ -7,35 +7,45 @@ import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
-import com.ss.TIW_2021project.business.utils.ConnectionFactory;
+import com.ss.TIW_2021project.business.utils.ConnectionHandler;
 
-import javax.servlet.ServletContext;
 import java.sql.*;
 import java.util.*;
 
 public class ProductsDAO {
 
-    private Connection connection;
+    private Connection conn;
 
-    public ProductsDAO(ServletContext servletContext) throws UtilityException {
-        connection = ConnectionFactory.getConnection(servletContext);
+    public ProductsDAO() throws UtilityException {
+        conn = ConnectionHandler.getConnection();
     }
 
     public List<SupplierProduct> getProductsBySupplier(Integer supplierId) throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnection();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
+        ResultSet rs = null;
+        PreparedStatement ps = null;
 
         List<SupplierProduct> productsList = new ArrayList<>();
 
         String query = "SELECT * FROM productsCatalogue WHERE supplierId = ? ";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            preparedStatement.setInt(1, supplierId);
-            try (ResultSet result = preparedStatement.executeQuery();) {
+        try {
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, supplierId);
+            try {
+                rs = ps.executeQuery();
                 SupplierProduct supplierProduct = null;
-                while (result.next()) {
+                while (rs.next()) {
                     supplierProduct = new SupplierProduct();
-                    supplierProduct.setSupplierId(result.getInt("supplierId"));
-                    supplierProduct.setProductId(result.getInt("productId"));
-                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
+                    supplierProduct.setSupplierId(rs.getInt("supplierId"));
+                    supplierProduct.setProductId(rs.getInt("productId"));
+                    supplierProduct.setSupplierProductCost(rs.getFloat("productCost"));
                     productsList.add(supplierProduct);
                 }
             } catch (SQLException exception) {
@@ -43,7 +53,14 @@ public class ProductsDAO {
             }
         } catch (SQLException exception) {
             throw new DAOException(DAOException._MALFORMED_QUERY);
+        } finally {
+            ConnectionHandler.closeQuietly(rs);
+            ConnectionHandler.closeQuietly(ps);
+            ConnectionHandler.closeQuietly(conn);
         }
+
+
+
 
         return productsList;
     }
@@ -71,7 +88,7 @@ public class ProductsDAO {
                     "JOIN suppliers ON productsCatalogue.supplierId=suppliers.supplierId " +
                 "ORDER BY products.productId";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
 
             try (ResultSet result = preparedStatement.executeQuery();) {
                 SupplierProduct supplierProduct = null;
@@ -124,7 +141,7 @@ public class ProductsDAO {
                 "ORDER BY b.timestamp desc, pc.productCost";
 
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
             preparedStatement.setInt(1, userId);
 
             try (ResultSet rs = preparedStatement.executeQuery()) {
@@ -183,7 +200,7 @@ public class ProductsDAO {
                 "WHERE pc1.productId = prod.productId " +
                 "ORDER BY productCost ";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
             preparedStatement.setInt(1, categoryId);
             try (ResultSet rs = preparedStatement.executeQuery();) {
                 productsList = buildSupplierProductsList(rs);
@@ -219,7 +236,7 @@ public class ProductsDAO {
                 "WHERE REGEXP_LIKE(p.productName, '"+ keyword +"') OR REGEXP_LIKE(p.productDescription, '" + keyword + "')" +
                 "ORDER BY pc.productCost, p.productId ";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
 
             try (ResultSet resultSet = preparedStatement.executeQuery();) {
                 productsList = buildSupplierProductsList(resultSet);
@@ -249,11 +266,11 @@ public class ProductsDAO {
                 "VALUES(?, ?) " +
                 "ON DUPLICATE KEY UPDATE timestamp = current_timestamp ";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-             CallableStatement callableStatement = connection.prepareCall("{call maxFiveLastProducts(?)}")
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query);
+             CallableStatement callableStatement = conn.prepareCall("{call maxFiveLastProducts(?)}")
         ) {
 
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
 
             preparedStatement.setInt(1, productId);
             preparedStatement.setInt(2, userId);
@@ -262,13 +279,13 @@ public class ProductsDAO {
             callableStatement.setInt(1, userId);
             callableStatement.execute();
 
-            connection.commit();
+            conn.commit();
 
         } catch (SQLException e) {
             //errore da loggare
-            if (connection != null) {
+            if (conn != null) {
                 try {
-                    connection.rollback();
+                    conn.rollback();
                 } catch (SQLException ex) {
                     //errore da loggare
                 }
@@ -288,7 +305,7 @@ public class ProductsDAO {
         for (Order order : orders) {
             for (ShoppingCartProduct shoppingCartProduct : order.getOrderProductsList()) {
 
-                try (PreparedStatement prodQueryStm = connection.prepareStatement(prodQuery);) {
+                try (PreparedStatement prodQueryStm = conn.prepareStatement(prodQuery);) {
                     prodQueryStm.setInt(1, shoppingCartProduct.getProductId());
 
                     try (ResultSet prodRs = prodQueryStm.executeQuery();) {

@@ -5,9 +5,8 @@ import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.supplier.ItemRangeCost;
 import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.utils.ConnectionFactory;
+import com.ss.TIW_2021project.business.utils.ConnectionHandler;
 
-import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,10 +26,9 @@ public class SuppliersDAO {
      * Instantiates a new Suppliers DAO.
      *
      * @throws UnavailableException the unavailable exception
-     * @param servletContext
      */
-    public SuppliersDAO(ServletContext servletContext) throws UtilityException {
-        connection = ConnectionFactory.getConnection(servletContext);
+    public SuppliersDAO() throws UtilityException {
+        connection = ConnectionHandler.getConnection();
     }
 
 

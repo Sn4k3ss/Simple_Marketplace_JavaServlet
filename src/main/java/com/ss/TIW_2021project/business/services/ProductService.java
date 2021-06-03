@@ -7,7 +7,6 @@ import com.ss.TIW_2021project.business.entities.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 
-import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -15,17 +14,16 @@ import java.util.stream.Collectors;
 
 public class ProductService {
 
-    private ServletContext servletContext;
 
-    public ProductService(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public ProductService() {
+
     }
 
     public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws ServiceException {
         List<SupplierProduct> products = null;
 
         try {
-            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            ProductsDAO productsDAO = new ProductsDAO();
             products = productsDAO.getProductsBySupplier(idSupplier);
         } catch (DAOException | UtilityException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
@@ -44,7 +42,7 @@ public class ProductService {
         ProductsCatalogue retrievedProducts = null;
 
         try {
-            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            ProductsDAO productsDAO = new ProductsDAO();
             retrievedProducts = productsDAO.getProductsMatching(keyword);
         } catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
@@ -66,7 +64,7 @@ public class ProductService {
         ProductsCatalogue mostRecentProducts = null;
 
         try {
-            productsDAO = new ProductsDAO(this.servletContext);
+            productsDAO = new ProductsDAO();
             mostRecentProducts = productsDAO.getLastUserProduct(userId);
         }  catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
@@ -91,7 +89,7 @@ public class ProductService {
     public void setProductDisplayed(Integer userId, int productId) throws ServiceException {
 
         try {
-            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            ProductsDAO productsDAO = new ProductsDAO();
             productsDAO.setProductDisplayed(userId, productId);
         }  catch (UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_UPDATE_USERS_LAST_PRODUCTS);
@@ -138,7 +136,7 @@ public class ProductService {
     public void setProductInfoOnOrders(List<Order> orders) throws ServiceException {
 
         try {
-            ProductsDAO productsDAO = new ProductsDAO(servletContext);
+            ProductsDAO productsDAO = new ProductsDAO();
             productsDAO.setProductsInfo(orders);
         } catch (DAOException | UtilityException exception) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);

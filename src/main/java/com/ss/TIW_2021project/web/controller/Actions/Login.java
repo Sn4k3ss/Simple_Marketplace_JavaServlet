@@ -4,7 +4,6 @@ import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -65,7 +64,7 @@ public class Login extends HttpServlet {
             return;
         }
 
-        UserService userService = new UserService(getServletContext());
+        UserService userService = new UserService();
         User user;
 
         try {

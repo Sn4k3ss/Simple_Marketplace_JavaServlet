@@ -7,6 +7,8 @@ public class DAOException extends Exception {
     public final static int _UPDATE_FAILED = 3;
     public final static int _FAIL_TO_RETRIEVE = 4;
     public final static int _SQL_ERROR = 5;
+    public static final int _ERROR_GETTING_CONN = 6;
+    public static final int _ERROR_CLOSING_CONN = 7;
 
     private int errorCode;
 

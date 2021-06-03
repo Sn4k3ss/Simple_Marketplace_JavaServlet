@@ -8,7 +8,6 @@ import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
 import com.ss.TIW_2021project.business.entities.User;
 
-import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,10 +15,8 @@ import java.util.List;
 
 public class UserService {
 
-    private ServletContext servletContext;
+    public UserService() {
 
-    public UserService(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 
     /**
@@ -37,7 +34,7 @@ public class UserService {
         User userRetrieved;
 
         try {
-            usersDao = new UsersDAO(servletContext);
+            usersDao = new UsersDAO();
             userRetrieved = usersDao.getUser(email.toLowerCase(), password);
             if (userRetrieved != null)
                 userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
@@ -62,7 +59,7 @@ public class UserService {
         UsersDAO usersDAO;
 
         try {
-            usersDAO = new UsersDAO(servletContext);
+            usersDAO = new UsersDAO();
 
             if ( usersDAO.emailTaken(email) ) {
                 return null;
@@ -93,7 +90,7 @@ public class UserService {
     public List<User> getAllUsers() throws ServiceException {
 
         try {
-            UsersDAO usersDao = new UsersDAO(servletContext);
+            UsersDAO usersDao = new UsersDAO();
             return usersDao.getAllUsers();
         } catch ( UtilityException | DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
@@ -103,7 +100,7 @@ public class UserService {
     public List<ShippingAddress> getShippingAddresses(Integer userId) throws ServiceException {
 
         try {
-            UsersDAO usersDAO = new UsersDAO(servletContext);
+            UsersDAO usersDAO = new UsersDAO();
             return usersDAO.getShippingAddresses(userId);
         } catch (DAOException | UtilityException ex) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
@@ -114,7 +111,7 @@ public class UserService {
 
         List<ShippingAddress> shippingAddressList = new ArrayList<>();
         try {
-            UsersDAO usersDAO = new UsersDAO(servletContext);
+            UsersDAO usersDAO = new UsersDAO();
             shippingAddressList = usersDAO.getShippingAddresses(userId);
         } catch (UtilityException | DAOException ex) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
@@ -140,7 +137,7 @@ public class UserService {
         User user;
 
         try {
-            UsersDAO usersDAO = new UsersDAO(servletContext);
+            UsersDAO usersDAO = new UsersDAO();
             user = usersDAO.getUserById(orders.get(0).getUser().getUserId());
         } catch (DAOException | UtilityException exception) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);

@@ -7,17 +7,14 @@ import com.ss.TIW_2021project.business.dao.OrdersDAO;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
-import javax.servlet.ServletContext;
 import java.time.LocalDate;
 import java.util.*;
 
 public class OrderService {
 
-    private ServletContext servletContext;
-
-    public OrderService(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public OrderService() {
     }
+
 
 
     public Order createOrder(List<ShoppingCartProduct> productsList,
@@ -46,7 +43,7 @@ public class OrderService {
     public void placeOrder(Order newOrder) throws ServiceException {
 
         try {
-            OrdersDAO ordersDAO = new OrdersDAO(servletContext);
+            OrdersDAO ordersDAO = new OrdersDAO();
             ordersDAO.placeOrder(newOrder);
         } catch (DAOException | UtilityException ex) {
             throw new ServiceException(ServiceException._PLACE_ORDER_ERROR);
@@ -58,7 +55,7 @@ public class OrderService {
         List<Order> orders;
 
         try {
-            OrdersDAO ordersDAO = new OrdersDAO(servletContext);
+            OrdersDAO ordersDAO = new OrdersDAO();
             orders = ordersDAO.retrieveUserOrders(userId);
         } catch (DAOException | UtilityException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_ORDERS);

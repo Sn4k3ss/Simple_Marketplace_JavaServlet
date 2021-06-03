@@ -5,7 +5,6 @@ import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -42,8 +41,8 @@ public class SearchProducts extends HttpServlet {
 
         Integer selectedProductId = 0;
 
-        ProductService productService = new ProductService(req.getServletContext());
-        SupplierService supplierService = new SupplierService(req.getServletContext());
+        ProductService productService = new ProductService();
+        SupplierService supplierService = new SupplierService();
 
         ProductsCatalogue retrievedProducts = null;
 

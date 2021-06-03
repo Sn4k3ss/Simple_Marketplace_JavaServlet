@@ -52,7 +52,7 @@ public class AddToCart extends HttpServlet {
             return;
         }
 
-        ProductService productService = new ProductService(getServletContext());
+        ProductService productService = new ProductService();
         SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
 
         if(product == null) {
@@ -60,7 +60,7 @@ public class AddToCart extends HttpServlet {
             return;
         }
 
-        CartService cartService = new CartService(getServletContext());
+        CartService cartService = new CartService();
         cartService.addToCart(req.getSession(), product, howMany);
 
         String path = getServletContext().getContextPath() + PathUtils.goToShoppingCartServletPath;

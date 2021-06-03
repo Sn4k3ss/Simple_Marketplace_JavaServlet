@@ -5,7 +5,6 @@ import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -41,7 +40,7 @@ public class ShowProductInfo extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer productId = Integer.parseInt(req.getParameter("productId"));
-        ProductService productService = new ProductService(getServletContext());
+        ProductService productService = new ProductService();
         User user = (User) req.getSession().getAttribute("user");
 
         try {

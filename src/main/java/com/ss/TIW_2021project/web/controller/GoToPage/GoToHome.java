@@ -36,8 +36,8 @@ public class GoToHome extends HttpServlet {
 
         User user = (User) req.getSession(false).getAttribute("user");
 
-        ProductService productService = new ProductService(getServletContext());
-        SupplierService supplierService = new SupplierService(getServletContext());
+        ProductService productService = new ProductService();
+        SupplierService supplierService = new SupplierService();
         ProductsCatalogue retrievedProducts = null;
 
         try {

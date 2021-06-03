@@ -4,9 +4,8 @@ import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.*;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.utils.ConnectionFactory;
+import com.ss.TIW_2021project.business.utils.ConnectionHandler;
 
-import javax.servlet.ServletContext;
 import javax.servlet.UnavailableException;
 import java.sql.*;
 import java.time.LocalDate;
@@ -24,11 +23,10 @@ public class OrdersDAO {
     /**
      * Instantiates a new Orders dao.
      *
-     * @param servletContext the servlet context
      * @throws UnavailableException the unavailable exception
      */
-    public OrdersDAO(ServletContext servletContext) throws UtilityException {
-        connection = ConnectionFactory.getConnection(servletContext);
+    public OrdersDAO() throws UtilityException {
+        connection = ConnectionHandler.getConnection();
     }
 
 
