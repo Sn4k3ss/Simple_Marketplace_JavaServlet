@@ -34,7 +34,6 @@ public class SearchProducts extends HttpServlet {
         Integer selectedProductId = 0;
 
         ProductService productService = new ProductService();
-        SupplierService supplierService = new SupplierService();
 
         ProductsCatalogue retrievedProducts = null;
 
@@ -50,8 +49,6 @@ public class SearchProducts extends HttpServlet {
             }
 
             retrievedProducts = productService.getRelevantProducts(keyword);
-            supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
-
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't execute your request");
             return;

@@ -30,12 +30,10 @@ public class GoToHome extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService();
-        SupplierService supplierService = new SupplierService();
         ProductsCatalogue retrievedProducts = null;
 
         try {
             retrievedProducts = productService.getLastUserProducts(user.getUserId());
-            supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't get user's last products");
             return;

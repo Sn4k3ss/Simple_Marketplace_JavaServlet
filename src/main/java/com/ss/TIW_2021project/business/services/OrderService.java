@@ -61,6 +61,21 @@ public class OrderService {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_ORDERS);
         }
 
+        if (!orders.isEmpty()) {
+            //serve per prendere le informazioni di User
+            //senza prendere lo user dal db si potrebbe settare quello già disponibile nella sessione
+            UserService userService = new UserService();
+            userService.setUserInfoOnOrders(orders);
+
+            //serve prendere informazioni di Supplier
+            SupplierService supplierService = new SupplierService();
+            supplierService.setSupplierInfoOnOrders(orders);
+
+            //serve per prendere informazioni su ShoppingCartProduct
+            ProductService productService = new ProductService();
+            productService.setProductInfoOnOrders(orders);
+        }
+
         return orders;
     }
 }

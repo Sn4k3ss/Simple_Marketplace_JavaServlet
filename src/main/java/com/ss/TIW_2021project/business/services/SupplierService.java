@@ -54,6 +54,9 @@ public class SupplierService {
     public void setSuppliersToProductsInCatalogue(ProductsCatalogue catalogue) throws ServiceException {
         List<Supplier> suppliers;
 
+        if (!catalogue.containsAtLeast(1))
+            return;
+
         try {
             SuppliersDAO suppliersDAO = new SuppliersDAO();
             suppliers = suppliersDAO.retrieveSuppliersInfo();

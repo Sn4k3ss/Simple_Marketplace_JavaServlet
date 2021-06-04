@@ -32,7 +32,8 @@ public class GoToShoppingCart extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
 
         if (user.getShippingAddresses().isEmpty()) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "User has no shipping address ");
+            //TODO goToErrorPage instaed of returning an error response
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "User has no shipping address, that shouldn't be allowed ");
             return;
         }
 

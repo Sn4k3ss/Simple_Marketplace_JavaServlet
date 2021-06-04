@@ -27,10 +27,11 @@ public class PlaceOrder extends HttpServlet {
 
         Integer supplierId = Integer.parseInt(req.getParameter("supplierId"));
         Integer userShippingAddressId = Integer.parseInt(req.getParameter("userShippingAddressId"));
+        User user = (User) req.getSession(false).getAttribute("user");
 
         CartService cartService = new CartService();
         ShoppingCart shoppingCart = cartService.getShoppingCart(req.getSession());
-        User user = (User) req.getSession(false).getAttribute("user");
+
         ShippingAddress shippingAddress = user.getShippingAddresses().stream()
                 .filter(x -> x.getShippingAddressId().equals(userShippingAddressId)).findFirst().orElse(null);
 

@@ -39,6 +39,7 @@ public class ProductService {
      * @return a list of relevant products
      */
     public ProductsCatalogue getRelevantProducts(String keyword) throws ServiceException {
+        SupplierService supplierService = new SupplierService();
         ProductsCatalogue retrievedProducts = null;
 
         try {
@@ -48,6 +49,7 @@ public class ProductService {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
+        supplierService.setSuppliersToProductsInCatalogue(retrievedProducts);
         return retrievedProducts;
     }
 
@@ -60,6 +62,8 @@ public class ProductService {
      * @return the last last products seen by the user.
      */
     public ProductsCatalogue getLastUserProducts(Integer userId) throws ServiceException {
+
+        SupplierService supplierService = new SupplierService();
         ProductsDAO productsDAO = null;
         ProductsCatalogue mostRecentProducts = null;
 
@@ -71,6 +75,7 @@ public class ProductService {
         }
 
         if (mostRecentProducts != null && mostRecentProducts.containsAtLeast(5)) {
+            supplierService.setSuppliersToProductsInCatalogue(mostRecentProducts);
             return mostRecentProducts;
         }
 
@@ -81,6 +86,7 @@ public class ProductService {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
+        supplierService.setSuppliersToProductsInCatalogue(randomDiscountedProducts);
         return randomDiscountedProducts;
     }
 
