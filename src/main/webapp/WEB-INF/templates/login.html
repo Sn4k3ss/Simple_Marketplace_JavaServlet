@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Login Page</title>
 
-    <link rel="stylesheet" type="text/css" media="all"
-          href="/css/myStyle.css" th:href="@{/css/myStyle.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/myStyle.css" th:href="@{/css/myStyle.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/login.css" th:href="@{/css/login.css}" />
 
     <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}"/>
 
@@ -29,16 +29,20 @@
         <form th:action="@{/login}" method="POST" class="styled-form-button" >
             <fieldset>
                 <legend>Login form</legend>
-                E-mail: <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
-                <br>
-                Password: <input type="password" name="password"  value="password1234" required minlength="6">
-                <br>
-                <input type="submit" value="Login!">
-                <div class="" th:if="${loginErrorMessage}">
-                    <span th:text="${loginErrorMessage}">Email or password not valid!</span>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
                 </div>
+                <div>
+                    <label for="email">Password</label>
+                    <input type="password" name="password"  value="password1234" required minlength="6">
+                </div>
+                <button type="submit">Login</button>
             </fieldset>
         </form>
+        <div class="" th:if="${loginErrorMessage}">
+            <span th:text="${loginErrorMessage}">Email or password not valid!</span>
+        </div>
     </div>
 
     <div class="signup" >
