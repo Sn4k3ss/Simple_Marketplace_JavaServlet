@@ -39,7 +39,9 @@ public class ShowProductInfo extends HttpServlet {
         try {
             productService.setProductDisplayed(user.getUserId(), productId);
         } catch (ServiceException ex) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't update user last product");
+            String errorMessage = "Couldn't update user last product";
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, errorMessage);
             return;
         }
 
@@ -49,15 +51,29 @@ public class ShowProductInfo extends HttpServlet {
             productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
 
         } else {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something ain't right");
+            String errorMessage = "Something ain't right";
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, errorMessage);
             return;
         }
 
-        //redirect to the search page with the products retrieved displayed in a table
-        final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        webContext.setVariable("products", productsFromQuery);
-        webContext.setVariable("selectedProductId", productId);
-        TemplateHandler.templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
+        req.setAttribute("products", productsFromQuery);
+        req.setAttribute("selectedProductId", productId);
+
+        forward(req, resp, null);
+    }
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        String path = PathUtils.pathToSearchProductsPage;
+
+        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        }
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
     }
 
 }

@@ -45,11 +45,14 @@
         <input th:placeholder="'Oasis..'" name="keyword" >
         <input class="button" type="submit" value="vai!">
     </form>
+    <div class="" th:if="${searchErrorMessage}">
+        <span th:text="${searchErrorMessage}">Email or password not valid!</span>
+    </div>
 </div>
 
 
 
-<div>
+<div th:if="${session.last_user_products}">
     <table class="styled-table">
         <caption></caption>
         <thead>
@@ -63,7 +66,7 @@
         </thead>
 
         <tbody>
-        <tr th:each="productId : ${products.supplierProductMap.keySet()}" th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
+        <tr th:each="productId : ${session.last_user_products.supplierProductMap.keySet()}" th:with="productInfo1=${session.last_user_products.supplierProductMap.get(productId)[0]}">
             <td th:class="table-product-img">
                 <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
             </td>

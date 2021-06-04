@@ -5,11 +5,8 @@ import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +21,7 @@ import java.io.IOException;
 public class Login extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
         resp.sendRedirect(path);
     }
@@ -41,19 +38,15 @@ public class Login extends HttpServlet {
             password = req.getParameter("password");
 
             if (email==null || password==null) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 invalidCredentials("Login error: Credentials can't be null", req, resp);
                 return;
             }
             else if(email.isEmpty() || password.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 invalidCredentials("Login error: Credentials can't be empty", req, resp);
                 return;
             }
         } catch (NullPointerException e) {
-            e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            invalidCredentials("Somthing went wrong, please try again", req, resp);
+            invalidCredentials("Somtehing went wrong, please try again", req, resp);
             return;
         }
 
@@ -63,13 +56,16 @@ public class Login extends HttpServlet {
         try {
             user = userService.checkCredentials(email, password);
         } catch (ServiceException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Login error: Not Possible to check credentials");
+            String errorMessage = "Login error: Not Possible to check credentials";
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, errorMessage);
             return;
         }
 
 
         if (user == null) {
-            invalidCredentials("Login error: Incorrect email or password", req, resp);
+            String errorMessage = "Login error: Incorrect email or password";
+            invalidCredentials(errorMessage, req, resp);
             return;
         }
 
@@ -81,10 +77,26 @@ public class Login extends HttpServlet {
 
     private void invalidCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        ServletContext servletContext = getServletContext();
-        final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
         request.setAttribute("loginErrorMessage", errorMessage);
-        TemplateHandler.templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
+        forward(request, response, errorMessage);
     }
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        String path = PathUtils.pathToHomePage;
+
+        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        } else if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToLoginPage;
+        }
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
+    }
+
 }

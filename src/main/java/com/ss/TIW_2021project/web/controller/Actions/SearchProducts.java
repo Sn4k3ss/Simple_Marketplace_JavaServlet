@@ -9,7 +9,10 @@ import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,26 +44,45 @@ public class SearchProducts extends HttpServlet {
             String keyword = req.getParameter("keyword");
 
             if (keyword == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Search string can't be null");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                forward(req, resp, "Search string can't be null");
                 return;
             } else if (keyword.isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Search string can't be empty");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                forward(req, resp, "Search string can't be empty");
                 return;
             }
 
             retrievedProducts = productService.getRelevantProducts(keyword);
         } catch (ServiceException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't execute your request");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, "Couldn't execute your request");
             return;
         }
 
 
         req.getSession().setAttribute("products_from_query", retrievedProducts);
 
-        //redirect to the search page with the products retrieved displayed in a table
-        final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        webContext.setVariable("products", retrievedProducts);
-        webContext.setVariable("selectedProductId", selectedProductId);
-        TemplateHandler.templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
+        req.setAttribute("products", retrievedProducts);
+        req.setAttribute("selectedProductId", selectedProductId);
+
+        forward(req, resp, null);
+    }
+
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        String path = PathUtils.pathToSearchProductsPage;
+
+        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        } else if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        }
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
     }
 }

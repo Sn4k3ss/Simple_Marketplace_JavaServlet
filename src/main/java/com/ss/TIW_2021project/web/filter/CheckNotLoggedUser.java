@@ -16,7 +16,7 @@ public class CheckNotLoggedUser implements Filter {
     /**
      * @see Filter#init(FilterConfig)
      */
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         this.marketplaceApp = MarketplaceApp.getInstance(filterConfig.getServletContext());
     }
 

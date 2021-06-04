@@ -7,6 +7,8 @@ import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.business.utils.ServletUtility;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
+import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,7 +50,7 @@ public class AddToCart extends HttpServlet {
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UtilityException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The server encountered an error parsing the request's parameters");
+            forwardToErrorPage(req, resp, "The server encountered an error parsing the request's parameters");
             return;
         }
 
@@ -56,7 +58,7 @@ public class AddToCart extends HttpServlet {
         SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
 
         if(product == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Where did you get that product?");
+            forwardToErrorPage(req, resp, "Where did you get that product?");
             return;
         }
 
@@ -67,6 +69,15 @@ public class AddToCart extends HttpServlet {
         resp.sendRedirect(path);
     }
 
+
+    private void forwardToErrorPage(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        req.setAttribute("errorMessage", errorMessage);
+        String path = PathUtils.pathToErrorPage;
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
+    }
 
 
 }

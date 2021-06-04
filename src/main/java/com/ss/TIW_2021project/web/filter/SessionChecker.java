@@ -34,7 +34,7 @@ public class SessionChecker implements Filter {
         if (process(req,res)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            req.setAttribute("error", "You are not authorized to access this page");
+            req.setAttribute("loginErrorMessage", "You are not authorized to access this page");
             forward(req, res, PathUtils.pathToLoginPage);
         }
 
@@ -52,8 +52,7 @@ public class SessionChecker implements Filter {
      * @throws ServletException
      */
 
-    private boolean process(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private boolean process(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
 
@@ -68,7 +67,7 @@ public class SessionChecker implements Filter {
         Filter.super.destroy();
     }
 
-    public void forward(HttpServletRequest request, HttpServletResponse response, String path) throws ServletException, IOException{
+    public void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException{
 
         ServletContext servletContext = request.getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());

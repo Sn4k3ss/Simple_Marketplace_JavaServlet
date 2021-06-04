@@ -55,19 +55,15 @@ public class Signup extends HttpServlet {
 
             if (email==null || password==null || firstName == null || lastName == null
                     || address == null || addrCity == null || addrState == null || addrPhone == null) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 invalidSignUpCredentials("Signup error: Credentials can't be null", req, resp);
                 return;
             }
             else if(email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()
                     || address.isEmpty() || addrCity.isEmpty() || addrState.isEmpty() || addrPhone.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 invalidSignUpCredentials("Signup error: Credentials can't be empty", req, resp);
                 return;
             }
         } catch (NullPointerException e) {
-            e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             invalidSignUpCredentials("Somthing went wrong, please try again", req, resp);
             return;
         }
@@ -76,30 +72,48 @@ public class Signup extends HttpServlet {
         User user;
 
         try {
-
             user = userService.registerUser(email, password, firstName, lastName, address, addrCity, addrState, addrPhone);
-
         } catch (ServiceException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Login error: Not Possible to validate data");
+            String errorMessage = "Login error: Not Possible to validate data";
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, errorMessage);
             return;
         }
 
-
         if (user == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Registration successful but can't get user info");
+            String errorMessage = "Registration successful but can't get user info";
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            forward(req, resp, errorMessage);
             return;
         }
 
         req.getSession().setAttribute("user", user);
 
-        String path = getServletContext().getContextPath() + PathUtils.pathToHomePage;
+        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
         resp.sendRedirect(path);
     }
 
     private void invalidSignUpCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ServletContext servletContext = getServletContext();
-        final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+
         request.setAttribute("signupErrorMessage", errorMessage);
-        TemplateHandler.templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+        forward(request, response, errorMessage);
+    }
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        String path = PathUtils.pathToHomePage;
+
+        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        } else if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToLoginPage;
+        }
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
     }
 }

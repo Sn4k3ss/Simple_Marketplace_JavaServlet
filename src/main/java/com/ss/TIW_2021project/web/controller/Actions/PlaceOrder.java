@@ -6,6 +6,8 @@ import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.OrderService;
 import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
+import com.ss.TIW_2021project.web.application.TemplateHandler;
+import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -48,7 +50,7 @@ public class PlaceOrder extends HttpServlet {
             Order newOrder = orderService.createOrder(productsList, user, shippingAddress, totalAmountAtSupplier, shippingFees, deliveryDate);
             orderService.placeOrder(newOrder);
         } catch (ServiceException e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't place your order");
+            forwardToErrorPage(req, resp, "Couldn't place your order");
             return;
         }
 
@@ -56,5 +58,14 @@ public class PlaceOrder extends HttpServlet {
 
         String path = getServletContext().getContextPath() + PathUtils.goToOrdersServletPath;
         resp.sendRedirect(path);
+    }
+
+    private void forwardToErrorPage(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        req.setAttribute("errorMessage", errorMessage);
+        String path = PathUtils.pathToErrorPage;
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
     }
 }

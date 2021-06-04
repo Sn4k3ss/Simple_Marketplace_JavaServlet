@@ -9,6 +9,7 @@ import java.util.Collections;
 public class CartService {
 
     public CartService() {
+        super();
     }
 
     public ShoppingCart getShoppingCart(HttpSession session) {
@@ -36,5 +37,14 @@ public class CartService {
         shoppingCart.addProductToCart(supplierProduct, howMany);
 
         return shoppingCart;
+    }
+
+    public void initShoppingCart(HttpSession session) {
+        ShoppingCart shoppingCart = (ShoppingCart) session.getAttribute("shoppingCart");
+
+        if (shoppingCart == null) {
+            shoppingCart = new ShoppingCart(Collections.emptyList());
+            session.setAttribute("shoppingCart", shoppingCart);
+        }
     }
 }

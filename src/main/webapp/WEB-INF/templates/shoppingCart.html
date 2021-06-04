@@ -38,8 +38,8 @@
 
 
 
-  <div th:if="${not #maps.isEmpty(shoppingCart.shoppingCartMap)}">
-    <table class="styled-table" style="width:100%">
+  <div th:if="${ !#maps.isEmpty(session.shoppingCart.shoppingCartMap)}">
+    <table  class="styled-table" style="width:100%">
       <caption style="lighting-color: #04aa6d">CART</caption>
         <thead>
           <tr>
@@ -50,9 +50,9 @@
             <th scope="col">How many</th>
           </tr>
         </thead>
-      <tbody th:each="supplierId : ${shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
+      <tbody th:each="supplierId : ${session.shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${session.shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
 
-        <tr th:each="product : ${shoppingCart.shoppingCartMap.get(supplierId)}" >
+        <tr th:each="product : ${session.shoppingCart.shoppingCartMap.get(supplierId)}" >
           <td class="table-product-img">
               <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
           </td>
@@ -99,7 +99,7 @@
               -->
             </td>
         </tr>
-        <tr th:class="active-row" th:with="totalamount=${shoppingCart.totalAmountBySupplier.get(supplierId)}">
+        <tr th:class="active-row" th:with="totalamount=${session.shoppingCart.totalAmountBySupplier.get(supplierId)}">
           <td th:text="'Total amount on ' + ${supplierInfo.supplierName} + ': ' + ${totalamount}">Costo totale per venditore</td>
           <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
           <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount }" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
@@ -126,9 +126,11 @@
     </table>
   </div>
 
-  <div th:if="${#maps.isEmpty(shoppingCart.shoppingCartMap)}">
+
+  <div th:if="${ #maps.isEmpty(session.shoppingCart.shoppingCartMap)}">
     Your shopping cart is empty!
   </div>
+
 
 
 

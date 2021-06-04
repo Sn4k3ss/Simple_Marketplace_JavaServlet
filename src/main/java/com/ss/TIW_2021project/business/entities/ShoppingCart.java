@@ -99,7 +99,7 @@ public class ShoppingCart {
      * @param supplierId the supplierId which all the products need to be removed
      */
     public void emptyShoppingCart(Integer supplierId) {
-        this.shoppingCartMap.clear();
+        this.shoppingCartMap.remove(supplierId);
         this.totalAmountBySupplier.remove(supplierId);
     }
 }

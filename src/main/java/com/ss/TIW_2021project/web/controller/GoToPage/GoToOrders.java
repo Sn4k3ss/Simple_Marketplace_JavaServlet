@@ -4,16 +4,10 @@ import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.OrderService;
-import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.services.SupplierService;
-import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,15 +34,27 @@ public class GoToOrders extends HttpServlet {
         try {
             orders = orderService.retrieveUserOrders(user.getUserId());
         } catch (ServiceException e) {
-            //TODO goToErrorPage instaed of send error response
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Couldn't get infos about orders");
+            String errorMessage = "Couldn't get infos about orders";
+            req.setAttribute("errorMessage", errorMessage);
+            forward(req, resp, errorMessage);
             return;
         }
 
+        req.setAttribute("orders", orders);
+        forward(req, resp, null);
+    }
 
-        ServletContext servletContext = getServletContext();
-        final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
-        webContext.setVariable("orders", orders);
-        TemplateHandler.templateEngine.process(PathUtils.pathToOrdersPage, webContext, resp.getWriter());
+
+    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
+
+        String path = PathUtils.pathToOrdersPage;
+
+        if (errorMessage != null) {
+            req.setAttribute("errorMessage", errorMessage);
+            path = PathUtils.pathToErrorPage;
+        }
+
+        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
+        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
     }
 }
