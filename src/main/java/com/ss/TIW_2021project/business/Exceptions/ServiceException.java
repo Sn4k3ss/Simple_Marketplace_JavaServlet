@@ -15,7 +15,7 @@ public class ServiceException extends Exception {
 
 
 
-    private int errorCode;
+    private final int errorCode;
 
     public ServiceException(int errorCode) {
         this.errorCode = errorCode;

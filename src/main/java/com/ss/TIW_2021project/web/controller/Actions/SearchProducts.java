@@ -23,14 +23,6 @@ import java.io.IOException;
 )
 public class SearchProducts extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -72,6 +64,6 @@ public class SearchProducts extends HttpServlet {
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("products", retrievedProducts);
         webContext.setVariable("selectedProductId", selectedProductId);
-        templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
     }
 }

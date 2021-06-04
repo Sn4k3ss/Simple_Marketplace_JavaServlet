@@ -21,4 +21,9 @@ public class MutliMapUtility {
                 list.add(prod);
         }
     }
+
+    private MutliMapUtility() {
+
+    }
+
 }

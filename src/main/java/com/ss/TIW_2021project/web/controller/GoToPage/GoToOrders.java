@@ -29,13 +29,6 @@ import java.util.List;
 )
 public class GoToOrders extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, UnavailableException {
 
@@ -70,6 +63,6 @@ public class GoToOrders extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
         webContext.setVariable("orders", orders);
-        templateEngine.process(PathUtils.pathToOrdersPage, webContext, resp.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToOrdersPage, webContext, resp.getWriter());
     }
 }

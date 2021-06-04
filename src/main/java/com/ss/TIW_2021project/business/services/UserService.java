@@ -1,6 +1,5 @@
 package com.ss.TIW_2021project.business.services;
 
-import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.UsersDAO;
@@ -38,7 +37,7 @@ public class UserService {
             userRetrieved = usersDao.getUser(email.toLowerCase(), password);
             if (userRetrieved != null)
                 userRetrieved.setShippingAddresses(usersDao.getShippingAddresses(userRetrieved.getUserId()));
-        } catch (UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_CHECK_CREDENTIALS);
         }
 
@@ -75,7 +74,7 @@ public class UserService {
             user.setShippingAddresses(usersDAO.getShippingAddresses(user.getUserId()));
             return user;
 
-        } catch (UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_CHECK_UNIQUE_EMAIL);
         }
 
@@ -92,7 +91,7 @@ public class UserService {
         try {
             UsersDAO usersDao = new UsersDAO();
             return usersDao.getAllUsers();
-        } catch ( UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
     }
@@ -102,7 +101,7 @@ public class UserService {
         try {
             UsersDAO usersDAO = new UsersDAO();
             return usersDAO.getShippingAddresses(userId);
-        } catch (DAOException | UtilityException ex) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
     }
@@ -113,7 +112,7 @@ public class UserService {
         try {
             UsersDAO usersDAO = new UsersDAO();
             shippingAddressList = usersDAO.getShippingAddresses(userId);
-        } catch (UtilityException | DAOException ex) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
 
@@ -139,7 +138,7 @@ public class UserService {
         try {
             UsersDAO usersDAO = new UsersDAO();
             user = usersDAO.getUserById(orders.get(0).getUser().getUserId());
-        } catch (DAOException | UtilityException exception) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_USERS_INFO);
         }
 

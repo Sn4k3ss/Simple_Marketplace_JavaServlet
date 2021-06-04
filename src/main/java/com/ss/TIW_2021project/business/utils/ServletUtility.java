@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ServletUtility {
 
+    private ServletUtility() {
+
+    }
 
     /**
      * Creats a 'light' version of {@link SupplierProduct supplierProduct} based on the parameters sent into the request

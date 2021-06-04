@@ -20,15 +20,15 @@ import java.util.List;
  */
 public class SuppliersDAO {
 
-    private Connection connection;
+    private Connection conn;
 
     /**
      * Instantiates a new Suppliers DAO.
      *
-     * @throws UnavailableException the unavailable exception
+     * @throws UtilityException if it's not possible to get a connection
      */
-    public SuppliersDAO() throws UtilityException {
-        connection = ConnectionHandler.getConnection();
+    public SuppliersDAO() {
+        super();
     }
 
 
@@ -41,6 +41,12 @@ public class SuppliersDAO {
      */
     public Supplier getSupplierById(Integer supplierId) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         Supplier supplier = null;
 
         String query = "" +
@@ -50,9 +56,14 @@ public class SuppliersDAO {
                 "    JOIN shippingPolicy sP on sup.supplierId = sP.supplierId " +
                 "WHERE sup.supplierId = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = conn.prepareStatement(query);
             preparedStatement.setInt(1, supplierId);
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+            try {
+                resultSet = preparedStatement.executeQuery();
                 supplier = buildSuppliersList(resultSet).get(0);
 
             } catch (SQLException exception) {
@@ -61,7 +72,15 @@ public class SuppliersDAO {
             }
         } catch (SQLException exception) {
             //error while preparing the query
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(resultSet);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return supplier;
@@ -72,6 +91,13 @@ public class SuppliersDAO {
      *
      */
     public List<Supplier> retrieveSuppliersInfo() throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<Supplier> suppliers = null;
 
         String query = "SELECT  sup.supplierId, sup.supplierName, sup.supplierRating, sup.freeShippingMin, sup.imagePath, " +
@@ -79,8 +105,13 @@ public class SuppliersDAO {
                 "       FROM suppliers as sup " +
                 "           JOIN shippingPolicy sP on sup.supplierId = sP.supplierId";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = conn.prepareStatement(query);
+            try {
+                resultSet = preparedStatement.executeQuery();
                 suppliers = buildSuppliersList(resultSet);
 
             } catch (SQLException exception) {
@@ -89,8 +120,17 @@ public class SuppliersDAO {
             }
         } catch (SQLException exception) {
             //error while preparing the query
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(resultSet);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
+
         return suppliers;
     }
 

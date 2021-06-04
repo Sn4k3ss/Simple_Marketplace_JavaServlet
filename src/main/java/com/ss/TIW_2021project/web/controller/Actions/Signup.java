@@ -23,18 +23,11 @@ import java.io.IOException;
 )
 public class Signup extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-       this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(req, resp, servletContext, req.getLocale());
-        templateEngine.process(PathUtils.pathToLoginPage, webContext, resp.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToLoginPage, webContext, resp.getWriter());
     }
 
     @Override
@@ -107,6 +100,6 @@ public class Signup extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
         request.setAttribute("signupErrorMessage", errorMessage);
-        templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
     }
 }

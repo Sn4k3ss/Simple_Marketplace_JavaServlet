@@ -2,8 +2,6 @@ package com.ss.TIW_2021project.web.filter;
 
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -13,16 +11,13 @@ import java.io.IOException;
 
 public class CheckNotLoggedUser implements Filter {
 
-    private ITemplateEngine templateEngine;
     private MarketplaceApp marketplaceApp;
-
 
     /**
      * @see Filter#init(FilterConfig)
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         this.marketplaceApp = MarketplaceApp.getInstance(filterConfig.getServletContext());
-        this.templateEngine = TemplateHandler.getTemplateEngine();
     }
 
 

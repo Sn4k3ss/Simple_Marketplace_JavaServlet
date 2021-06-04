@@ -7,6 +7,7 @@ import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
@@ -22,14 +23,6 @@ import java.io.IOException;
         value = "/search/products/ShowProductInfo"
 )
 public class ShowProductInfo extends HttpServlet {
-
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -64,7 +57,7 @@ public class ShowProductInfo extends HttpServlet {
         final WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("products", productsFromQuery);
         webContext.setVariable("selectedProductId", productId);
-        templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToSearchProductsPage, webContext, resp.getWriter());
     }
 
 }

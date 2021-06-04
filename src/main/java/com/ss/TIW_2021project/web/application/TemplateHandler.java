@@ -1,6 +1,5 @@
 package com.ss.TIW_2021project.web.application;
 
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
@@ -9,10 +8,13 @@ import javax.servlet.ServletContext;
 
 public class TemplateHandler {
 
-    private static TemplateEngine templateEngine = null;
+    public static TemplateEngine templateEngine = null;
+
+    private TemplateHandler() {
+
+    }
 
     public static void setupTemplateEngine(ServletContext servletContext) {
-
 
         if(TemplateHandler.templateEngine != null)
             return;
@@ -30,7 +32,4 @@ public class TemplateHandler {
         TemplateHandler.templateEngine = templateEngine;
     }
 
-    public static ITemplateEngine getTemplateEngine() {
-        return templateEngine;
-    }
 }

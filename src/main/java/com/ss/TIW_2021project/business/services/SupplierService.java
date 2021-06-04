@@ -40,7 +40,7 @@ public class SupplierService {
         try {
             SuppliersDAO suppliersDAO = new SuppliersDAO();
             return suppliersDAO.getSupplierById(supplierId);
-        } catch (UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
         }
     }
@@ -58,7 +58,7 @@ public class SupplierService {
             SuppliersDAO suppliersDAO = new SuppliersDAO();
             suppliers = suppliersDAO.retrieveSuppliersInfo();
 
-        } catch (UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);
         }
 

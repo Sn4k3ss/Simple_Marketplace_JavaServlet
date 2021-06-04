@@ -24,13 +24,6 @@ import java.io.IOException;
 )
 public class GoToHome extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-        this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -53,7 +46,7 @@ public class GoToHome extends HttpServlet {
         WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
         webContext.setVariable("userInfo", user);
         webContext.setVariable("products", retrievedProducts);
-        templateEngine.process(PathUtils.pathToHomePage, webContext, resp.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToHomePage, webContext, resp.getWriter());
     }
 
 }

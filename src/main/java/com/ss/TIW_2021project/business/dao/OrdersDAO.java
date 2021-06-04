@@ -18,28 +18,17 @@ import java.util.List;
  */
 public class OrdersDAO {
 
-    private Connection connection;
+    private Connection conn;
 
     /**
      * Instantiates a new Orders dao.
      *
      * @throws UnavailableException the unavailable exception
      */
-    public OrdersDAO() throws UtilityException {
-        connection = ConnectionHandler.getConnection();
+    public OrdersDAO() {
+        super();
     }
 
-
-    /**
-     * Gets order.
-     *
-     * @param orderId the order id
-     * @return the order
-     */
-    public Order getOrder(Integer orderId) {
-        //TODO
-        return null;
-    }
 
     /**
      * Gets all user orders
@@ -50,6 +39,12 @@ public class OrdersDAO {
      */
     public List<Order> retrieveUserOrders(Integer userId) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<Order> orders;
 
         String ordersListQuery = "SELECT * " +
@@ -57,16 +52,29 @@ public class OrdersDAO {
                 "WHERE userId = ? " +
                 "ORDER BY ord.orderPlacementDate desc";
 
-        try (PreparedStatement ordersListStm = connection.prepareStatement(ordersListQuery);) {
+        PreparedStatement ordersListStm = null;
+        ResultSet ordersRS = null;
+
+        try {
+            ordersListStm = conn.prepareStatement(ordersListQuery);
             ordersListStm.setInt(1, userId);
-            try (ResultSet ordersRS = ordersListStm.executeQuery();) {
+            try {
+                ordersRS = ordersListStm.executeQuery();
                 orders = buildOrdersList(ordersRS);
 
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
-        } catch (SQLException | DAOException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+        } catch (SQLException exception) {
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(ordersRS);
+                ConnectionHandler.closeQuietly(ordersListStm);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return orders;
@@ -80,6 +88,12 @@ public class OrdersDAO {
      */
     public void placeOrder(Order newOrder) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         int localOrderId = 0;
 
 
@@ -92,14 +106,18 @@ public class OrdersDAO {
         String insertInOrderProducts = "INSERT INTO orderProducts (orderId, supplierId, productId, unitCost, quantity)" +
                 "VALUES(?, ?, ?, ?, ?)";
 
-        try (
-                PreparedStatement orderTableUpdate = connection.prepareStatement(insertInOrdersTable);
-                PreparedStatement getOrderId = connection.prepareStatement(newOrderId);
-                PreparedStatement orderProductsTableUpdate = connection.prepareStatement(insertInOrderProducts);
-        ) {
+        PreparedStatement orderTableUpdate = null;
+        PreparedStatement getOrderId = null;
+        PreparedStatement orderProductsTableUpdate = null;
+        ResultSet rs = null;
+
+        try {
+            orderTableUpdate = conn.prepareStatement(insertInOrdersTable);
+            getOrderId = conn.prepareStatement(newOrderId);
+            orderProductsTableUpdate = conn.prepareStatement(insertInOrderProducts);
 
             //autocommit false
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
             //inserisco l'ordine nella table order
             orderTableUpdate.setInt(1, newOrder.getOrderSupplier().getSupplierId());
             orderTableUpdate.setInt(2, newOrder.getUser().getUserId());
@@ -110,7 +128,7 @@ public class OrdersDAO {
             orderTableUpdate.executeUpdate();
 
             //prendo l'id dell'ordine appena inserito
-            ResultSet rs = getOrderId.executeQuery();
+            rs = getOrderId.executeQuery();
             if (rs.next())
                 localOrderId = rs.getInt("lastOrderId");
 
@@ -126,18 +144,28 @@ public class OrdersDAO {
             }
 
             //committo i cambiamenti in entrambe le tabelle
-            connection.commit();
+            conn.commit();
 
         } catch (SQLException e) {
             //errore da loggare
-            if (connection != null) {
+            if (conn != null) {
                 try {
-                    connection.rollback();
+                    conn.rollback();
                 } catch (SQLException ex) {
                     //errore da loggare
                 }
             }
             throw new DAOException(DAOException._FAIL_TO_INSERT);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(orderTableUpdate);
+                ConnectionHandler.closeQuietly(getOrderId);
+                ConnectionHandler.closeQuietly(orderProductsTableUpdate);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
 
@@ -150,7 +178,7 @@ public class OrdersDAO {
      * @return an {@link List<Order> ordersList} if there's at least one entry in the resultSet
      * @throws SQLException
      */
-    private List<Order> buildOrdersList(ResultSet resultSet) throws SQLException {
+    private List<Order> buildOrdersList(ResultSet resultSet) throws SQLException, DAOException {
 
         List<Order> orders = new ArrayList<>();
 
@@ -177,7 +205,7 @@ public class OrdersDAO {
 
             List<ShoppingCartProduct> orderProductsList = new ArrayList<>();
             ShoppingCartProduct prod;
-            try (PreparedStatement orderProductsListQueryStm = connection.prepareStatement(orderProductsListQuery);)
+            try (PreparedStatement orderProductsListQueryStm = conn.prepareStatement(orderProductsListQuery);)
             {
                 orderProductsListQueryStm.setInt(1, order.getOrderId());
                 try (ResultSet orderProductsRS = orderProductsListQueryStm.executeQuery();) {

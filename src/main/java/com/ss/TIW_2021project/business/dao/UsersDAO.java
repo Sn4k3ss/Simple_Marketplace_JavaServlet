@@ -19,15 +19,15 @@ import java.util.List;
  */
 public class UsersDAO {
 
-    private Connection connection;
+    private Connection conn;
 
     /**
      * Instantiates a new Users dao.
      *
      * @throws UnavailableException the unavailable exception
      */
-    public UsersDAO() throws UtilityException {
-        connection = ConnectionHandler.getConnection();
+    public UsersDAO() {
+        super();
     }
 
 
@@ -41,37 +41,46 @@ public class UsersDAO {
      */
     public User getUserById(Integer userId) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         User userRetrieved = null;
-
         String userQuery = "SELECT * FROM users WHERE userId = ?";
-
         String addressesQuery = "" +
                 "SELECT sA.userId, userAddressId, recipient, address, city, state, phone " +
                 "from users " +
                 "    join shippingAddresses sA on users.userId = sA.userId " +
                 "where sA.userId = ?";
 
-        try (
-                PreparedStatement userQueryStm = connection.prepareStatement(userQuery);
-                PreparedStatement addressesQueryStm = connection.prepareStatement(addressesQuery)
-        ) {
+        PreparedStatement userQueryStm = null;
+        PreparedStatement addressesQueryStm = null;
+        ResultSet userRs = null;
+        ResultSet addrRs = null;
+
+        try {
+            userQueryStm = conn.prepareStatement(userQuery);
+            addressesQueryStm = conn.prepareStatement(addressesQuery);
+
             userQueryStm.setInt(1, userId);
             addressesQueryStm.setInt(1, userId);
-            try (
-                    ResultSet rs = userQueryStm.executeQuery();
-                    ResultSet shipAddrRes = addressesQueryStm.executeQuery();
-            ) {
-                while (rs.next()) {
+            try {
+                userRs = userQueryStm.executeQuery();
+                addrRs = addressesQueryStm.executeQuery();
+
+                while (userRs.next()) {
                     userRetrieved = new User();
-                    userRetrieved.setUserId(rs.getInt("userId"));
-                    userRetrieved.setEmail(rs.getString("email"));
+                    userRetrieved.setUserId(userRs.getInt("userId"));
+                    userRetrieved.setEmail(userRs.getString("email"));
                     //userRetrieved.setPassword(result.getString("password"));
-                    userRetrieved.setUserName(rs.getString("userName"));
-                    userRetrieved.setUserSurname(rs.getString("userSurname"));
+                    userRetrieved.setUserName(userRs.getString("userName"));
+                    userRetrieved.setUserSurname(userRs.getString("userSurname"));
                 }
 
                 if (userRetrieved != null)
-                    userRetrieved.setShippingAddresses(buildUserAddresses(shipAddrRes));
+                    userRetrieved.setShippingAddresses(buildUserAddresses(addrRs));
 
 
             } catch (SQLException exception) {
@@ -81,7 +90,17 @@ public class UsersDAO {
 
         } catch (SQLException exception) {
             //error while preparing the query
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(userRs);
+                ConnectionHandler.closeQuietly(addrRs);
+                ConnectionHandler.closeQuietly(userQueryStm);
+                ConnectionHandler.closeQuietly(addressesQueryStm);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return userRetrieved;
@@ -90,12 +109,23 @@ public class UsersDAO {
 
     public boolean emailTaken(String email) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         String query = "SELECT * FROM users WHERE email = ?";
 
-        try ( PreparedStatement preparedStatement = connection.prepareStatement(query); ) {
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        try {
+            preparedStatement = conn.prepareStatement(query);
             preparedStatement.setString(1, email);
 
-            try ( ResultSet rs = preparedStatement.executeQuery(); ) {
+            try {
+                rs = preparedStatement.executeQuery();
                 return rs.next();
 
             } catch (SQLException exception) {
@@ -104,12 +134,27 @@ public class UsersDAO {
             }
         } catch (SQLException exception) {
             //error while preparing the query
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
     }
 
     public void registerUser(String email, String password, String firstName, String lastName,
                              String address, String addrCity, String addrState, String addrPhone) throws DAOException {
+
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
 
         int localUserId = -1;
 
@@ -124,14 +169,19 @@ public class UsersDAO {
         String insertAddress = "INSERT INTO shippingAddresses (userId, userAddressId, recipient, address, city, state, phone)" +
                 "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-        try (
-                PreparedStatement userTableUpdate = connection.prepareStatement(insertInUserTable);
-                PreparedStatement getUserId = connection.prepareStatement(newUserId);
-                PreparedStatement userAddressUpdate = connection.prepareStatement(insertAddress);
-        ) {
+        PreparedStatement userTableUpdate = null;
+        PreparedStatement getUserId = null;
+        PreparedStatement userAddressUpdate = null;
+
+        ResultSet rs = null;
+
+        try {
+            userTableUpdate = conn.prepareStatement(insertInUserTable);
+            getUserId = conn.prepareStatement(newUserId);
+            userAddressUpdate = conn.prepareStatement(insertAddress);
 
             //autocommit false
-            connection.setAutoCommit(false);
+            conn.setAutoCommit(false);
             //inserisco l'utente nella tabella degli utenti
             userTableUpdate.setString(1, firstName);
             userTableUpdate.setString(2, lastName);
@@ -140,7 +190,7 @@ public class UsersDAO {
             userTableUpdate.executeUpdate();
 
             //prendo l'id dell'utente appena inserito
-            ResultSet rs = getUserId.executeQuery();
+            rs = getUserId.executeQuery();
             if (rs.next())
                 localUserId = rs.getInt("lastUserId");
 
@@ -159,19 +209,29 @@ public class UsersDAO {
 
 
             //committo i cambiamenti in entrambe le tabelle
-            connection.commit();
+            conn.commit();
 
         } catch (SQLException e) {
             //errore da loggare
-            if (connection != null) {
+            if (conn != null) {
                 try {
-                    connection.rollback();
+                    conn.rollback();
                 } catch (SQLException ex) {
                     //errore da loggare
                     //cannot rollback
                 }
             }
             throw new DAOException(DAOException._FAIL_TO_INSERT);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(userTableUpdate);
+                ConnectionHandler.closeQuietly(getUserId);
+                ConnectionHandler.closeQuietly(userAddressUpdate);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
     }
 
@@ -186,30 +246,50 @@ public class UsersDAO {
      */
     public User getUser(String email, String password) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
+
         User userRetrieved = null;
 
         String query = "SELECT * FROM users WHERE email = ? AND password = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        try {
+            preparedStatement = conn.prepareStatement(query);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
 
-            try (ResultSet result = preparedStatement.executeQuery();) {
+            try {
+                rs = preparedStatement.executeQuery();
 
-                while (result.next()) {
+                while (rs.next()) {
                     userRetrieved = new User();
-                    userRetrieved.setUserId(result.getInt("userId"));
-                    userRetrieved.setEmail(result.getString("email"));
-                    userRetrieved.setPassword(result.getString("password"));
-                    userRetrieved.setUserName(result.getString("userName"));
-                    userRetrieved.setUserSurname(result.getString("userSurname"));
+                    userRetrieved.setUserId(rs.getInt("userId"));
+                    userRetrieved.setEmail(rs.getString("email"));
+                    userRetrieved.setPassword(rs.getString("password"));
+                    userRetrieved.setUserName(rs.getString("userName"));
+                    userRetrieved.setUserSurname(rs.getString("userSurname"));
 
                 }
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
         return userRetrieved;
     }
@@ -223,21 +303,32 @@ public class UsersDAO {
      */
     public List<User> getAllUsers() throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<User> userList = new ArrayList<>();
 
         String query = "SELECT * FROM users ";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
 
-            try (ResultSet result = preparedStatement.executeQuery();) {
+        try {
+            preparedStatement = conn.prepareStatement(query);
+
+            try {
+                rs = preparedStatement.executeQuery();
                 User user = null;
-                while (result.next()) {
+                while (rs.next()) {
                     user = new User();
-                    user.setUserId(result.getInt("userId"));
-                    user.setEmail(result.getString("email"));
-                    user.setPassword(result.getString("password"));
-                    user.setUserName(result.getString("userName"));
-                    user.setUserSurname(result.getString("userSurname"));
+                    user.setUserId(rs.getInt("userId"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setUserName(rs.getString("userName"));
+                    user.setUserSurname(rs.getString("userSurname"));
                     userList.add(user);
                 }
 
@@ -245,7 +336,15 @@ public class UsersDAO {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException | DAOException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return userList;
@@ -261,6 +360,12 @@ public class UsersDAO {
      */
     public List<ShippingAddress> getShippingAddresses(Integer userId) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<ShippingAddress> userShippingAddresses = new ArrayList<>();
 
         String query = "" +
@@ -269,17 +374,30 @@ public class UsersDAO {
                 "   JOIN shippingAddresses sA on user.userId = sA.userId " +
                 "WHERE user.userId = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);) {
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+
+        try {
+            preparedStatement = conn.prepareStatement(query);
             preparedStatement.setInt(1, userId);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                userShippingAddresses = buildUserAddresses(resultSet);
+            try {
+                rs = preparedStatement.executeQuery();
+                userShippingAddresses = buildUserAddresses(rs);
 
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(preparedStatement);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return userShippingAddresses;

@@ -16,7 +16,7 @@ public class ProductService {
 
 
     public ProductService() {
-
+        super();
     }
 
     public List<SupplierProduct> getProductsBySupplier(Integer idSupplier) throws ServiceException {
@@ -25,7 +25,7 @@ public class ProductService {
         try {
             ProductsDAO productsDAO = new ProductsDAO();
             products = productsDAO.getProductsBySupplier(idSupplier);
-        } catch (DAOException | UtilityException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
@@ -44,7 +44,7 @@ public class ProductService {
         try {
             ProductsDAO productsDAO = new ProductsDAO();
             retrievedProducts = productsDAO.getProductsMatching(keyword);
-        } catch (UtilityException | DAOException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
@@ -66,7 +66,7 @@ public class ProductService {
         try {
             productsDAO = new ProductsDAO();
             mostRecentProducts = productsDAO.getLastUserProduct(userId);
-        }  catch (UtilityException | DAOException e) {
+        }  catch ( DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
 
@@ -91,7 +91,7 @@ public class ProductService {
         try {
             ProductsDAO productsDAO = new ProductsDAO();
             productsDAO.setProductDisplayed(userId, productId);
-        }  catch (UtilityException | DAOException e) {
+        }  catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_UPDATE_USERS_LAST_PRODUCTS);
         }
 
@@ -138,7 +138,7 @@ public class ProductService {
         try {
             ProductsDAO productsDAO = new ProductsDAO();
             productsDAO.setProductsInfo(orders);
-        } catch (DAOException | UtilityException exception) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_PRODUCTS_INFO);
         }
     }

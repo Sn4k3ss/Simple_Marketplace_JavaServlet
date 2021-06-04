@@ -23,13 +23,6 @@ import java.io.IOException;
 )
 public class Login extends HttpServlet {
 
-    private ITemplateEngine templateEngine;
-
-    @Override
-    public void init() throws ServletException {
-       this.templateEngine = TemplateHandler.getTemplateEngine();
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
@@ -91,7 +84,7 @@ public class Login extends HttpServlet {
         ServletContext servletContext = getServletContext();
         final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
         request.setAttribute("loginErrorMessage", errorMessage);
-        templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
+        TemplateHandler.templateEngine.process(PathUtils.pathToLoginPage, webContext, response.getWriter());
 
     }
 }

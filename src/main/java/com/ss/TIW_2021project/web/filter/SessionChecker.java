@@ -3,7 +3,6 @@ package com.ss.TIW_2021project.web.filter;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.*;
@@ -14,8 +13,6 @@ import java.io.IOException;
 
 public class SessionChecker implements Filter {
 
-    private ServletContext servletContext;
-    private ITemplateEngine templateEngine;
     private MarketplaceApp marketplaceApp;
 
     public SessionChecker() {
@@ -23,12 +20,9 @@ public class SessionChecker implements Filter {
     }
 
 
-
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         this.marketplaceApp = MarketplaceApp.getInstance(filterConfig.getServletContext());
-        this.templateEngine = TemplateHandler.getTemplateEngine();
-        this.servletContext = filterConfig.getServletContext();
     }
 
     @Override
@@ -78,7 +72,7 @@ public class SessionChecker implements Filter {
 
         ServletContext servletContext = request.getServletContext();
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
+        TemplateHandler.templateEngine.process(path, ctx, response.getWriter());
 
     }
 }

@@ -16,24 +16,24 @@ public class ProductsDAO {
 
     private Connection conn;
 
-    public ProductsDAO() throws UtilityException {
-        conn = ConnectionHandler.getConnection();
+    public ProductsDAO()  {
+        super();
     }
 
     public List<SupplierProduct> getProductsBySupplier(Integer supplierId) throws DAOException {
 
         try {
-            conn = ConnectionHandler.getConnection();
+            conn = ConnectionHandler.getConnectionFromPool();
         } catch (UtilityException e) {
             throw new DAOException(DAOException._ERROR_GETTING_CONN);
         }
 
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-
         List<SupplierProduct> productsList = new ArrayList<>();
 
         String query = "SELECT * FROM productsCatalogue WHERE supplierId = ? ";
+
+        ResultSet rs = null;
+        PreparedStatement ps = null;
 
         try {
             ps = conn.prepareStatement(query);
@@ -52,14 +52,16 @@ public class ProductsDAO {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
         } finally {
-            ConnectionHandler.closeQuietly(rs);
-            ConnectionHandler.closeQuietly(ps);
-            ConnectionHandler.closeQuietly(conn);
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
-
-
 
 
         return productsList;
@@ -71,6 +73,12 @@ public class ProductsDAO {
      * @return catalogue containing every product in the marketplace
      */
     public ProductsCatalogue getCatalogue() throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
 
         List<SupplierProduct> productsList = new ArrayList<>();
 
@@ -88,19 +96,24 @@ public class ProductsDAO {
                     "JOIN suppliers ON productsCatalogue.supplierId=suppliers.supplierId " +
                 "ORDER BY products.productId";
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-            try (ResultSet result = preparedStatement.executeQuery();) {
+        try {
+            ps = conn.prepareStatement(query);
+
+            try {
+                rs = ps.executeQuery();
                 SupplierProduct supplierProduct = null;
-                while (result.next()) {
+                while (rs.next()) {
                     supplierProduct = new SupplierProduct();
-                    supplierProduct.setProductId(result.getInt("productId"));
-                    supplierProduct.setProductName(result.getString("productName"));
-                    supplierProduct.setProductDescription(result.getString("productDescription"));
-                    supplierProduct.setProductCategory(result.getString("categoryName"));
-                    supplierProduct.setSupplierId(result.getInt("supplierId"));
-                    supplierProduct.setSupplierName(result.getString("supplierName"));
-                    supplierProduct.setSupplierProductCost(result.getFloat("productCost"));
+                    supplierProduct.setProductId(rs.getInt("productId"));
+                    supplierProduct.setProductName(rs.getString("productName"));
+                    supplierProduct.setProductDescription(rs.getString("productDescription"));
+                    supplierProduct.setProductCategory(rs.getString("categoryName"));
+                    supplierProduct.setSupplierId(rs.getInt("supplierId"));
+                    supplierProduct.setSupplierName(rs.getString("supplierName"));
+                    supplierProduct.setSupplierProductCost(rs.getFloat("productCost"));
 
                     productsList.add(supplierProduct);
                 }
@@ -108,7 +121,15 @@ public class ProductsDAO {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         ProductsCatalogue catalogue = new ProductsCatalogue(productsList);
@@ -122,6 +143,13 @@ public class ProductsDAO {
      * @return the last 5 user product
      */
     public ProductsCatalogue getLastUserProduct(Integer userId) throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<SupplierProduct> productsList;
 
         String query = "SELECT " +
@@ -140,18 +168,30 @@ public class ProductsDAO {
                 "JOIN productsCategory C on C.categoryId = p.categoryId " +
                 "ORDER BY b.timestamp desc, pc.productCost";
 
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
-            preparedStatement.setInt(1, userId);
+        try {
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
 
-            try (ResultSet rs = preparedStatement.executeQuery()) {
+            try {
+                rs = ps.executeQuery();
                 productsList = buildSupplierProductsList(rs);
 
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         return new ProductsCatalogue(productsList);
@@ -166,6 +206,12 @@ public class ProductsDAO {
      * @throws SQLException if an error appears while interacting with the db
      */
     public ProductsCatalogue getRandomDiscountedProducts() throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
 
         Integer categoryId;
         List<SupplierProduct> productsList = new ArrayList<>();
@@ -200,15 +246,29 @@ public class ProductsDAO {
                 "WHERE pc1.productId = prod.productId " +
                 "ORDER BY productCost ";
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
-            preparedStatement.setInt(1, categoryId);
-            try (ResultSet rs = preparedStatement.executeQuery();) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, categoryId);
+
+            try {
+                rs = ps.executeQuery();
                 productsList = buildSupplierProductsList(rs);
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
 
@@ -223,6 +283,13 @@ public class ProductsDAO {
      * @throws SQLException if an error appears while interacting with the db
      */
     public ProductsCatalogue getProductsMatching(String keyword) throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
         List<SupplierProduct> productsList = new ArrayList<>();
         String query = "SELECT " +
                 "p.productId, p.productName, p.productDescription, p.photoPath," +
@@ -236,16 +303,29 @@ public class ProductsDAO {
                 "WHERE REGEXP_LIKE(p.productName, '"+ keyword +"') OR REGEXP_LIKE(p.productDescription, '" + keyword + "')" +
                 "ORDER BY pc.productCost, p.productId ";
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query);) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-            try (ResultSet resultSet = preparedStatement.executeQuery();) {
-                productsList = buildSupplierProductsList(resultSet);
+        try {
+            ps = conn.prepareStatement(query);
+
+            try {
+                rs = ps.executeQuery();
+                productsList = buildSupplierProductsList(rs);
 
             } catch (SQLException exception) {
                 throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
             }
         } catch (SQLException exception) {
-            throw new DAOException(DAOException._MALFORMED_QUERY);
+            throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(rs);
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
 
         ProductsCatalogue catalogue = new ProductsCatalogue(productsList);
@@ -261,23 +341,32 @@ public class ProductsDAO {
      */
     public void setProductDisplayed(Integer userId, Integer productId) throws DAOException {
 
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
+
 
         String query = "INSERT INTO productsHistory (productId, userId) " +
                 "VALUES(?, ?) " +
                 "ON DUPLICATE KEY UPDATE timestamp = current_timestamp ";
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(query);
-             CallableStatement callableStatement = conn.prepareCall("{call maxFiveLastProducts(?)}")
-        ) {
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+
+        try {
+            ps = conn.prepareStatement(query);
+            cs = conn.prepareCall("{call maxFiveLastProducts(?)}");
 
             conn.setAutoCommit(false);
 
-            preparedStatement.setInt(1, productId);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate() ;
+            ps.setInt(1, productId);
+            ps.setInt(2, userId);
+            ps.executeUpdate() ;
 
-            callableStatement.setInt(1, userId);
-            callableStatement.execute();
+            cs.setInt(1, userId);
+            cs.execute();
 
             conn.commit();
 
@@ -291,10 +380,24 @@ public class ProductsDAO {
                 }
             }
             throw new DAOException(DAOException._FAIL_TO_INSERT);
+        } finally {
+            try {
+                ConnectionHandler.closeQuietly(ps);
+                ConnectionHandler.closeQuietly(cs);
+                ConnectionHandler.releaseConnectionToPool(conn);
+            } catch (UtilityException e) {
+                throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+            }
         }
     }
 
     public void setProductsInfo(List<Order> orders) throws DAOException {
+
+        try {
+            conn = ConnectionHandler.getConnectionFromPool();
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_GETTING_CONN);
+        }
 
         String prodQuery = "" +
                 "SELECT productName, pC.categoryId ,productDescription, categoryName, photoPath " +
@@ -302,24 +405,37 @@ public class ProductsDAO {
                 "JOIN productsCategory pC on pC.categoryId = products.categoryId " +
                 "WHERE productId = ?";
 
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
         for (Order order : orders) {
             for (ShoppingCartProduct shoppingCartProduct : order.getOrderProductsList()) {
 
-                try (PreparedStatement prodQueryStm = conn.prepareStatement(prodQuery);) {
-                    prodQueryStm.setInt(1, shoppingCartProduct.getProductId());
+                try {
+                    ps = conn.prepareStatement(prodQuery);
+                    ps.setInt(1, shoppingCartProduct.getProductId());
 
-                    try (ResultSet prodRs = prodQueryStm.executeQuery();) {
-                        buildProductInfo(prodRs, shoppingCartProduct);
+                    try {
+                        rs = ps.executeQuery();
+                        buildProductInfo(rs, shoppingCartProduct);
 
                     } catch (SQLException exception) {
                         throw new DAOException(DAOException._FAIL_TO_RETRIEVE);
                     }
                 } catch (SQLException exception) {
-                    throw new DAOException(DAOException._MALFORMED_QUERY);
+                    throw new DAOException(DAOException._ERROR_PREPARING_QUERY);
                 }
             }
         }
 
+
+        try {
+            ConnectionHandler.closeQuietly(ps);
+            ConnectionHandler.closeQuietly(rs);
+            ConnectionHandler.releaseConnectionToPool(conn);
+        } catch (UtilityException e) {
+            throw new DAOException(DAOException._ERROR_RELEASING_CONN);
+        }
 
     }
 

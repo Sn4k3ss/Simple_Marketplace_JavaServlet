@@ -1,6 +1,5 @@
 package com.ss.TIW_2021project.business.services;
 
-import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.OrdersDAO;
@@ -13,6 +12,7 @@ import java.util.*;
 public class OrderService {
 
     public OrderService() {
+        super();
     }
 
 
@@ -45,7 +45,7 @@ public class OrderService {
         try {
             OrdersDAO ordersDAO = new OrdersDAO();
             ordersDAO.placeOrder(newOrder);
-        } catch (DAOException | UtilityException ex) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._PLACE_ORDER_ERROR);
         }
 
@@ -57,7 +57,7 @@ public class OrderService {
         try {
             OrdersDAO ordersDAO = new OrdersDAO();
             orders = ordersDAO.retrieveUserOrders(userId);
-        } catch (DAOException | UtilityException e) {
+        } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_ORDERS);
         }
 

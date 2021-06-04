@@ -55,8 +55,8 @@
         <tbody>
             <tr th:each="productId : ${products.supplierProductMap.keySet()}" th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
                 <td class="table-product-img">
-                    <a th:href="@{/search/products/showProductInfo(productId=${productId})}" >
-                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
+                    <a th:href="@{/search/products/ShowProductInfo(productId=${productId})}" >
+                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image" src=""/>
                     </a>
                 </td>
                 <td>
