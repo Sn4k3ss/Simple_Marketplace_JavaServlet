@@ -1,7 +1,8 @@
 package com.ss.TIW_2021project.business.entities;
 
+import com.ss.TIW_2021project.business.entities.product.ShoppingCartProduct;
+import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.MutliMapUtility;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public class ShoppingCart {
     /**
      * Instantiates a new Products catalogue.
      *
-     * @param productsList a {@link List<SupplierProduct> productsList from which the catalogue will be generated}
+     * @param productsList a {@link List< SupplierProduct > productsList from which the catalogue will be generated}
      */
     public ShoppingCart(List<ShoppingCartProduct> productsList) {
 

@@ -20,8 +20,7 @@ public class MarketplaceApp {
         try {
             ConnectionHandler.setupConnectionPool(servletContext);
         } catch (UtilityException e) {
-            //errore creazione connection pool
-            e.printStackTrace();
+            System.out.println("Error creating connection pool");
         }
     }
 

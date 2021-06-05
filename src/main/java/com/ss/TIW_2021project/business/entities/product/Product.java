@@ -1,4 +1,4 @@
-package com.ss.TIW_2021project.business.entities;
+package com.ss.TIW_2021project.business.entities.product;
 
 
 public class Product {

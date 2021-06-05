@@ -1,7 +1,7 @@
 package com.ss.TIW_2021project.business.services;
 
 import com.ss.TIW_2021project.business.entities.ShoppingCart;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;

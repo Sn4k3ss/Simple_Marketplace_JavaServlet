@@ -3,10 +3,10 @@ package com.ss.TIW_2021project.business.dao;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.entities.Order;
-import com.ss.TIW_2021project.business.entities.Product;
+import com.ss.TIW_2021project.business.entities.product.Product;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
-import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.entities.product.ShoppingCartProduct;
+import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.ConnectionHandler;
 
 import java.sql.*;

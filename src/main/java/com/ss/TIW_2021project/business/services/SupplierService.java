@@ -1,16 +1,15 @@
 package com.ss.TIW_2021project.business.services;
 
-import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.SuppliersDAO;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.ShippingAddress;
-import com.ss.TIW_2021project.business.entities.ShoppingCartProduct;
+import com.ss.TIW_2021project.business.entities.product.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.ItemRangeCost;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
 import com.ss.TIW_2021project.business.entities.supplier.ShippingPolicy;
 
 import javax.servlet.UnavailableException;

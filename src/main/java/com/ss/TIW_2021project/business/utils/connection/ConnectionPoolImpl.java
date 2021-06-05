@@ -3,8 +3,7 @@ package com.ss.TIW_2021project.business.utils.connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class ConnectionPoolImpl implements ConnectionPool {
 
@@ -12,13 +11,13 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private String user;
     private String password;
     private String driver;
-    private List<Connection> connectionPool;
-    private List<Connection> usedConnections = new ArrayList<>();
-    private static int INITIAL_POOL_SIZE = 10;
+    private LinkedList<Connection> connectionPool;
+    private LinkedList<Connection> usedConnections = new LinkedList<>();
+    private static int INITIAL_POOL_SIZE = 5;
     private static int MAX_POOL_SIZE = 10;
     private static int MAX_TIMEOUT = 300;
 
-    private ConnectionPoolImpl(String url, String user, String password, String driver, List<Connection> connectionPool) {
+    private ConnectionPoolImpl(String url, String user, String password, String driver, LinkedList<Connection> connectionPool) {
         this.dbUrl = url;
         this.user = user;
         this.password = password;
@@ -28,7 +27,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     public static ConnectionPoolImpl create(String url, String user, String password, String driver) throws SQLException {
 
-        List<Connection> pool = new ArrayList<>(INITIAL_POOL_SIZE);
+        LinkedList<Connection> pool = new LinkedList<>();
 
         for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
             pool.add(createConnection(url, user, password, driver));
@@ -40,7 +39,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     //return null if no connection is available
     @Override
-    public Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
 
         if (connectionPool.isEmpty()) {
             if (usedConnections.size() < MAX_POOL_SIZE) {
@@ -61,7 +60,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public boolean releaseConnection(Connection connection) {
+    public synchronized boolean releaseConnection(Connection connection) {
         connectionPool.add(connection);
         return usedConnections.remove(connection);
     }

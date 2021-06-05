@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.business.entities;
 
+import com.ss.TIW_2021project.business.entities.product.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 import java.time.LocalDate;

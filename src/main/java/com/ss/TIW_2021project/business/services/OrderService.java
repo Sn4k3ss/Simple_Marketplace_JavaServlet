@@ -4,6 +4,7 @@ import com.ss.TIW_2021project.business.Exceptions.DAOException;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.dao.OrdersDAO;
 import com.ss.TIW_2021project.business.entities.*;
+import com.ss.TIW_2021project.business.entities.product.ShoppingCartProduct;
 import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 import java.time.LocalDate;
@@ -46,7 +47,7 @@ public class OrderService {
             OrdersDAO ordersDAO = new OrdersDAO();
             ordersDAO.placeOrder(newOrder);
         } catch (DAOException e) {
-            throw new ServiceException(ServiceException._PLACE_ORDER_ERROR);
+            throw new ServiceException(ServiceException._FAILED_TO_PLACE_ORDER);
         }
 
     }

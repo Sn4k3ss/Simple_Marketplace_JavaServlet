@@ -1,6 +1,6 @@
-package com.ss.TIW_2021project.business.entities.supplier;
+package com.ss.TIW_2021project.business.entities.product;
 
-import com.ss.TIW_2021project.business.entities.Product;
+import com.ss.TIW_2021project.business.entities.supplier.Supplier;
 
 public class SupplierProduct extends Product {
 

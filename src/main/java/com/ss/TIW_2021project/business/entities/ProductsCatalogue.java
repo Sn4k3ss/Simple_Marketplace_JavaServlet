@@ -1,10 +1,8 @@
 package com.ss.TIW_2021project.business.entities;
 
-import com.google.common.collect.*;
-import com.ss.TIW_2021project.business.entities.supplier.SupplierProduct;
+import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
 import com.ss.TIW_2021project.business.utils.MutliMapUtility;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
