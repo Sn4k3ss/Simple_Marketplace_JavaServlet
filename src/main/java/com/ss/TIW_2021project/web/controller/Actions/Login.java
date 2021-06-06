@@ -8,6 +8,7 @@ import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.io.IOException;
         description = "This is my first annotated servlet",
         value = "/login"
 )
+@MultipartConfig
 public class Login extends HttpServlet {
 
     @Override

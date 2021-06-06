@@ -11,6 +11,7 @@ import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import java.util.List;
         description = "This servlet handles the 'add to cart' action whenever triggered",
         value = "/products/AddToCart"
 )
+@MultipartConfig
 public class AddToCart extends HttpServlet {
 
     @Override
