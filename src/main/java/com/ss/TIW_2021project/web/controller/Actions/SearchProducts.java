@@ -3,16 +3,10 @@ package com.ss.TIW_2021project.web.controller.Actions;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.services.SupplierService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

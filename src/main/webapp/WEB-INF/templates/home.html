@@ -3,10 +3,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 
 <head>
-  <title>Marketplace App</title>
-  <meta charset="UTF-8">
+
+    <title>Marketplace App</title>
+    <meta charset="UTF-8">
 
     <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/global.css}" href="../../css/global.css"/>
+
+    <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="../../images/website-icon.ico"/>
 
 </head>
 
@@ -15,7 +18,7 @@
     <header>
         <div>
             <a th:href="@{/GoToHome}" href="#" class="logo">
-                <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
+                <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src="../../images/website-logo.png"/>
             </a>
 
             <div class="header-right">
@@ -35,10 +38,11 @@
 
 <!-- Search form-->
 <div class="search-form">
-    <form action="search/products" method="GET">
-        <p>Cosa vuoi cercare di bello? </p>
-        <input th:placeholder="'Oasis..'" name="keyword" >
-        <input class="button" type="submit" value="vai!">
+    <form th:action="${#request.contextPath} + '/search/products'" method="GET">
+        <div class="form-group">
+            <input  th:placeholder="'Oasis latest album...'" name="keyword" >
+            <input class="button" type="submit" value="Go!">
+        </div>
     </form>
     <div class="" th:if="${searchErrorMessage}">
         <span th:text="${searchErrorMessage}">Email or password not valid!</span>
@@ -55,7 +59,7 @@
             <th colspan="2" scope="col">Product</th>
             <th scope="col">Description</th>
             <th scope="col">Cost</th>
-            <th colspan="2" scope="col">Supplier</th>
+            <th scope="col">Supplier</th>
             <th scope="col">Add to cart</th>
         </tr>
         </thead>
@@ -65,8 +69,8 @@
 
 
             <!-- IMMAGINE PRODOTTO -->
-            <td th:class="table-product-img">
-                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
+            <td class="table-product-img">
+                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image" src="../../images/prod-ex.jpeg"/>
             </td>
 
 
@@ -84,12 +88,8 @@
 
             <!-- IMMAGINE SUPPLIER -->
             <td class="table-supplier-img">
-                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image"/>
+                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image" src="../../images/suppl-ex.png"/>
             </td>
-
-
-            <!-- NOME SUPPLIER -->
-            <td th:text="${productInfo1.supplierName}"></td>
 
 
             <!-- BUY BUTTON -->
@@ -102,7 +102,7 @@
                     <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
                     <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
                     <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
-                    <input class="clickable-link" type="submit" value="One-click buy" />
+                    <input class="clickable-link clickable-link-medium" type="submit" value="One-click buy" />
                 </form>
             </td>
         </tr>

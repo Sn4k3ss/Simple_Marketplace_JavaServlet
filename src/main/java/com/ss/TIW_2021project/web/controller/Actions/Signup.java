@@ -5,7 +5,6 @@ import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;

@@ -1,11 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Search</title>
 
-    <link rel="stylesheet" type="text/css" media="all"
-          href="../../css/global.css" th:href="@{/css/global.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/global.css" th:href="@{/css/global.css}" />
+
+    <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="../../images/website-icon.ico"/>
+
 </head>
 
 
@@ -30,14 +35,15 @@
 
     <!-- SEARCH FORM -->
     <div class="search-form">
-        <form th:class="styled-form" th:action=" ${#request.contextPath} + '/search/products' " method="GET">
-            <p>Cosa vuoi cercare di bello? </p>
-            <input th:placeholder="'Oasis..'" name="keyword" >
-            <input class="button" type="submit" value="vai!">
+        <form th:action="${#request.contextPath} + '/search/products'" method="GET">
+            <div class="form-group">
+                <input  th:placeholder="'Oasis latest album...'" name="keyword" >
+                <input class="button" type="submit" value="Go!">
+            </div>
         </form>
     </div>
 
-
+    <!-- VISTA PRODOTTI -->
     <div th:if="${not #maps.isEmpty(products.supplierProductMap)}">
         <table class="styled-table">
             <caption>Products from the marketplace</caption>
@@ -52,8 +58,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                <tr th:each="productId : ${products.supplierProductMap.keySet()}" th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
+            <tbody th:each="productId : ${products.supplierProductMap.keySet()}">
+                <tr  th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
 
                     <!-- IMMAGINE PRODOTTO -->
                     <td class="table-product-img">
@@ -85,13 +91,16 @@
                             <input type="hidden" th:value="*{productId}"    name="productId" />
                             <input type="hidden" th:value="*{supplierId}"   name="supplierId" />
                             <input type="hidden" th:value="*{supplierProductCost}"   name="supplierProductCost" />
-                            <input type="submit" class="clickable-link" value="One-click buy" />
+                            <input type="submit" class="clickable-link clickable-link-medium" value="One-click buy" />
                         </form>
                     </td>
 
+                </tr>
+
+                <tr th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
                     <!-- TABLE CON INFO SUI VENDITORI-->
-                    <td>
-                        <table class="styled-table" th:if="${selectedProductId.equals(productInfo1.productId)}">
+                    <td colspan="7">
+                        <table class="styled-table" th:if="${selectedProductId.equals(productInfo1.productId)}" >
                             <thead>
 
                             <tr>
@@ -100,14 +109,18 @@
                                 <th scope="col">Rating</th>
                                 <th scope="col">Free shipping from</th>
                                 <th scope="col">Range</th>
+                                <th scope="col">Items already in cart</th>
+                                <th scope="col">Amount</th>
                                 <th scope="col">Add to cart</th>
                             </tr>
 
                             </thead>
-                            <tr th:each="supplierProduct : ${products.supplierProductMap.get(productId)}">
+                            <tr th:each="supplierProduct : ${products.supplierProductMap.get(selectedProductId)}">
 
-                                <!-- NOME SUPPLIER -->
-                                <td th:text="${supplierProduct.supplier.supplierName}">Venditore 0</td>
+                                <!-- IMMAGINE SUPPLIER -->
+                                <td class="table-supplier-img">
+                                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${supplierProduct.supplier.imagePath}" alt="supplier-image" src="../../images/suppl-ex.png"/>
+                                </td>
 
                                 <!-- PREZZO PRODOTTO -->
                                 <td>&euro; <span th:text="${#numbers.formatDecimal(supplierProduct.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
@@ -141,6 +154,16 @@
                                     </table>
                                 </td>
 
+                                <!-- HOW MANY ITEMS -->
+                                <td th:if="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" th:text="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" >3</td>
+                                <td th:unless="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" >0</td>
+
+
+                                <!-- HOW MUCH TOTAL -->
+                                <td th:if="${session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId)}">&euro; <span th:text="${#numbers.formatDecimal(session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId), 1, 2, 'COMMA')}">10.00</span> </td>
+                                <td th:unless="${session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId)}">&euro; <span th:text="${#numbers.formatDecimal(0, 1, 2, 'COMMA')}">10.00</span> </td>
+
+
                                 <!-- ADD TO CART FORM -->
                                 <td>
                                     <form th:action="${#request.contextPath} + '/products/AddToCart'" method="POST">
@@ -159,7 +182,7 @@
                                         <input type="hidden" th:value="${supplierProduct.productId}"    name="productId" />
                                         <input type="hidden" th:value="${supplierProduct.supplierId}"   name="supplierId" />
                                         <input type="hidden" th:value="${supplierProduct.supplierProductCost}"   name="supplierProductCost" />
-                                        <input type="submit" class="clickable-link" value="Add to cart">
+                                        <input type="submit" class="clickable-link clickable-link-medium" value="Add to cart">
                                     </form>
                                 </td>
 
@@ -167,15 +190,17 @@
                         </table>
                     </td>
                 </tr>
+
             </tbody>
         </table>
     </div>
 
-<div th:if="${#maps.isEmpty(products.supplierProductMap)}">
-    <br>
-    <br>
-    Sorry, couldn't find what you're looking for!
-</div>
+    <!-- NIENTE PRODOTTI -->
+    <div th:if="${#maps.isEmpty(products.supplierProductMap)}">
+        <br>
+        <br>
+        Sorry, couldn't find what you're looking for!
+    </div>
 
 </body>
 </html>

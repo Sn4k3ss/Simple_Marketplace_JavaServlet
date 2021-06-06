@@ -2,12 +2,16 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
 <head>
+
   <title>Marketplace App</title>
   <meta charset="UTF-8">
 
   <link rel="stylesheet" type="text/css" media="all" href="../../css/global.css" th:href="@{/css/global.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../css/orders.css" th:href="@{/css/orders.css}" />
+
+  <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="../../images/website-icon.ico"/>
+
 </head>
 
 <body>
@@ -34,7 +38,7 @@
 
 
 <div th:if="${not #lists.isEmpty(orders)}">
-  <table th:each="order : ${orders}" class="styled-order-table">
+  <table th:each="order : ${orders}" class="styled-table">
     <caption></caption>
       <thead>
         <tr>
@@ -52,7 +56,11 @@
         <tr>
           <td th:text="${order.orderId}">#0</td>
           <td th:text="${#temporals.format(order.orderPlacementDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
-          <td th:text="${order.orderSupplier.supplierName}">AMZN</td>
+
+          <td class="table-supplier-img">
+            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${order.orderSupplier.imagePath}" alt="Product image" src="../../images/suppl-ex.png"/>
+          </td>
+
           <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderAmount, 1, 2, 'COMMA')}">999,9</span> </td>
           <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderShippingFees, 1, 2, 'COMMA')}">10,9</span> </td>
           <td th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
@@ -63,7 +71,7 @@
             <tbody>
               <tr th:each="product : ${order.orderProductsList}">
                 <td class="table-product-img">
-                  <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+                  <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image" src="../../images/prod-ex.jpeg"/>
                 </td>
                 <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
                 <td th:text="${product.productDescription}">Scarpe bellissime</td>

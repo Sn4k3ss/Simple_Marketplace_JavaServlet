@@ -68,6 +68,7 @@ body   {
     Header
  */
 
+
 header {
     background-color: #ffffff;
     padding: 2px 2px;
@@ -80,15 +81,15 @@ header a {
     text-align: center;
     padding: 12px;
     text-decoration: none;
-    font-size: 18px; 
+    font-size: 18px;
     line-height: 25px;
     border-radius: 4px;
     cursor: pointer;
 }
 
 header a.logo {
-  font-size: 25px;
-  font-weight: bold;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 header a.logo img {
@@ -102,8 +103,8 @@ header a:hover {
 }
 
 header a.active {
-  background-color: #04AA6D;
-  color: white;
+    background-color: #04AA6D;
+    color: white;
 }
 
 header a.inactive {
@@ -111,7 +112,7 @@ header a.inactive {
 }
 
 .header-right {
-  float: right;
+    float: right;
 }
 
 
@@ -134,13 +135,14 @@ header a.inactive {
     display: block;
 }
 
-.search-form p, input {
-    width: fit-content;
-    font-family: formula1display-regular, serif;
+.search-form input:hover{
+    border: 1px solid #04aa6d;
+    transition: 0.6s ease;
 }
 
 .search-form .button {
-    width: fit-content;
+    margin-left: 20px;
+    width: 5vh;
     border: solid thin #009879;
     height: auto;
     border-radius: 5px;
@@ -155,9 +157,62 @@ header a.inactive {
     transition: 0.6s ease;
 }
 
+/*
+    Da inserire come class di un div per ogni elemento del form
+
+    <div class="class1form" ...>
+        <form ...>
+            <div class="form-group"
+                <input ...>
+            </div>
+            <div class="form-group"
+                <input ...>
+            </div>
+        </form>
+    </div>
+ */
+.form-group{
+    margin-bottom: 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row; /* children flow as row */
+    justify-content: center; /* center flex childen */
+}
+.form-group > input {
+    padding: 0.5rem;
+    border-radius: 0 5px 5px 0;
+    border: 1px solid #d1d3e2;
+    color: #6e707e;
+    background-color: #fff;
+    font-weight: 200;
+    line-height: 1.5; /* 1.5 times the font size */
+    width: 80%;
+}
+.form-group > label {
+    padding: 0.8rem;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap; /* no new line for white spaces */
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-right: 0; /* reset border right, as input's one is already present */
+    font-weight: 200;
+    font-size: 0.6rem;
+    width: 20%;
+}
+
+/*
+    Form styling
+ */
+fieldset{
+    border: 0;
+}
 
 
 
+/*
+    Table styling to show products
+ */
 .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
@@ -175,13 +230,14 @@ header a.inactive {
 .styled-table thead tr {
     background-color: #009879;
     color: #ffffff;
-    text-align: left;
+    text-align: center;
 }
 
 .styled-table th,
 .styled-table td {
     min-width: fit-content;
     padding: 0.5% 0.5%;
+    text-align: center;
 }
 
 .styled-table tbody tr {
@@ -193,108 +249,12 @@ header a.inactive {
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+    border-bottom: 3px solid #009879;
 }
 
 .styled-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-}
-
-.styled-table caption {
-    font-weight: bold;
-    color: #009879;
-}
-
-
-.styled-order-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    table-layout: auto;
-    width: 100%;
-}
-
-.styled-order-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-
-.styled-order-table th,
-.styled-order-table td {
-    padding: 12px 15px;
-}
-
-.styled-order-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.styled-order-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.styled-order-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-.styled-order-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-}
-
-.styled-order-table caption {
-    font-weight: bold;
-    font-size: x-large;
-    color: #009879;
-    padding-bottom: 1%;
-}
-
-.styled-product-in-order-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.8em;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    table-layout: auto;
-    width: 90%;
-}
-
-.styled-product-in-order-table thead tr {
-    background-color: #028168;
-    color: #ffffff;
-    text-align: left;
-}
-
-.styled-product-in-order-table th,
-.styled-product-in-order-table td {
-    padding: 10px 10px;
-}
-
-.styled-product-in-order-table tbody tr {
-    border-bottom: 10px solid #dddddd;
-}
-
-.styled-product-in-order-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.styled-product-in-order-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-.styled-product-in-order-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-}
-
-.styled-product-in-order-table caption {
-    font-weight: bold;
-    font-size: large;
-    color: #028168;
-    padding-bottom: 5px;
+    font-family: formula1display-bold, serif;
+    color: #04aa6d;
 }
 
 .bold_info {
@@ -339,6 +299,8 @@ header a.inactive {
     border-radius: 5px;
     background: #04aa6d;
     color:white;
+    text-decoration-line: none;
+    padding: .25rem 1rem;
 }
 
 .clickable-link:hover {
@@ -348,26 +310,14 @@ header a.inactive {
     transition: 0.6s ease;
 }
 
-
-/*
-    Colored divs
-*/
-.green-div{
-    margin: 0 auto;
-    border: 2px solid #04aa6d;
-    border-radius: 20px;
-    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175); /* x-offset y-offset radius color */
-    padding: 1rem;
+.clickable-link-medium{
+    padding: .25rem 1rem;
+    font-family: formula1display-bold, serif;
+    font-size: 1rem;
 }
 
-.green-div .form-group > input:hover{
-    border: 1px solid #04aa6d;
-    transition: 0.2s ease;
-}
-
-/*
-    Form styling
- */
-fieldset{
-    border: 0;
+.clickable-link-large {
+    padding: .8rem 2rem;
+    font-family: formula1display-bold, serif;
+    font-size: 1rem;
 }
