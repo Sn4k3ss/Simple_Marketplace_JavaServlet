@@ -44,6 +44,12 @@ public class AddToCart extends HttpServlet {
             howMany = 1;
         }
 
+        if(howMany <= 0) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            forwardToErrorPage(req, resp, "You must add at least one product, please");
+            return;
+        }
+
         ProductsCatalogue lastUserProducts = (ProductsCatalogue) req.getSession().getAttribute("last_user_products");
         ProductsCatalogue productsFromQuery = (ProductsCatalogue) req.getSession().getAttribute("products_from_query");
 
