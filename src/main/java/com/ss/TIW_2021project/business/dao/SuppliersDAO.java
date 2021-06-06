@@ -153,6 +153,9 @@ public class SuppliersDAO {
                 supplier.setSupplierRating(resultSet.getFloat("supplierRating"));
                 supplier.setFreeShippingMinAmount(resultSet.getFloat("freeShippingMin"));
                 supplier.setImagePath(resultSet.getString("imagePath"));
+
+                if (supplier.getFreeShippingMinAmount() > 0)
+                    supplier.setHasFreeShipping(true);
             }
 
             if( resultSet.getInt("range") == 1 ) {

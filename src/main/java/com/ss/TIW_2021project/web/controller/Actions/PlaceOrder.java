@@ -10,6 +10,7 @@ import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +60,11 @@ public class PlaceOrder extends HttpServlet {
 
         String path = getServletContext().getContextPath() + PathUtils.goToOrdersServletPath;
         resp.sendRedirect(path);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        forwardToErrorPage(req, resp, "Mast send POST request!");
     }
 
     private void forwardToErrorPage(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {

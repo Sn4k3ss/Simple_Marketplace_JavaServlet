@@ -62,10 +62,16 @@ body   {
     height: 90%;
 }
 
+
+
+/*
+    Header
+ */
+
 header {
     background-color: #ffffff;
     padding: 2px 2px;
-    height: 60px;
+    height: 100px;
 }
 
 header a {
@@ -77,7 +83,8 @@ header a {
     font-size: 18px; 
     line-height: 25px;
     border-radius: 4px;
-  }
+    cursor: pointer;
+}
 
 header a.logo {
   font-size: 25px;
@@ -107,40 +114,48 @@ header a.inactive {
   float: right;
 }
 
-.welcome-title {
+
+
+/*
+    Green & bold text
+ */
+.title {
     color: #04AA6D;
+    font-family: formula1display-bold, sans-serif;
+
 }
 
 
-.styled-form {
+/*
+    Form used to search product
+ */
+.search-form {
     padding-left: 10px;
     display: block;
 }
 
-.styled-form p, input {
+.search-form p, input {
     width: fit-content;
     font-family: formula1display-regular, serif;
 }
 
-.styled-form .button {
+.search-form .button {
     width: fit-content;
     border: solid thin #009879;
-    text-align: center;
-    align-content: center;
-    vertical-align: middle;
     height: auto;
     border-radius: 5px;
     background: #04aa6d;
     color:white;
 }
 
-
-.styled-form .button:hover{
+.search-form .button:hover{
     background:white;
     color:#04aa6d;
     cursor: pointer;
     transition: 0.6s ease;
 }
+
+
 
 
 .styled-table {
@@ -165,6 +180,7 @@ header a.inactive {
 
 .styled-table th,
 .styled-table td {
+    min-width: fit-content;
     padding: 0.5% 0.5%;
 }
 
@@ -281,12 +297,10 @@ header a.inactive {
     padding-bottom: 5px;
 }
 
-
-.bold_info span {
+.bold_info {
     font-family: formula1display-bold, serif;
     font-size: 20px;
 }
-
 
 .table-product-img img {
     width: 150px;;
@@ -314,27 +328,46 @@ header a.inactive {
     transition: 0.6s ease;
 }
 
-.container {
-    height: 100%;
 
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
+/*
+    Smooth transition link button
+ */
+.clickable-link {
+    width: fit-content;
+    border: solid thin #009879;
+    height: auto;
+    border-radius: 5px;
+    background: #04aa6d;
+    color:white;
 }
 
-.login {
-    height: auto;
-
-
-
-
-    /* border: 2px solid rgb(0, 0, 0); */
+.clickable-link:hover {
+    background:white;
+    color:#04aa6d;
+    cursor: pointer;
+    transition: 0.6s ease;
 }
 
-.signup {
-    height: auto;
 
-    /* border: 2px solid rgb(0, 0, 0); */
+/*
+    Colored divs
+*/
+.green-div{
+    margin: 0 auto;
+    border: 2px solid #04aa6d;
+    border-radius: 20px;
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175); /* x-offset y-offset radius color */
+    padding: 1rem;
+}
+
+.green-div .form-group > input:hover{
+    border: 1px solid #04aa6d;
+    transition: 0.2s ease;
+}
+
+/*
+    Form styling
+ */
+fieldset{
+    border: 0;
 }

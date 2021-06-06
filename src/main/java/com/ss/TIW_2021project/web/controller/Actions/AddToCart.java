@@ -10,6 +10,7 @@ import com.ss.TIW_2021project.business.utils.ServletUtility;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,11 @@ import java.util.List;
         value = "/products/AddToCart"
 )
 public class AddToCart extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPost(req, resp);
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -64,6 +70,10 @@ public class AddToCart extends HttpServlet {
 
         CartService cartService = new CartService();
         cartService.addToCart(req.getSession(), product, howMany);
+
+        req.getSession().removeAttribute("products_from_query");
+        req.getSession().removeAttribute("last_user_products");
+
 
         String path = getServletContext().getContextPath() + PathUtils.goToShoppingCartServletPath;
         resp.sendRedirect(path);

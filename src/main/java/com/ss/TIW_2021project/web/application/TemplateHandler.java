@@ -1,6 +1,7 @@
 package com.ss.TIW_2021project.web.application;
 
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
@@ -27,6 +28,7 @@ public class TemplateHandler {
         templateResolver.setCacheable(true);
 
         TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.addDialect(new Java8TimeDialect());
         templateEngine.setTemplateResolver(templateResolver);
 
         TemplateHandler.templateEngine = templateEngine;

@@ -13,6 +13,7 @@ public class ShoppingCart {
     private Map<Integer, List<ShoppingCartProduct>> shoppingCartMap = null;
 
     private Map<Integer, Float> totalAmountBySupplier = null;
+    private Map<Integer, Integer> totalItemsBySupplier = null;
 
     public ShoppingCart() {  }
 
@@ -30,11 +31,11 @@ public class ShoppingCart {
         }
 
         this.totalAmountBySupplier = new HashMap<>();
+        this.totalItemsBySupplier = new HashMap<>();
     }
 
     public void addProductToCart(SupplierProduct supplierProduct, Integer howMany) {
 
-        //Cercando di rimuovere le mutlimap di google...
         boolean alreadyInShoppingCart = false;
 
         if (shoppingCartMap.get(supplierProduct.getSupplierId()) != null) {
@@ -62,11 +63,14 @@ public class ShoppingCart {
 
         //update the total of the current supplier
         Float totalAmount = 0f;
+        int totalItems = 0;
         Integer supplierId = supplierProduct.getSupplierId();
-        for (ShoppingCartProduct prod : shoppingCartMap.get(supplierId))
-            totalAmount+= prod.getTotalAmount();
+        for (ShoppingCartProduct prod : shoppingCartMap.get(supplierId)) {
+            totalAmount += prod.getTotalAmount();
+            totalItems+= prod.getHowMany();
+        }
         totalAmountBySupplier.put(supplierId, totalAmount);
-
+        totalItemsBySupplier.put(supplierId, totalItems);
     }
 
     public Map<Integer, List<ShoppingCartProduct>> getShoppingCartMap() {
@@ -102,5 +106,14 @@ public class ShoppingCart {
     public void emptyShoppingCart(Integer supplierId) {
         this.shoppingCartMap.remove(supplierId);
         this.totalAmountBySupplier.remove(supplierId);
+        this.totalItemsBySupplier.remove(supplierId);
+    }
+
+    public Map<Integer, Integer> getTotalItemsBySupplier() {
+        return totalItemsBySupplier;
+    }
+
+    public void setTotalItemsBySupplier(Map<Integer, Integer> totalItemsBySupplier) {
+        this.totalItemsBySupplier = totalItemsBySupplier;
     }
 }

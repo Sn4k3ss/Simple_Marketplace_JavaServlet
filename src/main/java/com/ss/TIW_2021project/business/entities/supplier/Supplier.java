@@ -6,11 +6,12 @@ public class Supplier {
     private String supplierName = null;
     private Float supplierRating = null;
     private ShippingPolicy supplierShippingPolicy = null;
+    private boolean hasFreeShipping = false;
     private Float freeShippingMinAmount = null;
     private String imagePath = null;
 
     public Supplier(){
-
+        super();
     }
 
     public Supplier(Integer supplierId) {
@@ -45,6 +46,13 @@ public class Supplier {
         this.supplierShippingPolicy = supplierShippingPolicy;
     }
 
+    public boolean isHasFreeShipping() {
+        return hasFreeShipping;
+    }
+    public void setHasFreeShipping(boolean hasFreeShipping) {
+        this.hasFreeShipping = hasFreeShipping;
+    }
+
     public Float getFreeShippingMinAmount() {
         return freeShippingMinAmount;
     }
@@ -55,7 +63,6 @@ public class Supplier {
     public String getImagePath() {
         return imagePath;
     }
-
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }

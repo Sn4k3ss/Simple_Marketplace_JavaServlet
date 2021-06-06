@@ -7,8 +7,7 @@
   <title>Marketplace App</title>
   <meta charset="UTF-8">
 
-  <link rel="stylesheet" type="text/css" media="all"
-        href="../CSS/myStyle.css" th:href="@{/css/myStyle.css}" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../css/global.css" th:href="@{/css/global.css}" />
 </head>
 
 <body>
@@ -29,20 +28,15 @@
     </div>
   </header>
 
-<div th:class="welcome-title">
-  <br>
-  <br>
-  <h1>Here are your orders, <span th:text="${session.user.userName}">Amadeus</span>
-  </h1>
+<div class="title">
+  <h1>Here are your orders, <span th:text="${session.user.userName}">Amadeus</span> </h1>
 </div>
 
 
 <div th:if="${not #lists.isEmpty(orders)}">
-  <h2 style="lighting-color: #04AA6D">Orders</h2>
-  <table th:each="order : ${orders}" th:class="styled-order-table">
-    <!-- se il carrello è vuoto non mostrare la tabella -->
-    <caption style="lighting-color: #04AA6D"></caption>
-      <thead >
+  <table th:each="order : ${orders}" class="styled-order-table">
+    <caption></caption>
+      <thead>
         <tr>
           <th scope="col">Order id</th>
           <th scope="col">Order placement date</th>
@@ -57,67 +51,37 @@
     <tbody>
         <tr>
           <td th:text="${order.orderId}">#0</td>
-          <td th:text="${order.orderPlacementDate}">1-1-1970 00:00</td>
+          <td th:text="${#temporals.format(order.orderPlacementDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
           <td th:text="${order.orderSupplier.supplierName}">AMZN</td>
-          <td th:text="${order.orderAmount}">€999.99</td>
-          <td th:text="${order.orderShippingFees}">€0.0</td>
-          <td th:text="${order.deliveryDate}">1-1-1970 00:01</td>
-          <td th:text="${order.shippingAddress.recipient} + ' ' + ${order.shippingAddress.address} +  ' '
-                        + ${order.shippingAddress.city} +  ' ' + ${order.shippingAddress.state} +  ' '
-                        + ${order.shippingAddress.phone}"> Heinz Strasse, Vienna Osterreich
-          </td>
+          <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderAmount, 1, 2, 'COMMA')}">999,9</span> </td>
+          <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderShippingFees, 1, 2, 'COMMA')}">10,9</span> </td>
+          <td th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
+          <td> <span th:text="${order.shippingAddress.recipient}"></span> <span th:text="${order.shippingAddress.address}"></span> <span th:text="${order.shippingAddress.city}"></span> <span th:text="${order.shippingAddress.state}"></span> <span th:text="${order.shippingAddress.phone}"> </span> </td>
 
           <table class="styled-product-in-order-table">
-            <caption style="lighting-color: #04AA6D"></caption>
-
-            <!--
-            <thead>
-                <tr>
-                  <th colspan="2" scope="col">Product name</th>
-                  <th scope="col">Product description</th>
-                  <th scope="col">Product's category</th>
-                  <th scope="col">Product cost</th>
-                </tr>
-              </thead>
-            -->
-                  <tbody>
-                    <tr th:each="product : ${order.orderProductsList}">
-                      <td class="table-product-img">
-                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
-                      </td>
-                      <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
-                      <td th:text="${product.productDescription}">Scarpe bellissime</td>
-                      <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
-                      <td th:text="${product.supplierProductCost}">€99999.99</td>
-                    </tr>
-                  </tbody>
-            </table>
+            <caption></caption>
+            <tbody>
+              <tr th:each="product : ${order.orderProductsList}">
+                <td class="table-product-img">
+                  <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
+                </td>
+                <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
+                <td th:text="${product.productDescription}">Scarpe bellissime</td>
+                <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
+                <td th:text="${product.howMany}">3</td>
+                <td>&euro; <span th:text="${#numbers.formatDecimal(product.supplierProductCost, 1, 2, 'COMMA')}">99,9</span> </td>
+              </tr>
+            </tbody>
+          </table>
         </tr>
     </tbody>
   </table>
 </div>
 
 
-<div th:if="${#lists.isEmpty(orders)}" style="display: block">
+<div th:if="${#lists.isEmpty(orders)}">
   <p>You didn't place any order yet</p>
 </div>
-
-
-
-<p>
-<h4>User info</h4>
-This is your e-mail:
-  <span th:text="${session.user.email}">amadeus.wgang@gmail.com </span> <br>
-  Name:
-  <span th:text="${session.user.userName}">Amadeus</span> <br>
-  Surname:
-  <span th:text="${session.user.userSurname}">Mozart</span> <br>
-  Id:
-  <span th:text="${session.user.userId}">0</span> <br>
-  Your country is: <span th:text="${#locale.country}">IT</span>
-</p>
-
-
 
 </body>
 </html>

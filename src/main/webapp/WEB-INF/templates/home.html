@@ -6,8 +6,7 @@
   <title>Marketplace App</title>
   <meta charset="UTF-8">
 
-    <link rel="stylesheet" type="text/css" media="all"
-          th:href="@{/css/myStyle.css}"  href="/css/myStyle.css"/>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/global.css}" href="../../css/global.css"/>
 
 </head>
 
@@ -15,31 +14,27 @@
 
     <header>
         <div>
-            <a th:href="@{/GoToHome}" class="logo">
+            <a th:href="@{/GoToHome}" href="#" class="logo">
                 <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
             </a>
 
             <div class="header-right">
-                <a th:href="@{/GoToHome}" class="active">Home</a>
-                <a th:href="@{/GoToShoppingCart}">Shopping cart</a>
-                <a th:href="@{/GoToOrders}">My Orders</a>
-                <a th:href="@{/logout}">Logout</a>
+                <a th:href="@{/GoToHome}" href="#" class="active">Home</a>
+                <a th:href="@{/GoToShoppingCart}" href="#">Shopping cart</a>
+                <a th:href="@{/GoToOrders}" href="#">My Orders</a>
+                <a th:href="@{/logout}" href="#">Logout</a>
             </div>
 
         </div>
     </header>
 
-    <div th:class="welcome-title">
-        <br>
-        <br>
-        <h1>Welcome to our marketplace
-            <span th:text="${session.user.userName}">Amadeus</span>
-        </h1>
+    <div class="title">
+        <h1>Welcome to our marketplace <span th:text="${session.user.userName}">Amadeus</span> </h1>
     </div>
 
 
 <!-- Search form-->
-<div class="styled-form">
+<div class="search-form">
     <form action="search/products" method="GET">
         <p>Cosa vuoi cercare di bello? </p>
         <input th:placeholder="'Oasis..'" name="keyword" >
@@ -67,24 +62,37 @@
 
         <tbody>
         <tr th:each="productId : ${session.last_user_products.supplierProductMap.keySet()}" th:with="productInfo1=${session.last_user_products.supplierProductMap.get(productId)[0]}">
+
+
+            <!-- IMMAGINE PRODOTTO -->
             <td th:class="table-product-img">
                 <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image"/>
             </td>
-            <td>
-                <form th:class="styled-form"
-                      th:action=" ${#request.contextPath} + '/GoToHome' "
-                      method="GET" > <!-- Da sostituire se si vuole aprire una pagina con le info sul prodotto -->
 
-                    <input type="hidden" name="productId" th:value="${productId}" value="Id prodotto">
-                    <input th:class="button" type="submit" name="productName" th:value="${productInfo1.productName}" value="Nome prodotto">
-                </form>
-            </td>
+
+            <!-- NOME PRODOTTO -->
+            <td> <a class="clickable-link" th:href="@{/GoToHome( productId=${productId} , productName=${productInfo1.productName} )}" th:text="${productInfo1.productName}"> Nome prodotto</a> </td>
+
+
+            <!-- DESCRIZIONE PRODOTTO -->
             <td th:text="${productInfo1.productDescription}"></td>
-            <td th:text="${productInfo1.supplierProductCost}"></td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+
+
+            <!-- PREZZO PRODOTTO -->
+            <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+
+
+            <!-- IMMAGINE SUPPLIER -->
             <td class="table-supplier-img">
                 <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image"/>
             </td>
+
+
+            <!-- NOME SUPPLIER -->
             <td th:text="${productInfo1.supplierName}"></td>
+
+
+            <!-- BUY BUTTON -->
             <td>
                 <form th:class="styled-form"
                       th:action="${#request.contextPath} + '/products/AddToCart'"
@@ -94,7 +102,7 @@
                     <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
                     <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
                     <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
-                    <input th:class="button" type="submit" value="One-click buy" />
+                    <input class="clickable-link" type="submit" value="One-click buy" />
                 </form>
             </td>
         </tr>

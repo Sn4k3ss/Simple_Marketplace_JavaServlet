@@ -27,12 +27,7 @@ import java.io.IOException;
 public class SearchProducts extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer selectedProductId = 0;
 
@@ -67,6 +62,12 @@ public class SearchProducts extends HttpServlet {
         req.setAttribute("selectedProductId", selectedProductId);
 
         forward(req, resp, null);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        doGet(req, resp);
     }
 
 

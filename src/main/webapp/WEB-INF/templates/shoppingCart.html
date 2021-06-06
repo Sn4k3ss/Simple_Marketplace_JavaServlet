@@ -7,33 +7,27 @@
   <meta charset="UTF-8">
 
   <link rel="stylesheet" type="text/css" media="all"
-        href="../CSS/myStyle.css" th:href="@{/css/myStyle.css}" />
+        href="../../css/global.css" th:href="@{/css/global.css}" />
 </head>
 
 <body>
 
   <header>
     <div>
-
       <a th:href="@{/GoToHome}" class="logo">
         <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src=""/>
       </a>
-
       <div class="header-right">
         <a th:href="@{/GoToHome}">Home</a>
         <a th:href="@{/GoToShoppingCart}" class="active">Shopping cart</a>
         <a th:href="@{/GoToOrders}">My Orders</a>
         <a th:href="@{/logout}">Logout</a>
       </div>
-
     </div>
   </header>
 
-  <div th:class="welcome-title">
-    <br>
-    <br>
-    <h1>Here's your shopping cart, <span th:text="${session.user.userName}">Amadeus</span>
-    </h1>
+  <div class="title">
+    <h1>Here's your shopping cart, <span th:text="${session.user.userName}">Amadeus</span> </h1>
   </div>
 
 
@@ -56,53 +50,21 @@
           <td class="table-product-img">
               <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image"/>
           </td>
-            <td th:text="${product.productName}">Nome prodotto</td>
-            <td th:text="${product.productDescription}">Descrizione prodotto</td>
-            <td th:text="${product.productCategory}">Categoria del prodotto</td>
-            <td th:text="${product.supplierProductCost}">{Costo unitario}</td>
-            <td th:text="${product.howMany}">Quanti nel carrello</td>
-            <td>
-               <!--
-               <table>
-                <thead>
-                <tr>
-                  <th colspan="2" scope="col">Supplier</th>
-                  <th scope="col">Rating</th>
-                </tr>
-                </thead>
-                <tr>
-                  <td th:class="table-supplier-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${product.supplier.imagePath}" alt="Product image"/>
-                  </td>
-                  <td th:text="${supplierInfo.supplierName}"> Venditore 0</td>
-                  <td th:text="${supplierInfo.supplierRating}"> 0</td>
-                  <td>
-                    <table>
-                      <thead>
-                      <tr>
-                        <th scope="col">Range</th>
-                        <th scope="col">minItem</th>
-                        <th scope="col">maxItem</th>
-                        <th scope="col">cost</th>
-                      </tr>
-                      </thead>
-                      <tr th:each="range : ${supplierInfo.supplierShippingPolicy.ranges}">
-                        <td th:text="${supplierInfo.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
-                        <td th:text="${range.minAmount}">1</td>
-                        <td th:text="${range.maxAmount}">5</td>
-                        <td th:text="${range.cost}">100,99</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              -->
-            </td>
+          <td th:text="${product.productName}">Prod1</td>
+          <td th:text="${product.productDescription}">Desc1</td>
+          <td th:text="${product.productCategory}">Cat1</td>
+          <td>&euro; <span th:text="${#numbers.formatDecimal(product.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
+          <td th:text="${product.howMany}">5</td>
         </tr>
         <tr th:class="active-row" th:with="totalamount=${session.shoppingCart.totalAmountBySupplier.get(supplierId)}">
-          <td th:text="'Total amount on ' + ${supplierInfo.supplierName} + ': ' + ${totalamount}">Costo totale per venditore</td>
-          <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount }" th:text="'Free shipping on ' + ${supplierInfo.supplierName} + ': ' + ${supplierInfo.freeShippingMinAmount}"> Spesa minima per spedizione gratuita </td>
-          <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount }" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
+
+          <td>Total amount on <span th:text="${supplierInfo.supplierName}">Suppl1</span> : &euro; <span th:text="${#numbers.formatDecimal(totalamount, 1, 2, 'COMMA')}">10.00</span></td>
+
+          <td th:if="${ !supplierInfo.hasFreeShipping }"> <span th:text=" ${supplierInfo.supplierName}">Suppl1</span> doesn't offer free shipping </td>
+
+          <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}">Free shipping on<span th:text="${supplierInfo.supplierName}">Suppl1</span>: &euro;<span th:text="${#numbers.formatDecimal(supplierInfo.freeShippingMinAmount, 1, 2, 'COMMA')}">10.00</span></td>
+
+          <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
           <td>
             <form  th:action="${#request.contextPath} + '/PlaceOrder'" method="POST">
               <label th:for="addreesId">Select an address
@@ -114,7 +76,7 @@
                 </select>
               </label>
               <input type="hidden"  name="supplierId" th:value="${supplierId}" >
-              <input type="submit" value="Place order">
+              <input type="submit" class="clickable-link" value="Place order">
             </form>
           </td>
         </tr>

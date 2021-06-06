@@ -2,7 +2,9 @@ package com.ss.TIW_2021project.web.controller.Actions;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
+import com.ss.TIW_2021project.business.entities.ShoppingCart;
 import com.ss.TIW_2021project.business.entities.User;
+import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
@@ -25,12 +27,7 @@ import java.io.IOException;
 public class ShowProductInfo extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer productId = Integer.parseInt(req.getParameter("productId"));
         ProductService productService = new ProductService();
@@ -57,10 +54,16 @@ public class ShowProductInfo extends HttpServlet {
             return;
         }
 
+        
         req.setAttribute("products", productsFromQuery);
         req.setAttribute("selectedProductId", productId);
 
         forward(req, resp, null);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        doGet(req, resp);
     }
 
     private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
