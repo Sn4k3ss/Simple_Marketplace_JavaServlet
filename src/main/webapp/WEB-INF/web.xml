@@ -37,16 +37,26 @@
         <filter-name>CheckNotLoggedUser</filter-name>
         <filter-class>com.ss.TIW_2021project.web.filter.CheckNotLoggedUser</filter-class>
     </filter>
+    <filter>
+        <filter-name>NoCacher</filter-name>
+        <filter-class>com.ss.TIW_2021project.web.filter.NoCacher</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>NoCacher</filter-name>
+        <url-pattern>/login.html</url-pattern>
+        <url-pattern>/home.html</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>CheckNotLoggedUser</filter-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/login.html</url-pattern>
         <url-pattern>/GoToLogin</url-pattern>
         <url-pattern>/login</url-pattern>
         <url-pattern>/signup</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionChecker</filter-name>
+        <url-pattern>/home.html</url-pattern>
         <url-pattern>/GoToHome</url-pattern>
         <url-pattern>/GoToShoppingCart</url-pattern>
         <url-pattern>/GoToOrders</url-pattern>
@@ -56,4 +66,7 @@
         <url-pattern>/logout</url-pattern>
     </filter-mapping>
 
+    <welcome-file-list>
+        <welcome-file>login</welcome-file>
+    </welcome-file-list>
 </web-app>

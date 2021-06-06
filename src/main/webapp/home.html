@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <title>Marketplace App</title>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/global.css}" href="./css/global.css"/>
+    <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="./images/website-icon.ico"/>
+    <script src="./js/utils.js" charset="utf-8" defer></script>
+    <script src="./js/loginSignupManagement.js" charset="utf-8" defer></script>
+
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <a th:href="@{/GoToHome}" href="#" class="logo">
+                <img th:src="@{/images/website-logo.png}" alt="website-logo.png" src="../../images/website-logo.png"/>
+            </a>
+
+            <div class="header-right">
+                <a th:href="@{/GoToHome}" href="#" class="active">Home</a>
+                <a th:href="@{/GoToShoppingCart}" href="#">Shopping cart</a>
+                <a th:href="@{/GoToOrders}" href="#">My Orders</a>
+                <a th:href="@{/logout}" href="#">Logout</a>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="title">
+        <h1>Welcome to our marketplace <span th:text="${session.user.userName}">Amadeus</span> </h1>
+    </div>
+
+
+<!-- Search form-->
+<div class="search-form">
+    <form th:action="${#request.contextPath} + '/search/products'" method="GET">
+        <div class="form-group">
+            <input  th:placeholder="'Oasis latest album...'" name="keyword" >
+            <input class="button" type="submit" value="Go!">
+        </div>
+    </form>
+    <div class="" th:if="${searchErrorMessage}">
+        <span th:text="${searchErrorMessage}">Email or password not valid!</span>
+    </div>
+</div>
+
+
+
+<div th:if="${session.last_user_products}">
+    <table class="styled-table">
+        <caption></caption>
+        <thead>
+        <tr>
+            <th colspan="2" scope="col">Product</th>
+            <th scope="col">Description</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Add to cart</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="productId : ${session.last_user_products.supplierProductMap.keySet()}" th:with="productInfo1=${session.last_user_products.supplierProductMap.get(productId)[0]}">
+
+
+            <!-- IMMAGINE PRODOTTO -->
+            <td class="table-product-img">
+                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image" src="../../images/prod-ex.jpeg"/>
+            </td>
+
+
+            <!-- NOME PRODOTTO -->
+            <td> <a class="clickable-link" th:href="@{/GoToHome( productId=${productId} , productName=${productInfo1.productName} )}" th:text="${productInfo1.productName}"> Nome prodotto</a> </td>
+
+
+            <!-- DESCRIZIONE PRODOTTO -->
+            <td th:text="${productInfo1.productDescription}"></td>
+
+
+            <!-- PREZZO PRODOTTO -->
+            <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+
+
+            <!-- IMMAGINE SUPPLIER -->
+            <td class="table-supplier-img">
+                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image" src="../../images/suppl-ex.png"/>
+            </td>
+
+
+            <!-- BUY BUTTON -->
+            <td>
+                <form th:class="styled-form"
+                      th:action="${#request.contextPath} + '/products/AddToCart'"
+                      th:object="${productInfo1}"
+                      method="POST" >
+
+                    <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
+                    <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
+                    <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
+                    <input class="clickable-link clickable-link-medium" type="submit" value="One-click buy" />
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

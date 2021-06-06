@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller.Actions;
 
+import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
@@ -58,7 +59,7 @@ public class Login extends HttpServlet {
         } catch (ServiceException e) {
             String errorMessage = "Login error: Not Possible to check credentials";
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            forward(req, resp, errorMessage);
+            resp.getWriter().println(errorMessage);
             return;
         }
 
@@ -71,32 +72,19 @@ public class Login extends HttpServlet {
 
         req.getSession().setAttribute("user", user);
 
-        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
-        resp.sendRedirect(path);
+
+        String jsonUser = new Gson().toJson(user);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().println(jsonUser);
     }
 
     private void invalidCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        request.setAttribute("loginErrorMessage", errorMessage);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
-        forward(request, response, errorMessage);
-    }
-
-    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
-
-        String path = PathUtils.pathToHomePage;
-
-        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-            req.setAttribute("errorMessage", errorMessage);
-            path = PathUtils.pathToErrorPage;
-        } else if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
-            req.setAttribute("errorMessage", errorMessage);
-            path = PathUtils.pathToLoginPage;
-        }
-
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
+        response.getWriter().println(errorMessage);
     }
 
 }

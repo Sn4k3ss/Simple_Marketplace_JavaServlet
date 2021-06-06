@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+
+    <link rel="stylesheet" type="text/css" media="all" href="./css/global.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="./css/login.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="./css/loading.css"/>
+    <link rel="icon" type="image/ico" href="./images/website-icon.ico"/>
+    <script src="./js/utils.js" charset="utf-8" defer></script>
+    <script src="./js/loginSignupManagement.js" charset="utf-8" defer></script>
+
+</head>
+
+
+<body>
+
+    <header>
+        <div>
+            <a id="homepage-link-logo" href="/GoToHome" class="logo">
+                <img src="images/website-logo.png" alt="website-logo.png"/>
+            </a>
+        </div>
+    </header>
+
+    <div class="loading-div">
+        <img class="loading-img" src="./images/loading.gif" alt="loading-gif"/>
+        <div id="loading_msg" class="loading-message">Communicating with Server ...</div>
+    </div>
+
+    <div class="forms-container">
+
+        <div id="login-div" class="login green-div" >
+            <form action="#">
+                <fieldset>
+                    <legend class="title">Login form</legend>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" value="sangeniti.ss@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password"  value="password1234" required minlength="6">
+                    </div>
+                    <button id="login-button" class="btn btn-green" type="submit">Login</button>
+                </fieldset>
+            </form>
+            <div id="loginErrorMessage-div" class="bold_info">
+                <span id="loginErrorMessage"></span>
+            </div>
+        </div>
+
+        <div id="signup-div" class="signup green-div" >
+            <form action="#" >
+                <fieldset>
+                    <legend class="title">Signup form</legend>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Name</label>
+                        <input type="text" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Surname</label>
+                        <input type="text" name="lastName" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addrCity">City</label>
+                        <input type="text" name="addrCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addrState">State</label>
+                        <input type="text" name="addrState" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="addrPhone">Phone</label>
+                        <input type="tel" name="addrPhone" required>
+                    </div>
+                    <button id="signup-button" class="btn btn-green" type="submit">Sign up</button>
+                </fieldset>
+            </form>
+            <div id="signupErrorMessage-div" class="bold_info">
+                <span id="signupErrorMessage" ></span>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
