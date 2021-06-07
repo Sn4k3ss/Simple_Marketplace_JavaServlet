@@ -33,7 +33,7 @@ public class CheckNotLoggedUser implements Filter {
         if(s != null) {
             Object user = s.getAttribute("user");
             if(user != null) {
-                res.sendRedirect(servletRequest.getServletContext().getContextPath() + PathUtils.goToHomeServletPath);
+                res.sendRedirect(servletRequest.getServletContext().getContextPath() + PathUtils.pathToHomePage);
                 return;
             }
         }

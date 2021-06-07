@@ -1,4 +1,4 @@
-package com.ss.TIW_2021project.web.controller.Actions;
+package com.ss.TIW_2021project.web.controller.action;
 
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;

@@ -4,6 +4,7 @@
     margin: 0 auto;
     margin-top: 4rem;
     text-align: center;
+    display: none;
 }
 
 .error-title{

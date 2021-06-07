@@ -12,7 +12,6 @@ public class PathUtils {
     public static String goToHomeServletPath = "/GoToHome";
     public static String goToShoppingCartServletPath = "/GoToShoppingCart";
     public static String goToOrdersServletPath = "/GoToOrders";
-    public static String goToEntryPoint = "/";
 
     private PathUtils() {
 

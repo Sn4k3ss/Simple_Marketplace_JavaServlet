@@ -1,4 +1,4 @@
-package com.ss.TIW_2021project.web.controller.Actions;
+package com.ss.TIW_2021project.web.controller.action;
 
 import com.ss.TIW_2021project.business.utils.PathUtils;
 
@@ -27,7 +27,7 @@ public class Logout extends HttpServlet {
         }
 
         String path = getServletContext().getContextPath();
-        resp.sendRedirect(path + PathUtils.goToEntryPoint);
+        resp.sendRedirect(path + PathUtils.pathToLoginPage);
     }
 
     @Override

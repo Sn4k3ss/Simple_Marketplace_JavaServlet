@@ -1,12 +1,10 @@
-package com.ss.TIW_2021project.web.controller.Actions;
+package com.ss.TIW_2021project.web.controller.action;
 
 import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +15,7 @@ import java.io.IOException;
 
 @WebServlet(
         name = "LoginController",
-        description = "This is my first annotated servlet",
+        description = "This servelt handle the login action",
         value = "/login"
 )
 @MultipartConfig
@@ -25,7 +23,7 @@ public class Login extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
+        String path = getServletContext().getContextPath() + PathUtils.pathToLoginPage;
         resp.sendRedirect(path);
     }
 

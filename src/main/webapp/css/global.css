@@ -321,3 +321,24 @@ fieldset{
     font-family: formula1display-bold, serif;
     font-size: 1rem;
 }
+
+
+#home-products-table-div {
+    display: none;
+}
+
+#search-products-table-div {
+    display: none;
+}
+
+#shopping-cart-div {
+    display: none;
+}
+
+#orders-div {
+    display: none;
+}
+
+#search-form-error {
+    display: none;
+}
