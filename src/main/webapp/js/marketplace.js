@@ -1,6 +1,8 @@
 /**
  * Marketplace
  */
+
+
 (function(){
 
     //Vars
@@ -40,8 +42,8 @@
             )
 
             productsCatalogue = new ProductsCatalogue(
-                document.getElementById("home-products-table-div"),
-                document.getElementById("search-products-table-div")
+                document.getElementById("products-table-div"),
+                document.getElementById("products-table-body")
             )
 
             orders = new OrdersList(
@@ -53,7 +55,7 @@
         this.refresh = function(excludeContacts){
             //Refresh view
             userInfo.show();
-            productsCatalogue.home_products_table_div.show();
+            productsCatalogue.products_table_div.show();
         };
     }
 
@@ -147,16 +149,19 @@
     }
 
 
+    // il products catalogue riceve come primo argomento il catalogo di prodotti da mostrare nella home
+    // come secondo argomento invece sono i risultati ottenuti dalla ricerca
     function ProductsCatalogue(
-        _home_products_table_div,
-        _search_products_table_div) {
+        products_table_div,
+        products_table_body) {
 
-        this.home_products_table_div = _home_products_table_div;
-        this.search_products_table_div = _search_products_table_div;
+
+        this.products_table_div = products_table_div;
+        this.products_table_body = products_table_body;
 
         var self = this;
 
-        this.home_products_table_div.show = function(){
+        this.products_table_div.show = function(){
             //Request and update with the results
             makeCall("GET", 'GetHomeProducts', null, (req) =>{
                 switch(req.status){
@@ -164,16 +169,6 @@
                         var products = JSON.parse(req.responseText);
                         self.update(products);
 
-                        /*
-
-                        if(!isNaN(self.currentSelectedId)){
-                            var open_account_button = document.querySelector("a[data_accountid='" + self.currentSelectedId + "']");
-                            var click = new Event("click");
-                            if(open_account_button)
-                                open_account_button.dispatchEvent(click);
-                        }
-
-                        */
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
@@ -189,7 +184,109 @@
 
         this.update = function(products, _error) {
 
-            //To update products table
+            this.products_table_body.innerHTML = ""; // empty the table body
+
+            var row, td, img, prod_name, form, form_input;
+
+            var prods = new Map();
+
+            for (const prodId in products.supplierProductMap) {
+                prods.set(prodId, products.supplierProductMap[prodId]);
+            }
+
+            var self = this;
+
+            //prods = Map<integer, Array<SupplierProduct> >
+            //quindi applicando il forEach mi ritorna l'array di prodotti con venditori diversi
+
+            prods.forEach( (function(product) { // self visible here, not this
+                var currentProd = product[0];
+                row = document.createElement("tr");
+
+                //td immagine prodotto
+                td = document.createElement("td");
+                td.className = "table-product-img";
+                img = document.createElement("img");
+                img.src = getProductsImageFolderURL().concat(currentProd.productImagePath); //set img
+                td.appendChild(img);
+                row.appendChild(td);
+
+                //td nome prodotto
+                td = document.createElement("td");
+                prod_name = document.createElement("a");
+                prod_name.innerHTML = currentProd.productName;
+                prod_name.className = "clickable-link";
+                td.appendChild(prod_name);
+                row.appendChild(td);
+
+                //td desc prodotto
+                td = document.createElement("td");
+                td.innerHTML = currentProd.productDescription;
+                row.appendChild(td);
+
+                //td costo prodotto
+                td = document.createElement("td");
+                td.innerHTML = currentProd.supplierProductCost;
+                row.appendChild(td);
+
+                //td immagine prodotto
+                td = document.createElement("td");
+                td.className = "table-supplier-img";
+
+                img = document.createElement("img");
+                img.src = getSuppliersImageFolderURL().concat(currentProd.supplier.imagePath); //set img
+                td.appendChild(img);
+                row.appendChild(td);
+
+                //td buy button
+                td = document.createElement("td");
+                form = document.createElement("form");
+                form.className = "styled-form";
+                form.action = "AddToCart";
+                form.method = "POST";
+                form_input = document.createElement("input");
+                form_input.type = "hidden";
+                form_input.value = currentProd.productId;
+                form_input.name = "productId";
+                form.appendChild(form_input);
+                form_input = document.createElement("input");
+                form_input.type = "hidden";
+                form_input.value = currentProd.supplierId;
+                form_input.name = "supplierId";
+                form.appendChild(form_input);
+                form_input = document.createElement("input");
+                form_input.type = "hidden";
+                form_input.value = currentProd.supplierProductCost;
+                form_input.name = "supplierProductCost";
+                form.appendChild(form_input);
+                form_input = document.createElement("input");
+                form_input.className = "clickable-link clickable-link-medium";
+                form_input.type = "submit";
+                form_input.value = "Add to cart";
+                form.appendChild(form_input);
+
+                td.appendChild(form);
+                row.appendChild(td);
+
+
+                //AGGIUNGI AL CARRELLO
+                form_input.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    if (form.checkValidity()) { //Do form check
+                        //sendToServer(form, login_error_message_div, login_error_message, 'login');
+                        //da invocare la servlet sul server
+                    } else
+                        form.reportValidity(); //If not valid, notify
+                }, false);
+
+
+
+                self.products_table_body.appendChild(row);
+
+                self.products_table_div.style.display = 'block';
+
+            }));
 
         };
     }

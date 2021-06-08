@@ -52,7 +52,7 @@
 
 
     <!-- HOME PRODUCTS TABLE -->
-    <div id="home-products-table-div">
+    <div id="products-table-div">
         <table class="styled-table">
             <caption></caption>
             <thead>
@@ -65,35 +65,35 @@
             </tr>
             </thead>
 
-            <tbody>
-            <tr th:each="productId : ${session.last_user_products.supplierProductMap.keySet()}" th:with="productInfo1=${session.last_user_products.supplierProductMap.get(productId)[0]}">
+            <tbody id="products-table-body">
+            <!--
+            <tr>
 
 
-                <!-- IMMAGINE PRODOTTO -->
                 <td class="table-product-img">
                     <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image" src="./images/prod-ex.jpeg"/>
                 </td>
 
 
-                <!-- NOME PRODOTTO -->
+
                 <td> <a class="clickable-link" th:href="@{/GoToHome( productId=${productId} , productName=${productInfo1.productName} )}" th:text="${productInfo1.productName}"> Nome prodotto</a> </td>
 
 
-                <!-- DESCRIZIONE PRODOTTO -->
+
                 <td th:text="${productInfo1.productDescription}"></td>
 
 
-                <!-- PREZZO PRODOTTO -->
-                <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>  <!-- if product.isOnDiscount 'illimuna prezzo' -->
+
+                <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
 
 
-                <!-- IMMAGINE SUPPLIER -->
+
                 <td class="table-supplier-img">
                     <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image" src="./images/suppl-ex.png"/>
                 </td>
 
 
-                <!-- BUY BUTTON -->
+
                 <td>
                     <form th:class="styled-form"
                           th:action="${#request.contextPath} + '/products/AddToCart'"
@@ -107,6 +107,8 @@
                     </form>
                 </td>
             </tr>
+
+            -->
             </tbody>
         </table>
     </div>
@@ -188,7 +190,7 @@
 
                             <!-- IMMAGINE SUPPLIER -->
                             <td class="table-supplier-img">
-                                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${supplierProduct.supplier.imagePath}" alt="supplier-image" src="../../images/suppl-ex.png"/>
+                                <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${supplierProduct.supplier.imagePath}" alt="supplier-image" src="./images/suppl-ex.png"/>
                             </td>
 
                             <!-- PREZZO PRODOTTO -->
@@ -343,7 +345,7 @@
                 <td th:text="${#temporals.format(order.orderPlacementDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
 
                 <td class="table-supplier-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${order.orderSupplier.imagePath}" alt="Product image" src="../../images/suppl-ex.png"/>
+                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${order.orderSupplier.imagePath}" alt="Product image" src="./images/suppl-ex.png"/>
                 </td>
 
                 <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderAmount, 1, 2, 'COMMA')}">999,9</span> </td>
@@ -356,7 +358,7 @@
                     <tbody>
                     <tr th:each="product : ${order.orderProductsList}">
                         <td class="table-product-img">
-                            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image" src="../../images/prod-ex.jpeg"/>
+                            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image" src="./images/prod-ex.jpeg"/>
                         </td>
                         <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
                         <td th:text="${product.productDescription}">Scarpe bellissime</td>

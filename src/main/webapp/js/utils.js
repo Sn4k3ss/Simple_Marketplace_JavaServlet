@@ -186,3 +186,11 @@ Array.prototype.contains = function(element){
     
     return false;
 }
+
+function getProductsImageFolderURL() {
+    return "https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/";
+}
+
+function getSuppliersImageFolderURL() {
+    return "https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/";
+}

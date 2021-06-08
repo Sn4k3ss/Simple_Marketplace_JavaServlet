@@ -7,9 +7,9 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Search</title>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../../css/global.css" th:href="@{/css/global.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/global.css" />
 
-    <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="../../images/website-icon.ico"/>
+    <link rel="icon" type="image/ico" href="../../images/website-icon.ico"/>
 
 </head>
 
@@ -52,7 +52,7 @@
                     <th colspan="2" scope="col">Product</th>
                     <th scope="col">Description</th>
                     <th scope="col">Cost</th>
-                    <th colspan="2" scope="col">Supplier</th>
+                    <th scope="col">Supplier</th>
                     <th scope="col">Add to cart</th>
                     <th colspan="4" scope="col"></th>
                 </tr>
@@ -64,7 +64,7 @@
                     <!-- IMMAGINE PRODOTTO -->
                     <td class="table-product-img">
                         <a th:href="@{/search/products/ShowProductInfo(productId=${productId})}" >
-                            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product-image" src=""/>
+                            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product-image" src="../../images/prod-ex.jpeg"/>
                         </a>
                     </td>
 
@@ -79,11 +79,9 @@
 
                     <!-- IMMAGINE SUPPLIER -->
                     <td class="table-supplier-img">
-                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="supplier-image"/>
+                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="supplier-image" src="../../images/suppl-ex.png"/>
                     </td>
 
-                    <!-- NOME SUPPLIER -->
-                    <td th:text="${productInfo1.supplierName}">Supplier name</td>
 
                     <!-- BUY BUTTON -->
                     <td>

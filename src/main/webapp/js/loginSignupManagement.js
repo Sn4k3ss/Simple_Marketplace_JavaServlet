@@ -26,20 +26,22 @@
         e.preventDefault();
         var form = e.target.closest("form");
 
-      login_error_message_div.style.display = 'none';
-      if (form.checkValidity()) { //Do form check
-        sendToServer(form, login_error_message_div, login_error_message, 'login');
-      }else
-        form.reportValidity(); //If not valid, notify
+        login_error_message_div.style.display = 'none';
+
+        if (form.checkValidity()) { //Do form check
+            sendToServer(form, login_error_message_div, login_error_message, 'login');
+        } else
+            form.reportValidity(); //If not valid, notify
     });
 
     //Attach to register button
     signup_button.addEventListener("click", (e) => {
-      var form = e.target.closest("form");
-      signup_error_message_div.style.display = 'none';
-      if (form.checkValidity()) { //Do form check
+        e.preventDefault();
+        var form = e.target.closest("form");
+        signup_error_message_div.style.display = 'none';
+        if (form.checkValidity()) { //Do form check
         sendToServer(form, signup_error_message_div, signup_error_message, 'signup');
-      }else
+        }else
         form.reportValidity(); //If not valid, notify
     });
 

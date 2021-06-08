@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "SearchProducts",
+        name = "GetSearchProducts",
         description = "This servlet handles the search through the catalogue",
-        value = "/search/products"
+        value = "/GetSearchProducts"
 )
-public class SearchProducts extends HttpServlet {
+public class GetSearchProducts extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -70,9 +70,6 @@ public class SearchProducts extends HttpServlet {
         String path = PathUtils.pathToSearchProductsPage;
 
         if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-            req.setAttribute("errorMessage", errorMessage);
-            path = PathUtils.pathToErrorPage;
-        } else if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
             req.setAttribute("errorMessage", errorMessage);
             path = PathUtils.pathToErrorPage;
         }

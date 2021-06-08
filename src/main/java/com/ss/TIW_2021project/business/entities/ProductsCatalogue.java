@@ -31,7 +31,6 @@ public class ProductsCatalogue {
 
     }
 
-    //removing guava
     public Map<Integer, List<SupplierProduct>> getSupplierProductMap() {
         return supplierProductMap;
     }
@@ -39,7 +38,6 @@ public class ProductsCatalogue {
     public void setSupplierProductMap(Map<Integer, List<SupplierProduct>> supplierProductMap) {
         this.supplierProductMap = supplierProductMap;
     }
-    //removing guava
 
 
 
