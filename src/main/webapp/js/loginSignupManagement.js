@@ -23,7 +23,8 @@
 
     //Attach to login button
     login_button.addEventListener("click", (e) => {
-      var form = e.target.closest("form");
+        e.preventDefault();
+        var form = e.target.closest("form");
 
       login_error_message_div.style.display = 'none';
       if (form.checkValidity()) { //Do form check
