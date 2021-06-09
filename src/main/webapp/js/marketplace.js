@@ -310,7 +310,7 @@
         home_link.setAttribute("href", "GoToHome");
 
         let shopping_cart_link = document.getElementById("shopping-cart-link");
-        shopping_cart_link.setAttribute("hred", "GoToShoppingCart")
+        shopping_cart_link.setAttribute("href", "GoToShoppingCart")
 
         let orders_link = document.getElementById("orders-link");
         orders_link.setAttribute("href", "GoToOrders");
