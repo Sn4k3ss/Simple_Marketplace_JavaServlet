@@ -38,7 +38,8 @@
             )
 
             shoppingCart = new ShoppingCart(
-                document.getElementById("shopping-cart-div")
+                document.getElementById("shopping-cart-div"),
+                document.getElementById("shopping-cart-div-message")
             )
 
             productsCatalogue = new ProductsCatalogue(
@@ -134,16 +135,18 @@
 
 
     function ShoppingCart(
-        _shopping_cart_div) {
+        _shopping_cart_div,
+        _shopping_cart_div_message) {
 
-        this.shopping_cart = _shopping_cart_div;
+        this.shopping_cart_div = _shopping_cart_div;
+        this.shopping_cart_div_message = _shopping_cart_div_message;
 
         var self = this; //Necessary only for in-function helpers (makeCall)
 
         this.show = function() {
-            self.shopping_cart = sessionStorage.getItem(shoppingCart);
+            self.shopping_cart_div = sessionStorage.getItem(shoppingCart);
 
-            shoppingCart.style.display = 'block';
+            _shopping_cart_div.style.display = 'block';
         }
 
     }
@@ -273,9 +276,28 @@
                 form_input.addEventListener("click", (e) => {
                     e.preventDefault();
 
-                    if (form.checkValidity()) { //Do form check
-                        //sendToServer(form, login_error_message_div, login_error_message, 'login');
-                        //da invocare la servlet sul server
+                    if (form.checkValidity()) {
+                        //chiamata a servlet
+                        makeCall("POST", 'products/AddToCart', (req) =>{
+                            switch(req.status){
+                                case 200: //ok
+                                    var data = JSON.parse(req.responseText);
+                                    pageOrchestrator.refresh(true);
+                                    //Close form
+                                    var click = new Event("click");
+                                    self.create_transfer_button.dispatchEvent(click);
+
+                                    transferResult.showSuccess(data.sourceAccount, data.transfer, data.destAccount);
+                                    break;
+                                case 400: // bad request
+                                case 401: // unauthorized
+                                case 500: // server error
+                                    transferResult.showFailure(req.responseText);
+                                    break;
+                                default: //Error
+                                    transferResult.showFailure("Request reported status " + req.status);
+                            }
+                        });
                     } else
                         form.reportValidity(); //If not valid, notify
                 }, false);
