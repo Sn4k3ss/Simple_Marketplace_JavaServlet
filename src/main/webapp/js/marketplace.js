@@ -11,9 +11,9 @@
     var pageOrchestrator = new PageOrchestrator();
 
     window.addEventListener("load", () => {
-        setHeaderHrefs();
         pageOrchestrator.start(); // initialize the components
-        pageOrchestrator.refresh(); // display initial content
+        pageOrchestrator.showHomePage(); // display initial content
+        setHeaderHrefs();
     });
 
     /**
@@ -23,7 +23,11 @@
      *   Others refreshes will be managed by AddressBook object itself.
      */
     function PageOrchestrator(){
+
+        var self = this;
+
         this.start = function() {
+
             //Init components
             userInfo = new UserInfo(
                 sessionStorage.getItem('userName'),
@@ -44,7 +48,7 @@
 
             productsCatalogue = new ProductsCatalogue(
                 document.getElementById("products-table-div"),
-                document.getElementById("products-table-body")
+                document.getElementById("products-table")
             )
 
             orders = new OrdersList(
@@ -52,23 +56,31 @@
             )
         };
 
-
-        this.refresh = function(){
-            //Refresh view
+        this.showHomePage = function(){
             userInfo.show();
-            productsCatalogue.products_table_div.show();
+            productsCatalogue.showHomeProducts();
         };
 
 
         //deve nascondermi tutti i div eccetto quelo del carrello
         this.showShoppingCart = function () {
 
+            //nascondi tutto il resto
+            productsCatalogue.hide();
+
+            //mostra carrello
+            shoppingCart.show();
 
         }
 
         //deve nascondermi tutti i div eccetto quelo degli ordini
         this.showOrders = function () {
 
+            //nascondi tutto il resto
+            productsCatalogue.hide();
+
+            //mostra carrello
+            orders.show();
 
         }
     }
@@ -115,13 +127,9 @@
 
             makeCall("GET", endpoint, null, (req) =>{
                 switch(req.status){
-                    case 200: //ok
-                        // var click = new Event("click");
-                        // self.create_account_button.dispatchEvent(click);
-                        // self.show();
-
-                        var products = JSON.parse(req.responseText);
-                        productsCatalogue.update(products, null, true); //aggiorno la tabella dei prodotti
+                    case 200:
+                        let products = JSON.parse(req.responseText);
+                        productsCatalogue.updateSearchProducts(products);
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
@@ -162,7 +170,13 @@
             self.shopping_cart_div.style.display = 'block';
         }
 
-        //da invocare in seguito a risposta positiva alla servlet 'AddToCart'
+        this.hide = function () {
+            //TODO da fare
+
+            self.shopping_cart_div.style.display = 'block';
+        }
+
+
         this.update = function () {
 
             //aggiungo il prodotto alla sessione
@@ -185,194 +199,202 @@
     // come secondo argomento invece sono i risultati ottenuti dalla ricerca
     function ProductsCatalogue(
         products_table_div,
-        products_table_body) {
+        products_table) {
 
 
         this.products_table_div = products_table_div;
-        this.products_table_body = products_table_body;
+        this.products_table = products_table;
 
         var self = this;
 
-        this.products_table_div.show = function(){
+        this.showHomeProducts = function(){
             //Request and update with the results
             makeCall("GET", 'GetHomeProducts', null, (req) =>{
                 switch(req.status){
                     case 200: //ok
-                        var products = JSON.parse(req.responseText);
-                        self.update(products);
+                        let products = JSON.parse(req.responseText);
+                        self.updateHomeProducts(products);
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
                     case 500: // server error
-                        self.update(null, req.responseText);
+                        self.updateHomeProducts(null, req.responseText);
                         break;
                     default: //Error
-                        self.update(null, "Request reported status " + req.status);
+                        self.updateHomeProducts(null, "Request reported status " + req.status);
                         break;
                 }
             });
         };
 
-        this.update = function(products, _error) {
+        this.updateHomeProducts = function(products, _error) {
+
+            //remove all tbody tags in products_table
+            if (this.products_table.tBodies.length > 0) {
+                for (const item of this.products_table.tBodies) {
+                    this.products_table.removeChild(item);
+                }
+            }
+
+
 
             //se errore allora mostra l'errore a schermo
             if (products == null) {
                 this.products_table_div.innerHTML = _error;
-                this.products_table_body.innerHTML = ""; // empty the table body
                 return;
             }
 
-            this.products_table_body.innerHTML = ""; // empty the table body
-
-            var table_body, row, td, img, prod_name, form, form_input;
-
-            var prods = new Map();
+            let prodsMap = new Map();
+            let table_body = document.createElement("tbody");
 
             for (const prodId in products.supplierProductMap) {
-                prods.set(prodId, products.supplierProductMap[prodId]);
+                prodsMap.set(prodId, products.supplierProductMap[prodId]);
+            }
+
+
+            var self = this;
+            let searchResultNum = 1;
+            let resultsNum = prodsMap.size;
+
+            prodsMap.forEach( (function(prods) { // self visible here, not this
+                let currentProd = prods[0];
+
+                table_body.appendChild(createProductsRow(currentProd, shoppingCart, searchResultNum, resultsNum));
+                searchResultNum++;
+            }));
+
+            self.products_table.appendChild(table_body);
+            self.products_table_div.style.display = 'block';
+        };
+
+
+        this.updateSearchProducts = function(products) {
+
+            //remove all tbody tags in products_table
+            if (this.products_table.tBodies.length > 0) {
+                for (const item of this.products_table.tBodies) {
+                    this.products_table.removeChild(item);
+                }
+            }
+
+            let prodsMap = new Map();
+            let table_body;
+
+            for (const prodId in products.supplierProductMap) {
+                prodsMap.set(prodId, products.supplierProductMap[prodId]);
             }
 
             var self = this;
+            let firstIteration = true;
+            let searchResultNum = 1;
+            let resultsNum = prodsMap.size;
 
-            //prods = Map<integer, Array<SupplierProduct> >
-            //quindi applicando il forEach mi ritorna l'array di prodotti con venditori diversi
+            // self visible here, not this
+            //iterazione per ogni prodId
+            prodsMap.forEach( (function(prods) {
 
+                let tr, td, table;
 
-            //bisogna differenziare per forza perchè altrimenti in ricerca non creo una nuova table body per ogni prodotto
-
-            prods.forEach( (function(product) { // self visible here, not this
-
-                //per ogni prodId si crea una nuova table body
-
+                //creo un nuovo body per ogni proId
                 table_body = document.createElement("tbody");
 
+                //creo un nuovo body per la tabella interna con gli altri venditori
+                let table_body_per_id = document.createElement("tbody");
 
-                var currentProd = product[0]; //questo è per prendere un solo prodotto venduto da un solo venditore
+                for (const supplierProduct of prods) {
 
-                row = document.createElement("tr");
+                    if (firstIteration) {
 
-                //td immagine prodotto
-                td = document.createElement("td");
-                td.className = "table-product-img";
-                img = document.createElement("img");
-                img.src = getProductsImageFolderURL().concat(currentProd.productImagePath); //set img
-                td.appendChild(img);
-                row.appendChild(td);
+                        //inserisco la riga col prodotto al prezzo più basso
+                        table_body.appendChild(createProductsRow(supplierProduct, shoppingCart, searchResultNum, resultsNum));
 
-                //td nome prodotto
-                td = document.createElement("td");
-                prod_name = document.createElement("a");
-                prod_name.innerHTML = currentProd.productName;
-                prod_name.className = "clickable-link";
-                td.appendChild(prod_name);
-                row.appendChild(td);
+                        //e "preparo" la tabella più interna con gli altri venditori
+                        tr = document.createElement("tr");
 
-                //
-                prod_name.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    //deve mettere in tabella le info degli altri venditori dei prodotti
+                        td = document.createElement("td");
+                        td.setAttribute("colspan", "7")
+
+                        table = createSearchProductsTable();
+
+                        firstIteration = false;
 
 
-                }, false);
+                    } else {
 
-                //td desc prodotto
-                td = document.createElement("td");
-                td.innerHTML = currentProd.productDescription;
-                row.appendChild(td);
-
-                //td costo prodotto
-                td = document.createElement("td");
-                td.innerHTML = currentProd.supplierProductCost;
-                row.appendChild(td);
-
-                //td immagine prodotto
-                td = document.createElement("td");
-                td.className = "table-supplier-img";
-
-                img = document.createElement("img");
-                img.src = getSuppliersImageFolderURL().concat(currentProd.supplier.imagePath); //set img
-                td.appendChild(img);
-                row.appendChild(td);
-
-                //td buy button
-                td = document.createElement("td");
-                form = document.createElement("form");
-                form.className = "styled-form";
-                form.action = "AddToCart";
-                form.method = "POST";
-                form_input = document.createElement("input");
-                form_input.type = "hidden";
-                form_input.value = currentProd.productId;
-                form_input.name = "productId";
-                form.appendChild(form_input);
-                form_input = document.createElement("input");
-                form_input.type = "hidden";
-                form_input.value = currentProd.supplierId;
-                form_input.name = "supplierId";
-                form.appendChild(form_input);
-                form_input = document.createElement("input");
-                form_input.type = "hidden";
-                form_input.value = currentProd.supplierProductCost;
-                form_input.name = "supplierProductCost";
-                form.appendChild(form_input);
-                form_input = document.createElement("input");
-                form_input.className = "clickable-link clickable-link-medium";
-                form_input.type = "submit";
-                form_input.value = "Add to cart";
-                form.appendChild(form_input);
-
-                td.appendChild(form);
-                row.appendChild(td);
-
-
-                //AGGIUNGI AL CARRELLO
-                form_input.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    var addToCartForm = e.currentTarget.closest("form");
-                    var productRow = e.currentTarget.closest("tr");
-
-                    if (form.checkValidity()) {
-                        //chiamata a servlet
-                        makeCall("POST", 'products/AddToCart', addToCartForm, (req) =>{
-
-                            //nascondo la tabella
-                            self.products_table_div.style.display = 'block';
-
-                            switch(req.status){
-                                case 200: //ok
-
-                                    shoppingCart.update();
-                                    break;
-                                case 400: // bad request
-                                case 401: // unauthorized
-                                case 500: // server error
-
-                                    shoppingCart.showFailure(req.responseText);
-                                    break;
-                                default: //Error
-                                    shoppingCart.showFailure("Request reported status " + req.status);
-                            }
-                        });
-                    } else
-                        form.reportValidity(); //If not valid, notify
-                }, false);
+                        table_body_per_id.appendChild(createSupplierProductsRow(supplierProduct, shoppingCart));
 
 
 
-                self.products_table_body.appendChild(row);
+                        //prendere la riga precedente a questa,
+                        //prendere il td con il nome,
+                        //prendere <a> e metterci dentro l'event listener
+                        //che deve andare a mostrare la tabella sotto con gli altri venditori
+                    }
 
-                self.products_table_div.style.display = 'block';
+                }
+
+                //assegno id ad ogni risultato della ricerca
+                let tbID = 'tb-search-result-num-' + searchResultNum;
+                table_body.setAttribute("id", tbID);
+
+                //assegno id alle tr interne
+                let trID = 'tr-search-result-num-' + searchResultNum;
+                tr.setAttribute("id", trID);
+                tr.style.display = 'none';
+
+                table.appendChild(table_body_per_id);
+                td.appendChild(table);
+                tr.appendChild(td);
+                table_body.appendChild(tr);
+                self.products_table.appendChild(table_body);
+                firstIteration = true;
+                searchResultNum++;
 
             }));
 
+
+            self.products_table_div.style.display = 'block';
+
         };
+
+        this.hide = function () {
+            //FIXME
+            this.products_table_div.style.display = 'none';
+        };
+
     }
 
     function OrdersList(_orders_div) {
 
         this.orders_div = _orders_div;
 
+        var self = this;
 
+        this.show = function(){
+            //Request and update with the results
+            makeCall("GET", 'GetOrders', null, (req) =>{
+                switch(req.status){
+                    case 200: //ok
+                        let orders = JSON.parse(req.responseText);
+                        self.updateOrdersList(orders);
+                        break;
+                    case 400: // bad request
+                    case 401: // unauthorized
+                    case 500: // server error
+                        self.updateOrdersList(null, req.responseText);
+                        break;
+                    default: //Error
+                        self.updateOrdersList(null, "Request reported status " + req.status);
+                        break;
+                }
+            });
+        };
+
+        this.updateOrdersList = function (orders) {
+
+            //avendo gli ordini devo costruire il DOM
+
+        }
     }
 
 
@@ -384,13 +406,15 @@
         homepage_link_logo.setAttribute("href", "GoToHome");
 
         let home_link = document.getElementById("home-link");
-        home_link.setAttribute("href", "GoToHome");
+        home_link.setAttribute("href", "home.html");
 
         let shopping_cart_link = document.getElementById("shopping-cart-link");
-        shopping_cart_link.setAttribute("href", "GoToShoppingCart")
+        shopping_cart_link.onclick = pageOrchestrator.showShoppingCart();
+        //shopping_cart_link.setAttribute("href", "GoToShoppingCart")
 
         let orders_link = document.getElementById("orders-link");
-        orders_link.setAttribute("href", "GoToOrders");
+        orders_link.onclick = pageOrchestrator.showOrders();
+        //orders_link.setAttribute("href", "GoToOrders");
 
         let logout_link = document.getElementById("logout-link");
         logout_link.setAttribute("href", "logout")

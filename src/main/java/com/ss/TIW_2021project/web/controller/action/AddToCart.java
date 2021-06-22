@@ -1,15 +1,10 @@
 package com.ss.TIW_2021project.web.controller.action;
 
-import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
-import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.business.utils.ServletUtility;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -24,7 +19,7 @@ import java.util.List;
 @WebServlet(
         name = "AddToCart",
         description = "This servlet handles the 'add to cart' action whenever triggered",
-        value = "/products/AddToCart"
+        value = "/AddToCart"
 )
 @MultipartConfig
 public class AddToCart extends HttpServlet {
@@ -59,8 +54,9 @@ public class AddToCart extends HttpServlet {
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UtilityException e) {
+            String errorMessage = "The server encountered an error parsing the request's parameters";
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.getWriter().println("The server encountered an error parsing the request's parameters");
+            resp.getWriter().println(errorMessage);
             return;
         }
 
@@ -68,21 +64,17 @@ public class AddToCart extends HttpServlet {
         SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
 
         if(product == null) {
+            String errorMessage = "Where did you get that product?";
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().println("Where did you get that product?");
+            resp.getWriter().println(errorMessage);
             return;
         }
 
-        /*
-        CartService cartService = new CartService();
-        cartService.addToCart(req.getSession(), product, howMany);
-
-         */
+        //il carrello esiste solo sul client (session storage)
+        //la servlet si può forse eliminare totalmente
 
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
     }
 
 

@@ -56,7 +56,9 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionChecker</filter-name>
+        <url-pattern>/</url-pattern>
         <url-pattern>/home.html</url-pattern>
+        <url-pattern>/home</url-pattern>
         <url-pattern>/GoToHome</url-pattern>
         <url-pattern>/GoToShoppingCart</url-pattern>
         <url-pattern>/GoToOrders</url-pattern>

@@ -187,6 +187,12 @@ Array.prototype.contains = function(element){
     return false;
 }
 
+/**
+ * Utils for images URL
+ * -------------
+ * Description: return the images' folder path.
+ *
+ */
 function getProductsImageFolderURL() {
     return "https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/";
 }
@@ -195,8 +201,11 @@ function getSuppliersImageFolderURL() {
     return "https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/";
 }
 
-
-
+/**
+ * Utils for creating URL with parameters
+ * -------------
+ *
+ */
 function createUrlWithParams(URL, params) {
 
     var _endpoint = URL + ( function formatParams( params ) {
@@ -212,3 +221,4 @@ function createUrlWithParams(URL, params) {
     return _endpoint;
 
 }
+
