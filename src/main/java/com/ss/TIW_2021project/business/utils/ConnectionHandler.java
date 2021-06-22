@@ -49,6 +49,11 @@ public class ConnectionHandler {
 
     public static Connection getConnectionFromPool() throws UtilityException {
         Connection conn = null;
+
+        if (connectionPool == null) {
+            throw new UtilityException(UtilityException._CONNECTION_POOL_IS_NULL);
+        }
+
         try {
             conn = connectionPool.getConnection();
         } catch (SQLException throwables) {

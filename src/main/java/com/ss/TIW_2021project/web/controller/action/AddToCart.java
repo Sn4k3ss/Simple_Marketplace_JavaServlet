@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller.action;
 
+import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.UtilityException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.product.SupplierProduct;
@@ -58,7 +59,8 @@ public class AddToCart extends HttpServlet {
         try {
             supplierProduct = ServletUtility.buildProductFromRequest(req);
         } catch (UtilityException e) {
-            forwardToErrorPage(req, resp, "The server encountered an error parsing the request's parameters");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println("The server encountered an error parsing the request's parameters");
             return;
         }
 
@@ -66,29 +68,21 @@ public class AddToCart extends HttpServlet {
         SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
 
         if(product == null) {
-            forwardToErrorPage(req, resp, "Where did you get that product?");
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().println("Where did you get that product?");
             return;
         }
 
+        /*
         CartService cartService = new CartService();
         cartService.addToCart(req.getSession(), product, howMany);
 
-        req.getSession().removeAttribute("products_from_query");
-        req.getSession().removeAttribute("last_user_products");
+         */
 
 
-        String path = getServletContext().getContextPath() + PathUtils.goToShoppingCartServletPath;
-        resp.sendRedirect(path);
-    }
-
-
-    private void forwardToErrorPage(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
-
-        req.setAttribute("errorMessage", errorMessage);
-        String path = PathUtils.pathToErrorPage;
-
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
     }
 
 

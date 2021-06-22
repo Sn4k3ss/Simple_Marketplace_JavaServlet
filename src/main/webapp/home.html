@@ -60,56 +60,12 @@
                 <th colspan="2" scope="col">Product</th>
                 <th scope="col">Description</th>
                 <th scope="col">Cost</th>
-                <th scope="col">Supplier</th>
+                <th colspan="2" scope="col">Supplier</th>
                 <th scope="col">Add to cart</th>
             </tr>
             </thead>
 
-            <tbody id="products-table-body">
-            <!--
-            <tr>
-
-
-                <td class="table-product-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product image" src="./images/prod-ex.jpeg"/>
-                </td>
-
-
-
-                <td> <a class="clickable-link" th:href="@{/GoToHome( productId=${productId} , productName=${productInfo1.productName} )}" th:text="${productInfo1.productName}"> Nome prodotto</a> </td>
-
-
-
-                <td th:text="${productInfo1.productDescription}"></td>
-
-
-
-                <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
-
-
-
-                <td class="table-supplier-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="Product image" src="./images/suppl-ex.png"/>
-                </td>
-
-
-
-                <td>
-                    <form th:class="styled-form"
-                          th:action="${#request.contextPath} + '/products/AddToCart'"
-                          th:object="${productInfo1}"
-                          method="POST" >
-
-                        <input type="hidden" th:value="${productInfo1.productId}"    name="productId" />
-                        <input type="hidden" th:value="${productInfo1.supplierId}"   name="supplierId" />
-                        <input type="hidden" th:value="${productInfo1.supplierProductCost}"   name="supplierProductCost" />
-                        <input class="clickable-link clickable-link-medium" type="submit" value="One-click buy" />
-                    </form>
-                </td>
-            </tr>
-
-            -->
-            </tbody>
+            <tbody id="products-table-body"> </tbody>
         </table>
     </div>
 

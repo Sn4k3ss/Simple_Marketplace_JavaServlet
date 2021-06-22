@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @WebServlet(
         name = "GetHomeProducts",
-        description = "This servlet handles how the home page must be processed",
+        description = "This servlet look for the p",
         value = "/GetHomeProducts"
 )
 public class GetHomeProducts extends HttpServlet {
@@ -39,7 +39,7 @@ public class GetHomeProducts extends HttpServlet {
             return;
         }
 
-        req.getSession().setAttribute("last_user_products", retrievedProducts);
+        //req.getSession().setAttribute("last_user_products", retrievedProducts);
 
         String products = new Gson().toJson(retrievedProducts);
 

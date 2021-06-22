@@ -7,7 +7,8 @@ public class UtilityException extends Exception {
     public static final int _ERROR_CLOSING_RESULT_SET = 3;
     public static final int _ERROR_CLOSING_STATEMENT = 4;
     public static final int _ERROR_CREATING_CONN_POOL = 5;
-    public static final int _CONNECTIONS_LIMIT_REACHED = 5;
+    public static final int _CONNECTIONS_LIMIT_REACHED = 6;
+    public static final int _CONNECTION_POOL_IS_NULL = 7;
 
 
 

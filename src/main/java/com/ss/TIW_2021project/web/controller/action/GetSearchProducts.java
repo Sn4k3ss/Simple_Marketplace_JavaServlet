@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controller.action;
 
+import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
@@ -33,29 +34,39 @@ public class GetSearchProducts extends HttpServlet {
             String keyword = req.getParameter("keyword");
 
             if (keyword == null) {
+                String errorMessage = "Search string can't be null";
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                forward(req, resp, "Search string can't be null");
+                resp.getWriter().println(errorMessage);
                 return;
             } else if (keyword.isEmpty()) {
+                String errorMessage = "Search string can't be empty";
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                forward(req, resp, "Search string can't be empty");
+                resp.getWriter().println(errorMessage);
                 return;
             }
 
             retrievedProducts = productService.getRelevantProducts(keyword);
         } catch (ServiceException e) {
+            String errorMessage = "Couldn't execute your request";
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            forward(req, resp, "Couldn't execute your request");
+            resp.getWriter().println(errorMessage);
             return;
         }
 
 
-        req.getSession().setAttribute("products_from_query", retrievedProducts);
+        //req.getSession().setAttribute("products_from_query", retrievedProducts);
 
-        req.setAttribute("products", retrievedProducts);
-        req.setAttribute("selectedProductId", selectedProductId);
+        //req.setAttribute("products", retrievedProducts);
+        //req.setAttribute("selectedProductId", selectedProductId);
 
-        forward(req, resp, null);
+
+        String products = new Gson().toJson(retrievedProducts);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().println(products);
+
 
     }
 
@@ -64,17 +75,4 @@ public class GetSearchProducts extends HttpServlet {
         doGet(req, resp);
     }
 
-
-    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
-
-        String path = PathUtils.pathToSearchProductsPage;
-
-        if (errorMessage != null && resp.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-            req.setAttribute("errorMessage", errorMessage);
-            path = PathUtils.pathToErrorPage;
-        }
-
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
-    }
 }

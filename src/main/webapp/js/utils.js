@@ -194,3 +194,21 @@ function getProductsImageFolderURL() {
 function getSuppliersImageFolderURL() {
     return "https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/";
 }
+
+
+
+function createUrlWithParams(URL, params) {
+
+    var _endpoint = URL + ( function formatParams( params ) {
+
+        return "?" + Object
+            .keys(params)
+            .map(function(key) {
+                return key + "=" + encodeURIComponent(params[key])
+            })
+            .join("&")
+        } ) (params) ;
+
+    return _endpoint;
+
+}
