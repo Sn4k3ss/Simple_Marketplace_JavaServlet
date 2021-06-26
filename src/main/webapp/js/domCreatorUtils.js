@@ -385,3 +385,153 @@ function createSupplierRangesTable(supplierShippingPolicy) {
     return table;
 
 }
+
+//crea una table con intestazione e crelativa classe di stile css
+function createOrderTable() {
+
+    let table = document.createElement("table");
+    table.className = "styled-table";
+
+    let thead = document.createElement("thead");
+    let tr = document.createElement("tr");
+
+    let th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Order id";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Order placement date";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Supplier";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Order amount";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Shipping fees";
+    tr.appendChild(th);
+
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Delivery date";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Address";
+    tr.appendChild(th);
+
+    thead.appendChild(tr);
+    table.appendChild(thead);
+
+    return table;
+}
+
+function createOrderRow(order) {
+
+    let trow1 = document.createElement("tr"), td1;
+
+    //td id ordine
+    td1 = document.createElement("td");
+    td1.innerHTML = order.orderId;
+    trow1.appendChild(td1);
+
+    //td data ordine
+    td1 = document.createElement("td");
+    td1.innerHTML = order.orderPlacementDate;
+    trow1.appendChild(td1);
+
+    //td immagine supplier
+    td1 = document.createElement("td");
+    td1.className = "table-supplier-img";
+    let img = document.createElement("img");
+    img.src = getSuppliersImageFolderURL().concat(order.orderSupplier.imagePath); //set img
+    td1.appendChild(img);
+    trow1.appendChild(td1);
+
+    //td orderAmount
+    td1 = document.createElement("td");
+    td1.innerHTML = order.orderAmount;
+    trow1.appendChild(td1);
+
+    //td orderShippingFees
+    td1 = document.createElement("td");
+    td1.innerHTML = order.orderShippingFees;
+    trow1.appendChild(td1);
+
+    //td delivery
+    td1 = document.createElement("td");
+    td1.innerHTML = order.deliveryDate;
+    trow1.appendChild(td1);
+
+    //td shipping address
+    td1 = document.createElement("td");
+    td1.innerHTML = order.shippingAddress;
+    trow1.appendChild(td1);
+
+
+    return trow1;
+
+}
+
+function createProductsTableInOrder(prods) {
+
+    let prodsTable = document.createElement("table");
+    prodsTable.className = "styled-product-in-order-table";
+    let tbody = document.createElement("tbody");
+
+    prods.forEach( (function(prod) {
+
+        let trow2 = document.createElement("tr"), td2;
+
+        //td immagine prod
+        td2 = document.createElement("td");
+        td2.className = "table-product-img";
+        let img = document.createElement("img");
+        img.src = getProductsImageFolderURL().concat(prod.productImagePath); //set img
+        td2.appendChild(img);
+        trow2.appendChild(td2);
+
+        //td nome prodotto
+        td2 = document.createElement("td");
+        td2.innerHTML = prod.productName;
+        trow2.appendChild(td2);
+
+        //td descrizione prodotto
+        td2 = document.createElement("td");
+        td2.innerHTML = prod.productDescription;
+        trow2.appendChild(td2);
+
+        //td categoria prodotto
+        td2 = document.createElement("td");
+        td2.innerHTML = prod.productCategory;
+        trow2.appendChild(td2);
+
+        //td numero di prodotti
+        td2 = document.createElement("td");
+        td2.innerHTML = prod.howMany;
+        trow2.appendChild(td2);
+
+        //td costo cad.
+        td2 = document.createElement("td");
+        td2.innerHTML = prod.supplierProductCost;
+        trow2.appendChild(td2);
+
+        tbody.appendChild(trow2);
+
+    }));
+
+    prodsTable.appendChild(tbody);
+
+    return prodsTable;
+}

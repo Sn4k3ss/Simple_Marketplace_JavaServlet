@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" type="text/css" media="all" href="./css/global.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="./css/orders.css" />
     <link rel="stylesheet" type="text/css" media="all" href="./css/loading.css" />
     <link rel="stylesheet" type="text/css" media="all" href="./css/error.css" />
 
@@ -71,7 +72,6 @@
 
     <!-- SHOPPINC CART -->
     <div id="shopping-cart-div">
-        <div id="shopping-cart-div-message"> Prodotto aggiunto nel carrello con successo</div>
             <table  class="styled-table" style="width:100%">
                 <caption style="lighting-color: #04aa6d">CART</caption>
                 <thead>
@@ -123,56 +123,12 @@
 
                 </tbody>
             </table>
+        <div id="shopping-cart-div-message"> Prodotto aggiunto nel carrello con successo</div>
     </div>
 
 
     <!-- ORDERS -->
     <div id="orders-div" >
-        <table id="orders-table" class="styled-table" th:each="order : ${orders}">
-            <thead>
-            <tr>
-                <th scope="col">Order id</th>
-                <th scope="col">Order placement date</th>
-                <th scope="col">Supplier</th>
-                <th scope="col">Order amount</th>
-                <th scope="col">Shipping fees</th>
-                <th scope="col">Delivery date</th>
-                <th scope="col">Address</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr>
-                <td th:text="${order.orderId}">#0</td>
-                <td th:text="${#temporals.format(order.orderPlacementDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
-
-                <td class="table-supplier-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${order.orderSupplier.imagePath}" alt="Product image" src="./images/suppl-ex.png"/>
-                </td>
-
-                <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderAmount, 1, 2, 'COMMA')}">999,9</span> </td>
-                <td>&euro; <span th:text="${#numbers.formatDecimal(order.orderShippingFees, 1, 2, 'COMMA')}">10,9</span> </td>
-                <td th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}">1-1-1970 00:00</td>
-                <td> <span th:text="${order.shippingAddress.recipient}"></span> <span th:text="${order.shippingAddress.address}"></span> <span th:text="${order.shippingAddress.city}"></span> <span th:text="${order.shippingAddress.state}"></span> <span th:text="${order.shippingAddress.phone}"> </span> </td>
-
-                <table class="styled-product-in-order-table">
-                    <caption></caption>
-                    <tbody>
-                    <tr th:each="product : ${order.orderProductsList}">
-                        <td class="table-product-img">
-                            <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image" src="./images/prod-ex.jpeg"/>
-                        </td>
-                        <td th:text="${product.productName}">Nike Air Max 270 X Mozart limited edition</td>
-                        <td th:text="${product.productDescription}">Scarpe bellissime</td>
-                        <td th:text="${product.productCategory}">Scarpe e abbigliamento</td>
-                        <td th:text="${product.howMany}">3</td>
-                        <td>&euro; <span th:text="${#numbers.formatDecimal(product.supplierProductCost, 1, 2, 'COMMA')}">99,9</span> </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </tr>
-            </tbody>
-        </table>
         <div id="orders-error-div" >Error!</div>
     </div>
 

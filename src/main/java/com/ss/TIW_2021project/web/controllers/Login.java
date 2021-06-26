@@ -1,4 +1,4 @@
-package com.ss.TIW_2021project.web.controller.action;
+package com.ss.TIW_2021project.web.controllers;
 
 import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;

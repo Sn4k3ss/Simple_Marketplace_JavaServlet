@@ -50,7 +50,7 @@
 
             orders = new OrdersList(
                 document.getElementById("orders-div"),
-                document.getElementById("orders-table")
+                document.getElementById("orders-error-div")
             )
         };
 
@@ -359,10 +359,10 @@
 
     function OrdersList(
         _orders_div,
-        _orders_table) {
+        _orders_error_div) {
 
         this.orders_div = _orders_div;
-        this.orders_table = _orders_table;
+        this.orders_error_div = _orders_error_div;
 
         var self = this;
 
@@ -373,15 +373,15 @@
                     case 200: //ok
                         let ordersFromReq = JSON.parse(req.responseText);
                         self.updateOrdersList(ordersFromReq);
-                        self.orders_div.display.style = "block";
+                        self.orders_div.style.display = 'block';
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
                     case 500: // server error
-                        self.updateOrdersList(null, req.responseText);
+                        self.showFailure(req.responseText);
                         break;
                     default: //Error
-                        self.updateOrdersList(null, "Request reported status " + req.status);
+                        self.showFailure("Request reported status " + req.status);
                         break;
                 }
             });
@@ -389,38 +389,39 @@
 
         this.updateOrdersList = function (orders) {
 
-            /*
-            //TODO prima va popolato, poi in seguito vedremo come svuotarlo
             //remove all tables in orders-div
-            while (this.products_table.tBodies.length > 0) {
-                this.products_table.removeChild(this.products_table.tBodies[0]);
+            while (this.orders_div.getElementsByTagName("table").length > 0) {
+                this.orders_div.removeChild(_orders_div.getElementsByTagName("table")[0]);
             }
-
-             */
-
-            let ordersMap = new Map();
-            let table_body;
-
-            for (const prodId in products.supplierProductMap) {
-                ordersMap.set(prodId, products.supplierProductMap[prodId]);
-            }
-
-            var self = this;
-            let firstIteration = true;
-            let searchResultNum = 1;
-            let resultsNum = ordersMap.size;
 
             // self visible here, not this
-            //iterazione per ogni prodId
-            ordersMap.forEach( (function(prods) {
+            //iterazione per ogni ordine
+            orders.forEach( (function(order) {
+                let orderTable, tbody1;
 
-                //riempi tabella ordini
+                //tabella con le info sull'ordine
+                orderTable = createOrderTable();
+                tbody1 = document.createElement("tbody");
+                tbody1.appendChild(createOrderRow(order));
+                orderTable.appendChild(tbody1);
+                self.orders_div.appendChild(orderTable);
+
+                //tabella con i prodotti dell'ordine
+                let prodsTable = createProductsTableInOrder(order.orderProductsList);
+                self.orders_div.appendChild(prodsTable);
+
             }));
+        }
+
+
+        this.showFailure = function (_message) {
+
+            self.orders_div.style.display = 'block';
+            self.orders_error_div.innerHTML = _message;
+            self.orders_error_div.style.display = 'block';
 
         }
     }
-
-
 
 
 
@@ -433,11 +434,9 @@
 
         let shopping_cart_link = document.getElementById("shopping-cart-link");
         shopping_cart_link.onclick = pageOrchestrator.showShoppingCart;
-        //shopping_cart_link.setAttribute("href", "GoToShoppingCart")
 
         let orders_link = document.getElementById("orders-link");
         orders_link.onclick = pageOrchestrator.showOrders;
-        //orders_link.setAttribute("href", "GoToOrders");
 
         let logout_link = document.getElementById("logout-link");
         logout_link.setAttribute("href", "logout")

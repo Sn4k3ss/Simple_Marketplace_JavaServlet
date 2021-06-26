@@ -335,10 +335,18 @@ fieldset{
     display: none;
 }
 
+#shopping-cart-div-message {
+    display: none;
+}
+
 #orders-div {
+    display: none;
+}
+#orders-error-div{
     display: none;
 }
 
 #search-form-error {
     display: none;
 }
+
