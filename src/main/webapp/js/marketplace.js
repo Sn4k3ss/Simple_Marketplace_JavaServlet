@@ -23,9 +23,6 @@
      *   Others refreshes will be managed by AddressBook object itself.
      */
     function PageOrchestrator(){
-
-        var self = this;
-
         this.start = function() {
 
             //Init components
@@ -52,7 +49,8 @@
             )
 
             orders = new OrdersList(
-                document.getElementById("orders-div")
+                document.getElementById("orders-div"),
+                document.getElementById("orders-table")
             )
         };
 
@@ -230,10 +228,8 @@
         this.updateHomeProducts = function(products, _error) {
 
             //remove all tbody tags in products_table
-            if (this.products_table.tBodies.length > 0) {
-                for (const item of this.products_table.tBodies) {
-                    this.products_table.removeChild(item);
-                }
+            while (this.products_table.tBodies.length > 0) {
+                this.products_table.removeChild(this.products_table.tBodies[0]);
             }
 
 
@@ -271,10 +267,8 @@
         this.updateSearchProducts = function(products) {
 
             //remove all tbody tags in products_table
-            if (this.products_table.tBodies.length > 0) {
-                for (const item of this.products_table.tBodies) {
-                    this.products_table.removeChild(item);
-                }
+            while (this.products_table.tBodies.length > 0) {
+                this.products_table.removeChild(this.products_table.tBodies[0]);
             }
 
             let prodsMap = new Map();
@@ -294,10 +288,8 @@
             prodsMap.forEach( (function(prods) {
 
                 let tr, td, table;
-
                 //creo un nuovo body per ogni proId
                 table_body = document.createElement("tbody");
-
                 //creo un nuovo body per la tabella interna con gli altri venditori
                 let table_body_per_id = document.createElement("tbody");
 
@@ -316,8 +308,9 @@
 
                         table = createSearchProductsTable();
 
-                        firstIteration = false;
+                        table_body_per_id.appendChild(createSupplierProductsRow(supplierProduct, shoppingCart));
 
+                        firstIteration = false;
 
                     } else {
 
@@ -364,9 +357,12 @@
 
     }
 
-    function OrdersList(_orders_div) {
+    function OrdersList(
+        _orders_div,
+        _orders_table) {
 
         this.orders_div = _orders_div;
+        this.orders_table = _orders_table;
 
         var self = this;
 
@@ -375,8 +371,9 @@
             makeCall("GET", 'GetOrders', null, (req) =>{
                 switch(req.status){
                     case 200: //ok
-                        let orders = JSON.parse(req.responseText);
-                        self.updateOrdersList(orders);
+                        let ordersFromReq = JSON.parse(req.responseText);
+                        self.updateOrdersList(ordersFromReq);
+                        self.orders_div.display.style = "block";
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
@@ -392,7 +389,33 @@
 
         this.updateOrdersList = function (orders) {
 
-            //avendo gli ordini devo costruire il DOM
+            /*
+            //TODO prima va popolato, poi in seguito vedremo come svuotarlo
+            //remove all tables in orders-div
+            while (this.products_table.tBodies.length > 0) {
+                this.products_table.removeChild(this.products_table.tBodies[0]);
+            }
+
+             */
+
+            let ordersMap = new Map();
+            let table_body;
+
+            for (const prodId in products.supplierProductMap) {
+                ordersMap.set(prodId, products.supplierProductMap[prodId]);
+            }
+
+            var self = this;
+            let firstIteration = true;
+            let searchResultNum = 1;
+            let resultsNum = ordersMap.size;
+
+            // self visible here, not this
+            //iterazione per ogni prodId
+            ordersMap.forEach( (function(prods) {
+
+                //riempi tabella ordini
+            }));
 
         }
     }
@@ -409,11 +432,11 @@
         home_link.setAttribute("href", "home.html");
 
         let shopping_cart_link = document.getElementById("shopping-cart-link");
-        shopping_cart_link.onclick = pageOrchestrator.showShoppingCart();
+        shopping_cart_link.onclick = pageOrchestrator.showShoppingCart;
         //shopping_cart_link.setAttribute("href", "GoToShoppingCart")
 
         let orders_link = document.getElementById("orders-link");
-        orders_link.onclick = pageOrchestrator.showOrders();
+        orders_link.onclick = pageOrchestrator.showOrders;
         //orders_link.setAttribute("href", "GoToOrders");
 
         let logout_link = document.getElementById("logout-link");

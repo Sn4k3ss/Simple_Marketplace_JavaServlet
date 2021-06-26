@@ -69,161 +69,6 @@
     </div>
 
 
-    <!-- SEARCH PRODUCTS TABLE -->
-    <div id="search-products-table-div" >
-        <table class="styled-table">
-            <caption>Products from the marketplace</caption>
-            <thead>
-            <tr>
-                <th colspan="2" scope="col">Product</th>
-                <th scope="col">Description</th>
-                <th scope="col">Cost</th>
-                <th colspan="2" scope="col">Supplier</th>
-                <th scope="col">Add to cart</th>
-                <th colspan="4" scope="col"></th>
-            </tr>
-            </thead>
-
-            <tbody th:each="productId : ${products.supplierProductMap.keySet()}">
-            <tr  th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
-
-                <!-- IMMAGINE PRODOTTO -->
-                <td class="table-product-img">
-                    <a th:href="@{/search/products/ShowProductInfo(productId=${productId})}" >
-                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${productInfo1.productImagePath}" alt="Product-image" src=""/>
-                    </a>
-                </td>
-
-                <!-- NOME PRODOTTO -->
-                <td> <a class="clickable-link" th:href="@{/search/products/ShowProductInfo( productId=${productId} , productName=${productInfo1.productName} )}" th:text="${productInfo1.productName}"> Nome prodotto</a> </td>
-
-                <!-- DESCRIZIONE PRODOTTO -->
-                <td th:text="${productInfo1.productDescription}">No desc</td>
-
-                <!-- PREZZO PRODOTTO -->
-                <td>&euro; <span th:text="${#numbers.formatDecimal(productInfo1.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
-
-                <!-- IMMAGINE SUPPLIER -->
-                <td class="table-supplier-img">
-                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${productInfo1.supplier.imagePath}" alt="supplier-image"/>
-                </td>
-
-                <!-- NOME SUPPLIER -->
-                <td th:text="${productInfo1.supplierName}">Supplier name</td>
-
-                <!-- BUY BUTTON -->
-                <td>
-                    <form th:action="${#request.contextPath} + '/products/AddToCart'"  th:object="${productInfo1}" method="POST">
-                        <input type="hidden" th:value="*{productId}"    name="productId" />
-                        <input type="hidden" th:value="*{supplierId}"   name="supplierId" />
-                        <input type="hidden" th:value="*{supplierProductCost}"   name="supplierProductCost" />
-                        <input type="submit" class="clickable-link clickable-link-medium" value="One-click buy" />
-                    </form>
-                </td>
-
-            </tr>
-
-            <tr th:with="productInfo1=${products.supplierProductMap.get(productId)[0]}">
-                <!-- TABLE CON INFO SUI VENDITORI-->
-                <td colspan="7">
-                    <table class="styled-table" th:if="${selectedProductId.equals(productInfo1.productId)}" >
-                        <thead>
-                        <tr>
-                            <th scope="col">Supplier</th>
-                            <th scope="col">Cost</th>
-                            <th scope="col">Rating</th>
-                            <th scope="col">Free shipping from</th>
-                            <th scope="col">Range</th>
-                            <th scope="col">Items already in cart</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Add to cart</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr th:each="supplierProduct : ${products.supplierProductMap.get(selectedProductId)}">
-
-                                <!-- IMMAGINE SUPPLIER -->
-                                <td class="table-supplier-img">
-                                    <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/suppliers/'+ ${supplierProduct.supplier.imagePath}" alt="supplier-image" src="./images/suppl-ex.png"/>
-                                </td>
-
-                                <!-- PREZZO PRODOTTO -->
-                                <td>&euro; <span th:text="${#numbers.formatDecimal(supplierProduct.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
-
-                                <!-- RATING SUPPLIER -->
-                                <td th:text="${supplierProduct.supplier.supplierRating}">0.0</td>
-
-                                <!-- SUPPLIER FREE SHIPPING YES -->
-                                <td th:if="${supplierProduct.supplier.hasFreeShipping}" >&euro; <span th:text="${#numbers.formatDecimal(supplierProduct.supplier.freeShippingMinAmount, 1, 2, 'COMMA')}">10.00</span> </td>
-
-                                <!-- SUPPLIER FREE SHIPPING NO -->
-                                <td th:if="${!supplierProduct.supplier.hasFreeShipping}" th:text="'No'"></td>
-
-                                <!-- SUPPLIER RANGE COSTS -->
-                                <td>
-                                    <table class="styled-table">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Range</th>
-                                            <th scope="col">minItem</th>
-                                            <th scope="col">maxItem</th>
-                                            <th scope="col">cost</th>
-                                        </tr>
-                                        </thead>
-                                        <tr th:each="range : ${supplierProduct.supplier.supplierShippingPolicy.ranges}" >
-                                            <td th:text="${supplierProduct.supplier.supplierShippingPolicy.ranges.indexOf(range) + 1}">1</td>
-                                            <td th:text="${range.minAmount}">1</td>
-                                            <td th:text="${range.maxAmount}">5</td>
-                                            <td>&euro; <span th:text="${#numbers.formatDecimal(range.cost, 1, 2, 'COMMA')}">10.00</span> </td>
-                                        </tr>
-                                    </table>
-                                </td>
-
-                                <!-- HOW MANY ITEMS -->
-                                <td th:if="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" th:text="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" >3</td>
-                                <td th:unless="${session.shoppingCart.totalItemsBySupplier.get(supplierProduct.supplierId)}" >0</td>
-
-
-                                <!-- HOW MUCH TOTAL -->
-                                <td th:if="${session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId)}">&euro; <span th:text="${#numbers.formatDecimal(session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId), 1, 2, 'COMMA')}">10.00</span> </td>
-                                <td th:unless="${session.shoppingCart.totalAmountBySupplier.get(supplierProduct.supplierId)}">&euro; <span th:text="${#numbers.formatDecimal(0, 1, 2, 'COMMA')}">10.00</span> </td>
-
-
-                                <!-- ADD TO CART FORM -->
-                                <td>
-                                    <form th:action="${#request.contextPath} + '/products/AddToCart'" method="POST">
-                                        <label for="howMany">How many:</label>
-                                        <select name="howMany" id="howMany">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                            <option value="9">9</option>
-                                        </select>
-                                        <input type="hidden" th:value="${supplierProduct.productId}"    name="productId" />
-                                        <input type="hidden" th:value="${supplierProduct.supplierId}"   name="supplierId" />
-                                        <input type="hidden" th:value="${supplierProduct.supplierProductCost}"   name="supplierProductCost" />
-                                        <input type="submit" class="clickable-link clickable-link-medium" value="Add to cart">
-                                    </form>
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-
-            </tbody>
-        </table>
-    </div>
-
-
     <!-- SHOPPINC CART -->
     <div id="shopping-cart-div">
         <div id="shopping-cart-div-message"> Prodotto aggiunto nel carrello con successo</div>
@@ -283,8 +128,7 @@
 
     <!-- ORDERS -->
     <div id="orders-div" >
-        <table th:each="order : ${orders}" class="styled-table">
-            <caption></caption>
+        <table id="orders-table" class="styled-table" th:each="order : ${orders}">
             <thead>
             <tr>
                 <th scope="col">Order id</th>
@@ -329,6 +173,7 @@
             </tr>
             </tbody>
         </table>
+        <div id="orders-error-div" >Error!</div>
     </div>
 
 

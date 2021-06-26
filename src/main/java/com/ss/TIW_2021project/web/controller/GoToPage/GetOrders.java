@@ -1,12 +1,10 @@
 package com.ss.TIW_2021project.web.controller.GoToPage;
 
+import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.Order;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.OrderService;
-import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
@@ -17,11 +15,11 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(
-        name = "showOrders",
-        description = "This is my first annotated servlet",
-        value = "/GoToOrders"
+        name = "getOrders",
+        description = "This servlet handles the requests to get all the orders by the current user",
+        value = "/GetOrders"
 )
-public class GoToOrders extends HttpServlet {
+public class GetOrders extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, UnavailableException {
@@ -35,26 +33,18 @@ public class GoToOrders extends HttpServlet {
             orders = orderService.retrieveUserOrders(user.getUserId());
         } catch (ServiceException e) {
             String errorMessage = "Couldn't get infos about orders";
-            req.setAttribute("errorMessage", errorMessage);
-            forward(req, resp, errorMessage);
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().println(errorMessage);
             return;
         }
 
-        req.setAttribute("orders", orders);
-        forward(req, resp, null);
+        String ordersJson = new Gson().toJson(orders);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().println(ordersJson);
     }
 
 
-    private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {
-
-        String path = PathUtils.pathToOrdersPage;
-
-        if (errorMessage != null) {
-            req.setAttribute("errorMessage", errorMessage);
-            path = PathUtils.pathToErrorPage;
-        }
-
-        WebContext webContext = new WebContext(req, resp, getServletContext(), req.getLocale());
-        TemplateHandler.templateEngine.process(path, webContext, resp.getWriter() );
-    }
 }

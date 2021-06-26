@@ -39,8 +39,6 @@ public class GetHomeProducts extends HttpServlet {
             return;
         }
 
-        //req.getSession().setAttribute("last_user_products", retrievedProducts);
-
         String products = new Gson().toJson(retrievedProducts);
 
         resp.setStatus(HttpServletResponse.SC_OK);

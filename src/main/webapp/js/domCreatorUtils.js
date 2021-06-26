@@ -199,9 +199,6 @@ function createSearchProductsTable() {
     thead.appendChild(tr);
     table.appendChild(thead);
 
-    let tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-
     return table;
 
 }
@@ -214,7 +211,7 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
     let td = document.createElement("td");
     td.className = "table-supplier-img";
     let img = document.createElement("img");
-    img.src = getProductsImageFolderURL().concat(supplierProduct.supplier.imagePath); //set img
+    img.src = getSuppliersImageFolderURL().concat(supplierProduct.supplier.imagePath); //set img
     td.appendChild(img);
     row.appendChild(td);
 
