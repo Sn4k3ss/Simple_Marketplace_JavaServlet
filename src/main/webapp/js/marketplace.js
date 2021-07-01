@@ -27,8 +27,7 @@
 
             //Init components
             userInfo = new UserInfo(
-                sessionStorage.getItem('userName'),
-                sessionStorage.getItem('userId'),
+                sessionStorage.getItem('userdata'),
                 [document.getElementById("title-username")]
             );
 
@@ -38,7 +37,7 @@
                 document.getElementById("search-form-error"),
             )
 
-            shoppingCart = new ShoppingCart(
+            shoppingCart = new ShoppingCartNew(
                 document.getElementById("shopping-cart-div"),
                 document.getElementById("shopping-cart-div-message")
             )
@@ -55,6 +54,12 @@
         };
 
         this.showHomePage = function(){
+            updateHeaderCss('HOME');
+
+            //nascondi tutto il resto
+            shoppingCart.hide();
+            orders.hide();
+
             userInfo.show();
             productsCatalogue.showHomeProducts();
         };
@@ -62,9 +67,10 @@
 
         //deve nascondermi tutti i div eccetto quelo del carrello
         this.showShoppingCart = function () {
+            updateHeaderCss('CART');
 
-            //nascondi tutto il resto
             productsCatalogue.hide();
+            orders.hide();
 
             //mostra carrello
             shoppingCart.show();
@@ -73,9 +79,12 @@
 
         //deve nascondermi tutti i div eccetto quelo degli ordini
         this.showOrders = function () {
+            updateHeaderCss('ORDERS');
 
             //nascondi tutto il resto
             productsCatalogue.hide();
+            shoppingCart.hide();
+
 
             //mostra carrello
             orders.show();
@@ -84,12 +93,11 @@
     }
 
     function UserInfo(
-        _userName,
-        _userId,
+        _userdata,
         nameElements){
 
-        this.name = _userName;
-        this.id = _userId;
+        this.name = _userdata.name;
+        this.id = _userdata.id;
 
 
 
@@ -144,11 +152,11 @@
         });
 
         this.show = function() {
-            //TODO se servirà a qualcosa
+            self.search_form_div.style.display = 'block';
         };
 
         this.update = function() {
-            //TODO se servirà a qualcosa
+            self.search_form_div.style.display = 'none';
         };
     }
 
@@ -160,7 +168,7 @@
         this.shopping_cart_div = _shopping_cart_div;
         this.shopping_cart_div_message = _shopping_cart_div_message;
 
-        var self = this; //Necessary only for in-function helpers (makeCall)
+        var self = this; //Needed for in-function helpers only (makeCall)
 
         this.show = function() {
             self.shopping_cart_div = sessionStorage.getItem(shoppingCart);
@@ -171,7 +179,7 @@
         this.hide = function () {
             //TODO da fare
 
-            self.shopping_cart_div.style.display = 'block';
+            self.shopping_cart_div.style.display = 'none';
         }
 
 
@@ -192,6 +200,186 @@
         }
     }
 
+    function ShoppingCartNew(
+        _shopping_cart_div,
+        _shopping_cart_div_message
+    ) {
+
+        this.shopping_cart_div = _shopping_cart_div;
+        this.shopping_cart_div_message = _shopping_cart_div_message;
+
+        self.KEY = 'bkasjbdfkjasdkfjhaksdfjskd';
+        self.contents = [];
+        self.prods = new Map();
+
+
+        var self = this; //Needed for in-function helpers only (makeCall)
+
+        this.init = function () {
+            //check localStorage and initialize the contents of CART.contents
+            let _contents = localStorage.getItem(self.KEY);
+            if(_contents){
+                self.contents = JSON.parse(_contents);
+            }else{
+                //dummy test data
+                self.contents =
+                    [
+                        {   id:1,
+                            title:'Apple',
+                            qty:5,
+                            itemPrice: 0.85
+                        },
+                        {   id:2,
+                            title:'Banana',
+                            qty:3,
+                            itemPrice: 0.35
+                        },
+                        {   id:3,
+                            title:'Cherry',
+                            qty:8,
+                            itemPrice: 0.05
+                        }
+                    ];
+
+                self.contents =
+                    [
+                        {   id:1,
+                            title:'Apple',
+                            qty:5,
+                            itemPrice: 0.85
+                        },
+                        {   id:2,
+                            title:'Banana',
+                            qty:3,
+                            itemPrice: 0.35
+                        },
+                        {   id:3,
+                            title:'Cherry',
+                            qty:8,
+                            itemPrice: 0.05
+                        }
+                    ];
+
+                self.sync();
+            }
+        };
+
+        this.sync = async function  (){
+            let _cart = JSON.stringify(self.contents);
+            await localStorage.setItem(self.KEY, _cart);
+        };
+
+        this.find = function (id){
+            //find an item in the cart by it's id
+            let match = self.contents.filter(item=>{
+                if(item.id == id)
+                    return true;
+            });
+            if(match && match[0])
+                return match[0];
+        };
+
+        this.add = function (id){
+            //add a new item to the cart
+            //check that it is not in the cart already
+            if(self.find(id)){
+                self.increase(id, 1);
+            }else{
+                let arr = PRODUCTS.filter(product=>{
+                    if(product.id == id){
+                        return true;
+                    }
+                });
+                if(arr && arr[0]){
+                    let obj = {
+                        id: arr[0].id,
+                        title: arr[0].title,
+                        qty: 1,
+                        itemPrice: arr[0].price
+                    };
+                    self.contents.push(obj);
+                    //update localStorage
+                    self.sync();
+                }else{
+                    //product id does not exist in products data
+                    console.error('Invalid Product');
+                }
+            }
+        };
+
+        this.increase = function (id, qty=1){
+            //increase the quantity of an item in the cart
+            self.contents = self.contents.map(item=>{
+                if(item.id === id)
+                    item.qty = item.qty + qty;
+                return item;
+            });
+            //update localStorage
+            self.sync()
+        };
+
+        this.reduce = function (id, qty=1){
+            //reduce the quantity of an item in the cart
+            self.contents = self.contents.map(item=>{
+                if(item.id === id)
+                    item.qty = item.qty - qty;
+                return item;
+            });
+            self.contents.forEach(async item=>{
+                if(item.id === id && item.qty === 0)
+                    await self.remove(id);
+            });
+            //update localStorage
+            self.sync()
+        };
+
+        this.remove = function (id){
+            //remove an item entirely from CART.contents based on its id
+            self.contents = self.contents.filter(item=>{
+                if(item.id !== id)
+                    return true;
+            });
+            //update localStorage
+            self.sync()
+        };
+
+        this.empty = function (){
+            //empty whole cart
+            self.contents = [];
+            //update localStorage
+            self.sync()
+        };
+
+        this.sort = function (field='title'){
+            //sort by field - title, price
+            //return a sorted shallow copy of the CART.contents array
+            let sorted = self.contents.sort( (a, b)=>{
+                if(a[field] > b[field]){
+                    return 1;
+                }else if(a[field] < a[field]){
+                    return -1;
+                }else{
+                    return 0;
+                }
+            });
+            return sorted;
+            //NO impact on localStorage
+        };
+
+        this.logContents = function (prefix){
+            console.log(prefix, self.contents)
+        }
+
+        this.show = function() {
+            self.shopping_cart_div = sessionStorage.getItem(self.KEY);
+
+            self.shopping_cart_div.style.display = 'block';
+        }
+
+        this.hide = function () {
+            self.shopping_cart_div.style.display = 'none';
+        }
+    }
 
     // il products catalogue riceve come primo argomento il catalogo di prodotti da mostrare nella home
     // come secondo argomento invece sono i risultati ottenuti dalla ricerca
@@ -313,15 +501,7 @@
                         firstIteration = false;
 
                     } else {
-
                         table_body_per_id.appendChild(createSupplierProductsRow(supplierProduct, shoppingCart));
-
-
-
-                        //prendere la riga precedente a questa,
-                        //prendere il td con il nome,
-                        //prendere <a> e metterci dentro l'event listener
-                        //che deve andare a mostrare la tabella sotto con gli altri venditori
                     }
 
                 }
@@ -421,16 +601,20 @@
             self.orders_error_div.style.display = 'block';
 
         }
+
+        this.hide = function () {
+            this.orders_div.style.display = 'none';
+        };
     }
 
 
 
     function setHeaderHrefs(){
         let homepage_link_logo = document.getElementById("homepage-link-logo");
-        homepage_link_logo.setAttribute("href", "GoToHome");
+        homepage_link_logo.onclick = pageOrchestrator.showHomePage;
 
         let home_link = document.getElementById("home-link");
-        home_link.setAttribute("href", "home.html");
+        home_link.onclick = pageOrchestrator.showHomePage;
 
         let shopping_cart_link = document.getElementById("shopping-cart-link");
         shopping_cart_link.onclick = pageOrchestrator.showShoppingCart;
@@ -444,6 +628,34 @@
         logout_link.addEventListener("click", e => {
             sessionStorage.clear();
         });
+
+
+    }
+
+    function updateHeaderCss(a){
+
+        document.getElementById("home-link").classList.remove('active');
+        document.getElementById("shopping-cart-link").classList.remove('active');
+        document.getElementById("orders-link").classList.remove('active');
+
+        switch (a) {
+
+            case 'HOME': document.getElementById("home-link").classList.add('active');
+                    break;
+            case 'CART': document.getElementById("shopping-cart-link").classList.add('active');
+                    break;
+            case 'ORDERS': document.getElementById("orders-link").classList.add('active');
+                    break;
+            default:
+        }
+
+
+
+
+    }
+
+
+    function cart() {
 
 
     }

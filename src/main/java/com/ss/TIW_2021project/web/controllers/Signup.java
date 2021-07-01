@@ -88,7 +88,7 @@ public class Signup extends HttpServlet {
 
         req.getSession().setAttribute("user", user);
 
-        String path = getServletContext().getContextPath() + PathUtils.goToHomeServletPath;
+        String path = getServletContext().getContextPath() + PathUtils.pathToHomePage;
         resp.sendRedirect(path);
     }
 

@@ -51,9 +51,8 @@
         makeCall("POST", request_url, form, function(req){
             switch(req.status){ //Get status code
                 case 200: //Okay
-                    var data = JSON.parse(req.responseText);
-                    sessionStorage.setItem('id', data.id);
-                    sessionStorage.setItem('name', data.name);
+                    let data = JSON.parse(req.responseText);
+                    sessionStorage.setItem('userdata', data);
                     window.location.href = "home.html";
                     break;
                 case 302:

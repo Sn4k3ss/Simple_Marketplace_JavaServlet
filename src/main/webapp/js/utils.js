@@ -208,17 +208,23 @@ function getSuppliersImageFolderURL() {
  */
 function createUrlWithParams(URL, params) {
 
-    var _endpoint = URL + ( function formatParams( params ) {
+    return URL + (function formatParams(params) {
 
         return "?" + Object
             .keys(params)
-            .map(function(key) {
+            .map(function (key) {
                 return key + "=" + encodeURIComponent(params[key])
             })
             .join("&")
-        } ) (params) ;
+    })(params);
 
-    return _endpoint;
+}
+
+
+function addProdToCart(prod) {
+
+    sessionStorage.setItem("cart", [])
+
 
 }
 

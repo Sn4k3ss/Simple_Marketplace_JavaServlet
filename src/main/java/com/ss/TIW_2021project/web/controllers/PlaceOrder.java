@@ -29,6 +29,9 @@ public class PlaceOrder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+
+        //All you need to receive from a user it's just the supplierId and productId with the number of items to be bought
+
         Integer supplierId = Integer.parseInt(req.getParameter("supplierId"));
         Integer userShippingAddressId = Integer.parseInt(req.getParameter("userShippingAddressId"));
         User user = (User) req.getSession(false).getAttribute("user");
@@ -58,7 +61,7 @@ public class PlaceOrder extends HttpServlet {
 
         shoppingCart.emptyShoppingCart(supplierId);
 
-        String path = getServletContext().getContextPath() + PathUtils.goToOrdersServletPath;
+        String path = getServletContext().getContextPath() + "/orders";
         resp.sendRedirect(path);
     }
 

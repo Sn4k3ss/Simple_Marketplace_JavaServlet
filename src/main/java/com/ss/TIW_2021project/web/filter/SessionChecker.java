@@ -30,48 +30,23 @@ public class SessionChecker implements Filter {
 
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
+        HttpSession s = req.getSession();
 
-        if (process(req,res)) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
-            req.setAttribute("loginErrorMessage", "You are not authorized to access this page");
-            forward(req, res, PathUtils.pathToLoginPage);
+        if(s != null) {
+            Object user = s.getAttribute("user");
+            if(user != null) {
+                filterChain.doFilter(req, res);
+                return;
+            }
         }
 
-
-
+        res.sendRedirect(req.getServletContext().getContextPath() + PathUtils.pathToLoginPage);
     }
 
-    /**
-     *
-     * Process the request and check user's session
-     *
-     * @param request
-     * @param response
-     * @return true if user is logged in, false otherwisee
-     * @throws ServletException
-     */
-
-    private boolean process(HttpServletRequest request, HttpServletResponse response) {
-
-        HttpSession session = request.getSession();
-
-        boolean loggedIn = !session.isNew() && session != null && session.getAttribute("user") != null;
-        boolean loginRequest = request.getRequestURI().equals("/login");
-
-        return loggedIn || loginRequest;
-    }
 
     @Override
     public void destroy() {
         Filter.super.destroy();
     }
 
-    public void forward(HttpServletRequest request, HttpServletResponse response, String path) throws IOException{
-
-        ServletContext servletContext = request.getServletContext();
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-        TemplateHandler.templateEngine.process(path, ctx, response.getWriter());
-
-    }
 }

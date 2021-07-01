@@ -50,25 +50,20 @@
     <filter-mapping>
         <filter-name>CheckNotLoggedUser</filter-name>
         <url-pattern>/login.html</url-pattern>
-        <url-pattern>/GoToLogin</url-pattern>
         <url-pattern>/login</url-pattern>
         <url-pattern>/signup</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessionChecker</filter-name>
-        <url-pattern>/</url-pattern>
         <url-pattern>/home.html</url-pattern>
-        <url-pattern>/home</url-pattern>
-        <url-pattern>/GoToHome</url-pattern>
-        <url-pattern>/GoToShoppingCart</url-pattern>
-        <url-pattern>/GoToOrders</url-pattern>
-        <url-pattern>/search/*</url-pattern>
-        <url-pattern>/AddToCart</url-pattern>
+        <url-pattern>/GetHomeProducts</url-pattern>
+        <url-pattern>/GetSearchProducts</url-pattern>
+        <url-pattern>/GetOrders</url-pattern>
+        <url-pattern>/SetProductDisplayed</url-pattern>
         <url-pattern>/PlaceOrder</url-pattern>
-        <url-pattern>/logout</url-pattern>
     </filter-mapping>
 
     <welcome-file-list>
-        <welcome-file>login</welcome-file>
+        <welcome-file>login.html</welcome-file>
     </welcome-file-list>
 </web-app>
