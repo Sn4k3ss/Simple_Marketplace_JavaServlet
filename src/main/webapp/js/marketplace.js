@@ -177,20 +177,15 @@
         }
 
         this.hide = function () {
-            //TODO da fare
-
             self.shopping_cart_div.style.display = 'none';
         }
 
 
         this.update = function () {
-
             //aggiungo il prodotto alla sessione
-
             pageOrchestrator.showShoppingCart();
         }
 
-        //TODO da completare per farlo scomparire
         this.showFailure = function (_message) {
 
             self.shopping_cart_div.style.display = 'block';
@@ -205,88 +200,92 @@
         _shopping_cart_div_message
     ) {
 
+        /*
+
+        This line get all the elements with class ".buy-btn" in the document
+        const buyBtns = document.querySelectorAll(".buy-btn");
+
+         */
         this.shopping_cart_div = _shopping_cart_div;
         this.shopping_cart_div_message = _shopping_cart_div_message;
 
-        self.KEY = 'bkasjbdfkjasdkfjhaksdfjskd';
-        self.contents = [];
-        self.prods = new Map();
+        this.KEY = 'asc';
+        this.contents = [];
+
+        this.prods = new Map();
+
+        this.totalAmountBySupplier = new Map();
+        this.totalItemsBySupplier = new Map();
 
 
-        var self = this; //Needed for in-function helpers only (makeCall)
+        let self = this; //Needed for in-function helpers only
 
-        this.init = function () {
-            //check localStorage and initialize the contents of CART.contents
-            let _contents = localStorage.getItem(self.KEY);
-            if(_contents){
-                self.contents = JSON.parse(_contents);
-            }else{
-                //dummy test data
-                self.contents =
-                    [
-                        {   id:1,
-                            title:'Apple',
-                            qty:5,
-                            itemPrice: 0.85
-                        },
-                        {   id:2,
-                            title:'Banana',
-                            qty:3,
-                            itemPrice: 0.35
-                        },
-                        {   id:3,
-                            title:'Cherry',
-                            qty:8,
-                            itemPrice: 0.05
-                        }
-                    ];
 
-                self.contents =
-                    [
-                        {   id:1,
-                            title:'Apple',
-                            qty:5,
-                            itemPrice: 0.85
-                        },
-                        {   id:2,
-                            title:'Banana',
-                            qty:3,
-                            itemPrice: 0.35
-                        },
-                        {   id:3,
-                            title:'Cherry',
-                            qty:8,
-                            itemPrice: 0.05
-                        }
-                    ];
+        this.addToCart = function (product, howMany){
 
-                self.sync();
+            let alreadyInShoppingCart = false;
+
+            if (self.prods.get(product.supplierId) !== undefined) {
+
+                self.prods.get(product.supplierId).forEach(prod => {
+                    if (prod.productId === product.productId) {
+                        alreadyInShoppingCart = true;
+                        let tmp = prod.howMany;
+                        tmp += howMany;
+                        prod.howMany = tmp;
+                        prod.totalAmount = tmp * prod.supplierProductCost;
+                    }
+                });
             }
-        };
 
-        this.sync = async function  (){
-            let _cart = JSON.stringify(self.contents);
-            await localStorage.setItem(self.KEY, _cart);
-        };
 
-        this.find = function (id){
-            //find an item in the cart by it's id
-            let match = self.contents.filter(item=>{
-                if(item.id == id)
-                    return true;
+
+            if (!alreadyInShoppingCart) {
+                let list = self.prods.get(product.supplierId);
+                //settiamo le proprietà che vanno settate una volta sola
+                product.howMany = howMany;
+                product.totalAmount = howMany * product.supplierProductCost;
+
+                // if list does not exist create it
+                if(list === undefined) {
+                    list = [];
+                    list.push(product);
+                    self.prods.set(product.supplierId, list);
+                } else {
+                    // add if item is not already in list
+                    let itemInList = false;
+
+                    list.forEach(item => {
+                        if (item.productId === product.productId)
+                            itemInList = true;
+                    });
+
+                    if(!itemInList)
+                        list.push(product);
+                }
+            }
+
+
+            //update the total of the current supplier
+            let totalAmount = 0;
+            let totalItems = 0;
+
+            this.prods.get(product.supplierId).forEach(item => {
+                totalAmount += item.totalAmount;
+                totalItems += item.howMany;
             });
-            if(match && match[0])
-                return match[0];
-        };
 
-        this.add = function (id){
+            self.totalAmountBySupplier.set(product.supplierId, totalAmount);
+            self.totalItemsBySupplier.set(product.supplierId, totalItems);
+
+            /*
             //add a new item to the cart
             //check that it is not in the cart already
-            if(self.find(id)){
-                self.increase(id, 1);
+            if(self.prods.get(product)){
+                self.increase(product, 1);
             }else{
                 let arr = PRODUCTS.filter(product=>{
-                    if(product.id == id){
+                    if(product.id == product){
                         return true;
                     }
                 });
@@ -305,7 +304,26 @@
                     console.error('Invalid Product');
                 }
             }
+
+             */
         };
+
+
+        this.sync = async function  (){
+            let _cart = JSON.stringify(self.contents);
+            await localStorage.setItem(self.KEY, _cart);
+        };
+
+        this.find = function (id){
+            //find an item in the cart by it's id
+            let match = self.contents.filter(item=>{
+                if(item.id == id)
+                    return true;
+            });
+            if(match && match[0])
+                return match[0];
+        };
+
 
         this.increase = function (id, qty=1){
             //increase the quantity of an item in the cart
@@ -650,12 +668,6 @@
         }
 
 
-
-
-    }
-
-
-    function cart() {
 
 
     }

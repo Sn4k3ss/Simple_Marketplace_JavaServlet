@@ -322,6 +322,12 @@ fieldset{
     font-size: 1rem;
 }
 
+.buy-btn {
+    /*
+    Just for references purpose
+     */
+}
+
 
 #products-table-div {
     display: none;

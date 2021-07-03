@@ -9,6 +9,16 @@
  */
 function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resultsNum) {
 
+    let prodTmp = {
+        "productId": supplierProduct.productId,
+        "productImagePath": supplierProduct.productImagePath,
+        "productName": supplierProduct.productName,
+        "productDescription": supplierProduct.productDescription,
+        "productCategory": supplierProduct.productCategory,
+        "supplierProductCost": supplierProduct.supplierProductCost,
+        "supplierId": supplierProduct.supplier.supplierId,
+        "supplierName": supplierProduct.supplier.supplierName,
+    }
 
     let row = document.createElement("tr");
 
@@ -91,7 +101,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
     //td buy button
     td = document.createElement("td");
     let form = document.createElement("form");
-    form.className = "styled-form";
+    form.className = "buy-btn";
     form.action = "AddToCart";
     form.method = "POST";
     let form_input = document.createElement("input");
@@ -120,12 +130,17 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
 
 
     //AGGIUNGI AL CARRELLO
-    //TODO l'aggiungi al carrello non fa nessuna chiamata al server
+    //TODO l'aggiungi al carrello non fa nessuna chiamata al server ma chiama la funzione addToCart dentro ShoppingCartNew
     form_input.addEventListener("click", (e) => {
         e.preventDefault();
-        let addToCartForm = e.currentTarget.closest("form");
-        let productRow = e.currentTarget.closest("tr");
+        //let addToCartForm = e.currentTarget.closest("form");
+        //let productRow = e.currentTarget.closest("tr");
 
+        //TODO how many
+
+        shoppingCart.addToCart(prodTmp, 1);
+
+        /*
         if (form.checkValidity()) {
             //chiamata a servlet
             makeCall("POST", 'products/AddToCart', addToCartForm, (req) =>{
@@ -150,6 +165,8 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
             });
         } else
             form.reportValidity(); //If not valid, notify
+
+         */
     }, false);
 
     return row;
