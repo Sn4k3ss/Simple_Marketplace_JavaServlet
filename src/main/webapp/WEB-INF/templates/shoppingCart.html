@@ -70,7 +70,7 @@
           <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}">Free shipping on<span th:text="${supplierInfo.supplierName}">Suppl1</span>: &euro;<span th:text="${#numbers.formatDecimal(supplierInfo.freeShippingMinAmount, 1, 2, 'COMMA')}">10.00</span></td>
 
           <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
-          <td>
+          <td th:colspan="6">
             <form  th:action="${#request.contextPath} + '/PlaceOrder'" method="POST">
               <label th:for="addreesId">Select an address
                 <select th:name="userShippingAddressId">
