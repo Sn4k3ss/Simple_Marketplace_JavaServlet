@@ -18,6 +18,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
         "supplierProductCost": supplierProduct.supplierProductCost,
         "supplierId": supplierProduct.supplier.supplierId,
         "supplierName": supplierProduct.supplier.supplierName,
+        "supplier": supplierProduct.supplier
     }
 
     let row = document.createElement("tr");
@@ -130,43 +131,9 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
 
 
     //AGGIUNGI AL CARRELLO
-    //TODO l'aggiungi al carrello non fa nessuna chiamata al server ma chiama la funzione addToCart dentro ShoppingCartNew
     form_input.addEventListener("click", (e) => {
         e.preventDefault();
-        //let addToCartForm = e.currentTarget.closest("form");
-        //let productRow = e.currentTarget.closest("tr");
-
-        //TODO how many
-
         shoppingCart.addToCart(prodTmp, 1);
-
-        /*
-        if (form.checkValidity()) {
-            //chiamata a servlet
-            makeCall("POST", 'products/AddToCart', addToCartForm, (req) =>{
-
-                //nascondo la tabella
-                self.products_table_div.style.display = 'block';
-
-                switch(req.status){
-                    case 200: //ok
-
-                        shoppingCart.update();
-                        break;
-                    case 400: // bad request
-                    case 401: // unauthorized
-                    case 500: // server error
-
-                        shoppingCart.showFailure(req.responseText);
-                        break;
-                    default: //Error
-                        shoppingCart.showFailure("Request reported status " + req.status);
-                }
-            });
-        } else
-            form.reportValidity(); //If not valid, notify
-
-         */
     }, false);
 
     return row;
@@ -551,4 +518,180 @@ function createProductsTableInOrder(prods) {
     prodsTable.appendChild(tbody);
 
     return prodsTable;
+}
+
+function createCartTable(shoppingCart, userInfo) {
+
+    let table = document.createElement("table");
+    table.classList.add("styled-table");
+
+    //titolo tabella
+    let caption = document.createElement("caption");
+    caption.style.lightingColor = "#04aa6d";
+    caption.innerHTML = "CART";
+    table.appendChild(caption);
+
+    let thead = document.createElement("thead");
+    let tr = document.createElement("tr");
+
+
+    let th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.setAttribute("colspan", "col");
+    th.innerHTML = "Product name";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Product Description";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Category";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "Cost";
+    tr.appendChild(th);
+
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "How many";
+    tr.appendChild(th);
+
+    thead.appendChild(tr);
+    table.appendChild(thead);
+
+
+    //qua si ciclia per venditore
+    shoppingCart.prods.forEach( (function(products) {
+        let supplier = products[0].supplier;
+        let totalAmount = shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+        let tbody = document.createElement("tbody");
+
+        //qua si cicla per prodotti di un singolo venditore
+        products.forEach( (function (prod) {
+            tr = document.createElement("tr");
+
+            //immagine prodotto
+            let td = document.createElement("td");
+            td.className = "table-product-img";
+            let img = document.createElement("img");
+            img.src = getProductsImageFolderURL().concat(prod.productImagePath);
+            img.alt = "Product image";
+            td.appendChild(img);
+            tr.appendChild(td);
+
+            //nome prodotto
+            td = document.createElement("td");
+            td.innerHTML = prod.productName;
+            tr.appendChild(td);
+
+            //desc prodotto
+            td = document.createElement("td");
+            td.innerHTML = prod.productDescription;
+            tr.appendChild(td);
+
+            //cat prodotto
+            td = document.createElement("td");
+            td.innerHTML = prod.productCategory;
+            tr.appendChild(td);
+
+            //cat prodotto
+            td = document.createElement("td");
+            td.innerHTML = "€" + prod.supplierProductCost;
+            tr.appendChild(td);
+
+            //howMany
+            td = document.createElement("td");
+            td.innerHTML = prod.howMany;
+            tr.appendChild(td);
+
+            tbody.appendChild(tr);
+        }));
+
+        //riga con info su costo di spedizione e scelta indirizzo;
+        tr = document.createElement("tr");
+        tr.classList.add("active-row");
+
+        let td = document.createElement("td");
+        td.innerHTML = "Total amount on " + supplier.supplierName + "€ " + shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+        tr.appendChild(td);
+
+        //check if free shipping
+        if(!supplier.hasFreeShipping) {
+            td = document.createElement("td");
+            td.innerHTML = supplier.supplierName + " doesn't offer free shipping";
+            tr.appendChild(td);
+        } else {
+            if (totalAmount < supplier.freeShippingMinAmount) {
+                td = document.createElement("td");
+                td.innerHTML = "Free shipping on " + supplier.supplierName + ": € " + supplier.freeShippingMinAmount;
+                tr.appendChild(td);
+            } else if (totalAmount >= supplier.freeShippingMinAmount) {
+                td = document.createElement("td");
+                td.innerHTML = "You're getting free shipping";
+                tr.appendChild(td);
+            }
+        }
+
+        //bottone per completare l'ordine
+
+        td = document.createElement("td");
+        td.setAttribute("colspan", 6);
+        let form = document.createElement("form");
+        let label = document.createElement("label");
+        label.innerHTML = "Select an address";
+
+        let select = document.createElement("select");
+        select.setAttribute("name", "userShippingAddressId");
+        let option;
+
+        let firstIter = true;
+        userInfo.shippingAddresses.forEach( (function (address) {
+            option = document.createElement("option");
+            option.setAttribute("value", address.shippingAddressId);
+            if (firstIter) {
+                option.selected = true;
+                firstIter = false;
+            }
+            option.innerHTML = address.recipient + " " + address.address + " " + address.city + " " + address.state;
+            select.appendChild(option);
+        }));
+
+        label.appendChild(select);
+        form.appendChild(label);
+
+        let input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "supplierId");
+        input.setAttribute("value", supplier.supplierId);
+
+        form.appendChild(input);
+
+        input = document.createElement("input");
+        input.classList.add("clickable-link","clickable-link-large");
+        input.setAttribute("type", "submit");
+        input.setAttribute("value", "Place order");
+
+        form.appendChild(input);
+
+
+        td.appendChild(form);
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        table.appendChild(tbody);
+    }));
+
+
+
+
+
+
+
+
+    return table;
+
 }

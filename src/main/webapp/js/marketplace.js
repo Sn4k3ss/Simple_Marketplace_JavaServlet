@@ -27,7 +27,7 @@
 
             //Init components
             userInfo = new UserInfo(
-                sessionStorage.getItem('userdata'),
+                JSON.parse(sessionStorage.getItem('userdata')),
                 [document.getElementById("title-username")]
             );
 
@@ -96,8 +96,10 @@
         _userdata,
         nameElements){
 
-        this.name = _userdata.name;
-        this.id = _userdata.id;
+        this.name = _userdata.userName;
+        this.id = _userdata.userId;
+        this.shippingAddresses = _userdata.shippingAddresses;
+
 
 
 
@@ -381,7 +383,7 @@
                 }
             });
             return sorted;
-            //NO impact on localStorage
+
         };
 
         this.logContents = function (prefix){
@@ -389,13 +391,14 @@
         }
 
         this.show = function() {
-            self.shopping_cart_div = sessionStorage.getItem(self.KEY);
+            self.shopping_cart_div.appendChild(createCartTable(self, userInfo))
 
             self.shopping_cart_div.style.display = 'block';
         }
 
         this.hide = function () {
             self.shopping_cart_div.style.display = 'none';
+
         }
     }
 

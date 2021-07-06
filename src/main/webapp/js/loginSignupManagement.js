@@ -52,7 +52,7 @@
             switch(req.status){ //Get status code
                 case 200: //Okay
                     let data = JSON.parse(req.responseText);
-                    sessionStorage.setItem('userdata', data);
+                    sessionStorage.setItem('userdata', JSON.stringify(data));
                     window.location.href = "home.html";
                     break;
                 case 302:
