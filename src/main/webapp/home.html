@@ -45,7 +45,7 @@
     <div id="search-form-div" class="search-form">
         <form th:action="${#request.contextPath} + '/search/products'" method="GET">
             <div class="form-group">
-                <input th:placeholder="'Oasis latest album...'" name="keyword" >
+                <input th:placeholder="'Oasis latest album...'" name="keyword" id="keyword" >
                 <input id="search-form-div-button" class="button" type="submit" value="Go!">
             </div>
         </form>
@@ -68,6 +68,10 @@
             </thead>
         </table>
         <div id="products-table-error-div" style="display: none"> </div>
+        <div id="modal-window-div" class="modal" style="display: none">
+            <div id="modal-window-content-div" class="modal-content">
+            </div>
+        </div>
     </div>
 
 

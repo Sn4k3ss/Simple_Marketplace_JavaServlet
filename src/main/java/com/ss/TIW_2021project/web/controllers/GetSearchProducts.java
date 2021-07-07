@@ -43,7 +43,17 @@ public class GetSearchProducts extends HttpServlet {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().println(errorMessage);
                 return;
-            }
+            } else if (!keyword.matches("[a-zA-Z0-9]*")){
+                String errorMessage = "Invalid string";
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().println(errorMessage);
+                return;
+            } else if (keyword.length() < 3){
+            String errorMessage = "Please, insert at least 4 letters";
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(errorMessage);
+            return;
+        }
 
             retrievedProducts = productService.getRelevantProducts(keyword);
         } catch (ServiceException e) {

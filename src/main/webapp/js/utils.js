@@ -221,10 +221,11 @@ function createUrlWithParams(URL, params) {
 }
 
 
-function addProdToCart(prod) {
+function sortAscCost(prods) {
 
-    sessionStorage.setItem("cart", [])
-
+    return new Map([...prods.entries()].sort(function compare(a, b) {
+        return a[1][0].supplierProductCost - b[1][0].supplierProductCost;
+    }));
 
 }
 

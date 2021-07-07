@@ -96,7 +96,7 @@ public class SupplierService {
         Supplier supplier = getSupplierById(supplierId);
 
 
-        if (totalAmountAtSupplier >= supplier.getFreeShippingMinAmount())
+        if (totalAmountAtSupplier >= supplier.getFreeShippingMinAmount() && supplier.getFreeShippingMinAmount() != 0 )
             return 0f;
 
         Integer totalItemNum = 0;
@@ -127,8 +127,6 @@ public class SupplierService {
         //TODO da implementare, per il momento la data di spedizione è hard-coded
         // a 5 giorni di distanza dalla data di effettuazione dell'ordine
 
-
-
         //setting deliveryDate
         Date today = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -144,10 +142,11 @@ public class SupplierService {
 
     public void setSupplierInfoOnOrders(List<Order> orders) throws ServiceException {
 
-        Integer supplierId = orders.get(0).getOrderSupplier().getSupplierId();
-        Supplier orderSupplier = getSupplierById(supplierId);
+
 
         for(Order order : orders) {
+            Integer supplierId = order.getOrderSupplier().getSupplierId();
+            Supplier orderSupplier = getSupplierById(supplierId);
             order.setOrderSupplier(orderSupplier);
         }
 

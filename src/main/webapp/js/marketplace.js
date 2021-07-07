@@ -45,6 +45,8 @@
             productsCatalogue = new ProductsCatalogue(
                 document.getElementById("products-table-div"),
                 document.getElementById("products-table"),
+                document.getElementById("modal-window-div"),
+                document.getElementById("modal-window-content-div"),
                 document.getElementById("products-table-error-div")
             )
 
@@ -104,6 +106,17 @@
             productsCatalogue.showCatalogue();
 
         }
+
+        this.updatePage = function () {
+
+            if(searchForm.lastKeywordSearch == null || searchForm.lastKeywordSearch === "") {
+                pageOrchestrator.showHomePage();
+                return;
+            }
+
+            //fake a click on the button
+            searchForm.search_form_button.click();
+        }
     }
 
     function UserInfo(
@@ -132,6 +145,7 @@
         this.search_form_div = _search_form_div;
         this.search_form_button = _search_form_button;
         this.search_form_error = _search_form_error;
+        this.lastKeywordSearch = null;
 
         var self = this; //Necessary only for in-function helpers (makeCall)
 
@@ -144,6 +158,8 @@
             pageOrchestrator.showSearchPage();
 
             const paramOneValue = e.currentTarget.closest('form')['keyword'].value;
+
+            self.lastKeywordSearch = paramOneValue;
             const params = {
                 keyword: paramOneValue
             }
@@ -260,38 +276,23 @@
                 totalItems += item.howMany;
             });
 
-            self.totalAmountBySupplier.set(product.supplierId, totalAmount);
-            self.totalItemsBySupplier.set(product.supplierId, totalItems);
+            this.totalAmountBySupplier.set(product.supplierId, totalAmount);
+            this.totalItemsBySupplier.set(product.supplierId, totalItems);
 
-            /*
-            //add a new item to the cart
-            //check that it is not in the cart already
-            if(self.prods.get(product)){
-                self.increase(product, 1);
-            }else{
-                let arr = PRODUCTS.filter(product=>{
-                    if(product.id == product){
-                        return true;
-                    }
-                });
-                if(arr && arr[0]){
-                    let obj = {
-                        id: arr[0].id,
-                        title: arr[0].title,
-                        qty: 1,
-                        itemPrice: arr[0].price
-                    };
-                    self.contents.push(obj);
-                    //update localStorage
-                    self.sync();
-                }else{
-                    //product id does not exist in products data
-                    console.error('Invalid Product');
-                }
-            }
+            //bisogna riaggiornare la pagina
+            pageOrchestrator.updatePage();
 
-             */
         };
+
+        this.emptyShoppingCart = function (supplierId) {
+            //update variables
+            this.prods.delete(supplierId);
+            this.totalAmountBySupplier.delete(supplierId);
+            this.totalItemsBySupplier.delete(supplierId);
+
+            //update table
+            document.getElementById("sup" + supplierId + "-cart-body").remove();
+        }
 
 
         this.sync = async function  (){
@@ -336,15 +337,6 @@
             self.sync()
         };
 
-        this.remove = function (id){
-            //remove an item entirely from CART.contents based on its id
-            self.contents = self.contents.filter(item=>{
-                if(item.id !== id)
-                    return true;
-            });
-            //update localStorage
-            self.sync()
-        };
 
         this.empty = function (){
             //empty whole cart
@@ -401,10 +393,16 @@
 
         this.showFailure = function (_message) {
 
-            self.shopping_cart_div.style.display = 'block';
-            self.shopping_cart_div_message.innerHTML = _message;
-            self.shopping_cart_div_message.style.display = 'block';
+            this.shopping_cart_div.style.display = 'block';
+            this.shopping_cart_div_message.innerHTML = _message;
+            this.shopping_cart_div_message.style.display = 'block';
 
+        }
+
+        this.updateAndShowModal = function (supplierId) {
+            //creo la table con i prodotti presi dal carrello per il supplId e la passo al catalogo che la metterà nel div con id modal-window-items
+
+            productsCatalogue.updateAndShowModalCatalogue(createCartTable(self, userInfo, true, supplierId));
         }
     }
 
@@ -413,12 +411,16 @@
     function ProductsCatalogue(
         products_table_div,
         products_table,
+        modal_window_div,
+        modal_window_content_div,
         products_table_error_div) {
 
 
         this.products_table_div = products_table_div;
         this.products_table = products_table;
         this.products_table_error_div = products_table_error_div;
+        this.modal_window_div = modal_window_div;
+        this.modal_window_content_div = modal_window_content_div;
 
         var self = this;
 
@@ -467,11 +469,14 @@
                 prodsMap.set(prodId, products.supplierProductMap[prodId]);
             }
 
+            //asc sort
+            let sortedProds = sortAscCost(prodsMap);
+
 
             let searchResultNum = 1;
-            let resultsNum = prodsMap.size;
+            let resultsNum = sortedProds.size;
 
-            prodsMap.forEach( (function(prods) { // self visible here, not this
+            sortedProds.forEach( (function(prods) { // self visible here, not this
                 let currentProd = prods[0];
 
                 table_body.appendChild(createProductsRow(currentProd, shoppingCart, searchResultNum, resultsNum));
@@ -496,14 +501,17 @@
                 prodsMap.set(prodId, products.supplierProductMap[prodId]);
             }
 
+            //asc sort
+            let sortedProds = sortAscCost(prodsMap);
+
             var self = this;
             let firstIteration = true;
             let searchResultNum = 1;
-            let resultsNum = prodsMap.size;
+            let resultsNum = sortedProds.size;
 
             // self visible here, not this
             //iterazione per ogni prodId
-            prodsMap.forEach( (function(prods) {
+            sortedProds.forEach( (function(prods) {
 
                 let tr, td, table;
                 //creo un nuovo body per ogni proId
@@ -565,6 +573,22 @@
             this.products_table_div.style.display = 'block';
         }
 
+        this.updateAndShowModalCatalogue = function (table) {
+            this.modal_window_content_div.appendChild(table);
+            this.modal_window_div.style.display = 'block';
+
+        }
+
+        //hide modal windows
+        this.modal_window_content_div.onmouseleave = function () {
+
+            //remove all tables tags in modal-window-content-div
+            while (this.childElementCount > 0) {
+                this.removeChild(this.children[0]);
+            }
+
+            self.modal_window_div.style.display = 'none';
+        }
     }
 
     function OrdersList(

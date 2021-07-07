@@ -15,7 +15,12 @@ public class ShoppingCart {
     private Map<Integer, Float> totalAmountBySupplier = null;
     private Map<Integer, Integer> totalItemsBySupplier = null;
 
-    public ShoppingCart() {  }
+    public ShoppingCart() {
+
+        this.shoppingCartMap = new HashMap<>();
+        this.totalAmountBySupplier = new HashMap<>();
+        this.totalItemsBySupplier = new HashMap<>();
+    }
 
     /**
      * Instantiates a new Products catalogue.

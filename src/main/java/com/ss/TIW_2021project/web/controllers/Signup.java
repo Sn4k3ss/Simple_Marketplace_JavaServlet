@@ -1,5 +1,6 @@
 package com.ss.TIW_2021project.web.controllers;
 
+import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.UserService;
@@ -9,6 +10,7 @@ import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import java.io.IOException;
         description = "This is my first annotated servlet",
         value = "/signup"
 )
+@MultipartConfig
 public class Signup extends HttpServlet {
 
     @Override
@@ -88,8 +91,12 @@ public class Signup extends HttpServlet {
 
         req.getSession().setAttribute("user", user);
 
-        String path = getServletContext().getContextPath() + PathUtils.pathToHomePage;
-        resp.sendRedirect(path);
+        String jsonUser = new Gson().toJson(user);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().println(jsonUser);
     }
 
     private void invalidSignUpCredentials(String errorMessage, HttpServletRequest request, HttpServletResponse response) throws IOException {

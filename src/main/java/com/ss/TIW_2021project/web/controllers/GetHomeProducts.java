@@ -26,7 +26,6 @@ public class GetHomeProducts extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService();
-        new CartService().initShoppingCart(req.getSession(false));
 
         ProductsCatalogue retrievedProducts = null;
 

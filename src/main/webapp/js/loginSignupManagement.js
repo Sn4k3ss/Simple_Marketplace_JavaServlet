@@ -66,11 +66,11 @@
                 case 400: // bad request
                 case 401: // unauthorized
                 case 500: // server error
-                    error_div.textContent = req.responseText;
+                    error_div.innerHTML = req.responseText;
                     error_div.style.display = 'block';
                     break;
                 default: //Error
-                    error_div.textContent = "Request reported status " + req.status;
+                    error_div.innerHTML = "Request reported status " + req.status;
                     error_div.style.display = 'block';
             }
       });

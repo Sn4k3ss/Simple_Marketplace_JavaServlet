@@ -86,7 +86,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
 
     //td costo prodotto
     td = document.createElement("td");
-    td.innerHTML = supplierProduct.supplierProductCost;
+    td.innerHTML = Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
     row.appendChild(td);
 
     //td immagine venditore
@@ -174,6 +174,10 @@ function createSearchProductsTable() {
     th.innerHTML = "Range";
     tr.appendChild(th);
 
+    th = document.createElement("th");
+    th.setAttribute("scope", "col");
+    th.innerHTML = "items";
+    tr.appendChild(th);
 
     th = document.createElement("th");
     th.setAttribute("scope", "col");
@@ -213,18 +217,18 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
 
     //td costo prodotto
     td = document.createElement("td");
-    td.innerHTML = supplierProduct.supplierProductCost;
+    td.innerHTML = Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
     row.appendChild(td);
 
     //td rating
     td = document.createElement("td");
-    td.innerHTML = supplierProduct.supplier.supplierRating;
+    td.innerHTML = Number.parseFloat(supplierProduct.supplier.supplierRating).toFixed(1);
     row.appendChild(td);
 
     //td costo minimo spedizione gratuita
     td = document.createElement("td");
     if (supplierProduct.supplier.hasFreeShipping)
-        td.innerHTML = supplierProduct.supplier.freeShippingMinAmount;
+        td.innerHTML = Number.parseFloat(supplierProduct.supplier.freeShippingMinAmount).toFixed(2);
     else
         td.innerHTML = "No";
 
@@ -235,6 +239,19 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
     td.appendChild(createSupplierRangesTable(supplierProduct.supplier.supplierShippingPolicy));
     row.appendChild(td);
 
+    //items already in cart
+    const tot = shoppingCart.totalItemsBySupplier.get(supplierProduct.supplier.supplierId);
+    td = document.createElement("td");
+    if (tot !== undefined) {
+        td.innerHTML = tot;
+    } else {
+        td.innerHTML = "0";
+    }
+    row.appendChild(td);
+
+    td.onmouseover = function () {
+        shoppingCart.updateAndShowModal(supplierProduct.supplier.supplierId);
+    }
 
     //td buy button
     td = document.createElement("td");
@@ -424,7 +441,8 @@ function createOrderRow(order) {
 
     //td data ordine
     td1 = document.createElement("td");
-    td1.innerHTML = order.orderPlacementDate;
+    let date = order.orderPlacementDate;
+    td1.innerHTML = date.date.day + " / " + date.date.month + " / " + date.date.year;
     trow1.appendChild(td1);
 
     //td immagine supplier
@@ -437,22 +455,22 @@ function createOrderRow(order) {
 
     //td orderAmount
     td1 = document.createElement("td");
-    td1.innerHTML = order.orderAmount;
+    td1.innerHTML = "€ " + order.orderAmount;
     trow1.appendChild(td1);
 
     //td orderShippingFees
     td1 = document.createElement("td");
-    td1.innerHTML = order.orderShippingFees;
+    td1.innerHTML = "€ " + order.orderShippingFees;
     trow1.appendChild(td1);
 
     //td delivery
     td1 = document.createElement("td");
-    td1.innerHTML = order.deliveryDate;
+    td1.innerHTML = order.deliveryDate.day + " / " + order.deliveryDate.month + " / " + order.deliveryDate.year;
     trow1.appendChild(td1);
 
     //td shipping address
     td1 = document.createElement("td");
-    td1.innerHTML = order.shippingAddress;
+    td1.innerHTML = order.shippingAddress.recipient + " " + order.shippingAddress.address + " " + order.shippingAddress.city + " " + order.shippingAddress.state;
     trow1.appendChild(td1);
 
 
@@ -500,7 +518,7 @@ function createProductsTableInOrder(prods) {
 
         //td costo cad.
         td2 = document.createElement("td");
-        td2.innerHTML = prod.supplierProductCost;
+        td2.innerHTML = "€ " + prod.supplierProductCost;
         trow2.appendChild(td2);
 
         tbody.appendChild(trow2);
@@ -512,7 +530,7 @@ function createProductsTableInOrder(prods) {
     return prodsTable;
 }
 
-function createCartTable(shoppingCart, userInfo) {
+function createCartTable(shoppingCart, userInfo, modal, modalSupplierId) {
 
     let table = document.createElement("table");
     table.classList.add("styled-table");
@@ -558,11 +576,15 @@ function createCartTable(shoppingCart, userInfo) {
     table.appendChild(thead);
 
 
-    //qua si ciclia per venditore
-    shoppingCart.prods.forEach( (function(products) {
+    //se modal è asserito allora basta crearla per un solo venditore
+    if(modal) {
+
+        let products = shoppingCart.prods.get(modalSupplierId);
+
         let supplier = products[0].supplier;
-        let totalAmount = shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+        let totalAmount = shoppingCart.totalAmountBySupplier.get(modalSupplierId);
         let tbody = document.createElement("tbody");
+        tbody.setAttribute("id", "sup" + supplier.supplierId + "-cart-body");
 
         //qua si cicla per prodotti di un singolo venditore
         products.forEach( (function (prod) {
@@ -610,7 +632,7 @@ function createCartTable(shoppingCart, userInfo) {
         tr.classList.add("active-row");
 
         let td = document.createElement("td");
-        td.innerHTML = "Total amount on " + supplier.supplierName + "€ " + shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+        td.innerHTML = "Total amount on " + supplier.supplierName + " € " + Number.parseFloat(shoppingCart.totalAmountBySupplier.get(supplier.supplierId)).toFixed(2);
         tr.appendChild(td);
 
         //check if free shipping
@@ -621,7 +643,7 @@ function createCartTable(shoppingCart, userInfo) {
         } else {
             if (totalAmount < supplier.freeShippingMinAmount) {
                 td = document.createElement("td");
-                td.innerHTML = "Free shipping on " + supplier.supplierName + ": € " + supplier.freeShippingMinAmount;
+                td.innerHTML = "Free shipping on " + supplier.supplierName + " € " + Number.parseFloat(supplier.freeShippingMinAmount).toFixed(2);
                 tr.appendChild(td);
             } else if (totalAmount >= supplier.freeShippingMinAmount) {
                 td = document.createElement("td");
@@ -689,21 +711,26 @@ function createCartTable(shoppingCart, userInfo) {
 
             shoppingCart.shopping_cart_div_message.style.display = 'none';
 
-            if (form.checkValidity()) { //Do form check
-                makeCall("POST", 'PlaceOrder', form, function(req){
-                    switch(req.status){ //Get status code
-                        case 200: //Okay
+            let formData = new FormData(form);
+            formData.append("prodsJson",prodJson);
 
+
+
+            if (form.checkValidity()) { //Do form check
+                makeCall("POST", 'PlaceOrder', formData, function(req){
+                    switch(req.status){ //Get status code
+                        case 200: //order filled
+                            shoppingCart.emptyShoppingCart(supplierId);
+                            shoppingCart.shopping_cart_div_message.innerHTML = "Order filled successfully";
+                            shoppingCart.shopping_cart_div_message.style.display = 'block';
                             break;
                         case 400: // bad request
                         case 401: // unauthorized
                         case 500: // server error
-                            shoppingCart.shopping_cart_div_message.textContent = req.responseText;
-                            shoppingCart.shopping_cart_div_message.style.display = 'block';
+                            shoppingCart.showFailure(req.responseText);
                             break;
                         default: //Error
-                            shoppingCart.shopping_cart_div_message.textContent = "Request reported status " + req.status;
-                            shoppingCart.shopping_cart_div_message.style.display = 'block';
+                            shoppingCart.showFailure("Request reported status " + req.status);
                     }
                 });
             } else {
@@ -718,14 +745,176 @@ function createCartTable(shoppingCart, userInfo) {
         tr.appendChild(td);
         tbody.appendChild(tr);
         table.appendChild(tbody);
-    }));
+
+
+    } else { //altrimenti si crea tutt
+        shoppingCart.prods.forEach( (function(products) {
+            let supplier = products[0].supplier;
+            let totalAmount = shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+            let tbody = document.createElement("tbody");
+            tbody.setAttribute("id", "sup" + supplier.supplierId + "-cart-body");
+
+            //qua si cicla per prodotti di un singolo venditore
+            products.forEach( (function (prod) {
+                tr = document.createElement("tr");
+
+                //immagine prodotto
+                let td = document.createElement("td");
+                td.className = "table-product-img";
+                let img = document.createElement("img");
+                img.src = getProductsImageFolderURL().concat(prod.productImagePath);
+                img.alt = "Product image";
+                td.appendChild(img);
+                tr.appendChild(td);
+
+                //nome prodotto
+                td = document.createElement("td");
+                td.innerHTML = prod.productName;
+                tr.appendChild(td);
+
+                //desc prodotto
+                td = document.createElement("td");
+                td.innerHTML = prod.productDescription;
+                tr.appendChild(td);
+
+                //cat prodotto
+                td = document.createElement("td");
+                td.innerHTML = prod.productCategory;
+                tr.appendChild(td);
+
+                //cat prodotto
+                td = document.createElement("td");
+                td.innerHTML = "€" + prod.supplierProductCost;
+                tr.appendChild(td);
+
+                //howMany
+                td = document.createElement("td");
+                td.innerHTML = prod.howMany;
+                tr.appendChild(td);
+
+                tbody.appendChild(tr);
+            }));
+
+            //riga con info su costo di spedizione e scelta indirizzo;
+            tr = document.createElement("tr");
+            tr.classList.add("active-row");
+
+            let td = document.createElement("td");
+            td.innerHTML = "Total amount on " + supplier.supplierName + "€ " + shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
+            tr.appendChild(td);
+
+            //check if free shipping
+            if(!supplier.hasFreeShipping) {
+                td = document.createElement("td");
+                td.innerHTML = supplier.supplierName + " doesn't offer free shipping";
+                tr.appendChild(td);
+            } else {
+                if (totalAmount < supplier.freeShippingMinAmount) {
+                    td = document.createElement("td");
+                    td.innerHTML = "Free shipping on " + supplier.supplierName + ": € " + supplier.freeShippingMinAmount;
+                    tr.appendChild(td);
+                } else if (totalAmount >= supplier.freeShippingMinAmount) {
+                    td = document.createElement("td");
+                    td.innerHTML = "You're getting free shipping";
+                    tr.appendChild(td);
+                }
+            }
+
+            //bottone per completare l'ordine
+
+            td = document.createElement("td");
+            td.setAttribute("colspan", "4");
+            let form = document.createElement("form");
+            let label = document.createElement("label");
+            label.innerHTML = "Select an address";
+
+            let select = document.createElement("select");
+            select.setAttribute("name", "userShippingAddressId");
+
+            //l'id da settare sarà id=supX-prodY-label
+            const addressId = "shipping-address-id-select";
+            select.setAttribute("id", addressId);
+            let option;
+
+            let firstIter = true;
+            userInfo.shippingAddresses.forEach( (function (address) {
+                option = document.createElement("option");
+                option.setAttribute("value", address.shippingAddressId);
+                if (firstIter) {
+                    option.selected = true;
+                    firstIter = false;
+                }
+                option.innerHTML = address.recipient + " " + address.address + " " + address.city + " " + address.state;
+                select.appendChild(option);
+            }));
+
+            label.appendChild(select);
+            form.appendChild(label);
+
+            let input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "supplierId");
+            input.setAttribute("value", supplier.supplierId);
+
+            form.appendChild(input);
+
+            let form_input = document.createElement("input");
+            form_input.classList.add("clickable-link","clickable-link-large");
+            form_input.setAttribute("type", "submit");
+            form_input.setAttribute("value", "Place order");
+
+            form.appendChild(form_input);
+
+            //chiamata alla servlet place order
+            //Attach to register button
+            form_input.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                let form = e.target.closest("form");
+                const supplierId = parseInt(form.querySelector("input[name='supplierId']").value);
+                const shippingAddressId = parseInt(document.getElementById(addressId).value);
+
+                //prodotti in json
+                let prodJson = JSON.stringify(shoppingCart.prods.get(supplierId));
+
+                shoppingCart.shopping_cart_div_message.style.display = 'none';
+
+                let formData = new FormData(form);
+                formData.append("prodsJson",prodJson);
 
 
 
+                if (form.checkValidity()) { //Do form check
+                    makeCall("POST", 'PlaceOrder', formData, function(req){
+                        switch(req.status){ //Get status code
+                            case 200: //order filled
+                                shoppingCart.emptyShoppingCart(supplierId);
+                                shoppingCart.shopping_cart_div_message.innerHTML = "Order filled successfully";
+                                shoppingCart.shopping_cart_div_message.style.display = 'block';
+                                break;
+                            case 400: // bad request
+                            case 401: // unauthorized
+                            case 500: // server error
+                                shoppingCart.showFailure(req.responseText);
+                                break;
+                            default: //Error
+                                shoppingCart.showFailure("Request reported status " + req.status);
+                        }
+                    });
+                } else {
+                    form.reportValidity();
+                } //If not valid, notify
+
+            });
 
 
 
-
+            td.appendChild(form);
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+            table.appendChild(tbody);
+        }));
+    }
 
     return table;
 
