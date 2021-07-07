@@ -37,12 +37,17 @@
     //Attach to register button
     signup_button.addEventListener("click", (e) => {
         e.preventDefault();
+
         var form = e.target.closest("form");
+
         signup_error_message_div.style.display = 'none';
+
         if (form.checkValidity()) { //Do form check
-        sendToServer(form, signup_error_message_div, signup_error_message, 'signup');
-        }else
-        form.reportValidity(); //If not valid, notify
+            sendToServer(form, signup_error_message_div, signup_error_message, 'signup');
+        } else {
+            form.reportValidity();
+        } //If not valid, notify
+
     });
 
 

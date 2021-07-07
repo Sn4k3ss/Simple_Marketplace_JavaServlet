@@ -60,7 +60,6 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
                         document.getElementById("tr-search-result-num-" + i).style.display = 'none';
                     }
 
-
                     document.getElementById("tr-search-result-num-" + searchResultNum).removeAttribute("style");
                     break;
                 case 400: // bad request
@@ -100,6 +99,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
     row.appendChild(td);
 
     //td buy button
+    //possiamo rimuovere tutto e lasciare solo il bottone
     td = document.createElement("td");
     let form = document.createElement("form");
     form.className = "buy-btn";
@@ -140,7 +140,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
 }
 
 
-//crea una table con intestazione e crelativa classe di stile css
+//crea una table con intestazione e relativa classe di stile css
 function createSearchProductsTable() {
 
     let table = document.createElement("table");
@@ -188,6 +188,18 @@ function createSearchProductsTable() {
 }
 
 function createSupplierProductsRow(supplierProduct, shoppingCart) {
+
+    let prodTmp = {
+        "productId": supplierProduct.productId,
+        "productImagePath": supplierProduct.productImagePath,
+        "productName": supplierProduct.productName,
+        "productDescription": supplierProduct.productDescription,
+        "productCategory": supplierProduct.productCategory,
+        "supplierProductCost": supplierProduct.supplierProductCost,
+        "supplierId": supplierProduct.supplier.supplierId,
+        "supplierName": supplierProduct.supplier.supplierName,
+        "supplier": supplierProduct.supplier
+    }
 
     let row = document.createElement("tr");
 
@@ -238,10 +250,13 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
 
     let select = document.createElement("select");
     select.setAttribute("name", "howMany");
-    select.setAttribute("id", "howMany");
 
-    for (let i = 0; i < 9; i++){
-        select.options[select.options.length] = new Option(i+1, i);
+    //l'id da settare sarà id=supX-prodY-label
+    const id = "sup-" + prodTmp.supplierId + "-prod" + prodTmp.productId + "-select";
+    select.setAttribute("id", id);
+
+    for (let i = 1; i <= 9; i++){
+        select.options[select.options.length] = new Option(i, i);
     }
 
     form.appendChild(select);
@@ -276,33 +291,10 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
     //AGGIUNGI AL CARRELLO
     form_input.addEventListener("click", (e) => {
         e.preventDefault();
-        let addToCartForm = e.currentTarget.closest("form");
-        let productRow = e.currentTarget.closest("tr");
 
-        if (form.checkValidity()) {
-            //chiamata a servlet
-            makeCall("POST", 'products/AddToCart', addToCartForm, (req) =>{
+        const howMany = parseInt(document.getElementById(id).value);
 
-                //nascondo la tabella
-                self.products_table_div.style.display = 'block';
-
-                switch(req.status){
-                    case 200: //ok
-
-                        shoppingCart.update();
-                        break;
-                    case 400: // bad request
-                    case 401: // unauthorized
-                    case 500: // server error
-
-                        shoppingCart.showFailure(req.responseText);
-                        break;
-                    default: //Error
-                        shoppingCart.showFailure("Request reported status " + req.status);
-                }
-            });
-        } else
-            form.reportValidity(); //If not valid, notify
+        shoppingCart.addToCart(prodTmp, howMany);
     }, false);
 
     return row;
@@ -524,6 +516,7 @@ function createCartTable(shoppingCart, userInfo) {
 
     let table = document.createElement("table");
     table.classList.add("styled-table");
+    table.classList.add("cart-table");
 
     //titolo tabella
     let caption = document.createElement("caption");
@@ -537,7 +530,7 @@ function createCartTable(shoppingCart, userInfo) {
 
     let th = document.createElement("th");
     th.setAttribute("scope", "col");
-    th.setAttribute("colspan", "col");
+    th.setAttribute("colspan", "2");
     th.innerHTML = "Product name";
     tr.appendChild(th);
 
@@ -640,13 +633,17 @@ function createCartTable(shoppingCart, userInfo) {
         //bottone per completare l'ordine
 
         td = document.createElement("td");
-        td.setAttribute("colspan", 6);
+        td.setAttribute("colspan", "4");
         let form = document.createElement("form");
         let label = document.createElement("label");
         label.innerHTML = "Select an address";
 
         let select = document.createElement("select");
         select.setAttribute("name", "userShippingAddressId");
+
+        //l'id da settare sarà id=supX-prodY-label
+        const addressId = "shipping-address-id-select";
+        select.setAttribute("id", addressId);
         let option;
 
         let firstIter = true;
@@ -671,12 +668,50 @@ function createCartTable(shoppingCart, userInfo) {
 
         form.appendChild(input);
 
-        input = document.createElement("input");
-        input.classList.add("clickable-link","clickable-link-large");
-        input.setAttribute("type", "submit");
-        input.setAttribute("value", "Place order");
+        let form_input = document.createElement("input");
+        form_input.classList.add("clickable-link","clickable-link-large");
+        form_input.setAttribute("type", "submit");
+        form_input.setAttribute("value", "Place order");
 
-        form.appendChild(input);
+        form.appendChild(form_input);
+
+        //chiamata alla servlet place order
+        //Attach to register button
+        form_input.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let form = e.target.closest("form");
+            const supplierId = parseInt(form.querySelector("input[name='supplierId']").value);
+            const shippingAddressId = parseInt(document.getElementById(addressId).value);
+
+            //prodotti in json
+            let prodJson = JSON.stringify(shoppingCart.prods.get(supplierId));
+
+            shoppingCart.shopping_cart_div_message.style.display = 'none';
+
+            if (form.checkValidity()) { //Do form check
+                makeCall("POST", 'PlaceOrder', form, function(req){
+                    switch(req.status){ //Get status code
+                        case 200: //Okay
+
+                            break;
+                        case 400: // bad request
+                        case 401: // unauthorized
+                        case 500: // server error
+                            shoppingCart.shopping_cart_div_message.textContent = req.responseText;
+                            shoppingCart.shopping_cart_div_message.style.display = 'block';
+                            break;
+                        default: //Error
+                            shoppingCart.shopping_cart_div_message.textContent = "Request reported status " + req.status;
+                            shoppingCart.shopping_cart_div_message.style.display = 'block';
+                    }
+                });
+            } else {
+                form.reportValidity();
+            } //If not valid, notify
+
+        });
+
 
 
         td.appendChild(form);

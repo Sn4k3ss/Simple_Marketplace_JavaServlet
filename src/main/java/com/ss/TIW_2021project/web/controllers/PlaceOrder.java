@@ -29,6 +29,22 @@ public class PlaceOrder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+        /*
+        //JAVASCRIPT
+        //si riceve come parametri una lista di prodotti formata solo da id e quantità
+        Integer supplierId = Integer.parseInt(req.getParameter("supplierId"));
+        Integer userShippingAddressId = Integer.parseInt(req.getParameter("userShippingAddressId"));
+        User user = (User) req.getSession(false).getAttribute("user");
+
+
+         */
+
+
+
+
+
+
+
 
         //All you need to receive from a user it's just the supplierId and productId with the number of items to be bought
 

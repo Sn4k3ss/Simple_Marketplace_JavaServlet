@@ -44,7 +44,8 @@
 
             productsCatalogue = new ProductsCatalogue(
                 document.getElementById("products-table-div"),
-                document.getElementById("products-table")
+                document.getElementById("products-table"),
+                document.getElementById("products-table-error-div")
             )
 
             orders = new OrdersList(
@@ -90,6 +91,19 @@
             orders.show();
 
         }
+
+        this.showSearchPage = function () {
+            updateHeaderCss('HOME');
+
+            //nascondi tutto il resto
+            shoppingCart.hide();
+            orders.hide();
+
+
+            //mostra ricerca
+            productsCatalogue.showCatalogue();
+
+        }
     }
 
     function UserInfo(
@@ -127,6 +141,8 @@
 
             self.search_form_error.style.display = 'none';
 
+            pageOrchestrator.showSearchPage();
+
             const paramOneValue = e.currentTarget.closest('form')['keyword'].value;
             const params = {
                 keyword: paramOneValue
@@ -138,6 +154,7 @@
                     case 200:
                         let products = JSON.parse(req.responseText);
                         productsCatalogue.updateSearchProducts(products);
+                        productsCatalogue.showCatalogue();
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
@@ -162,40 +179,6 @@
         };
     }
 
-
-    function ShoppingCart(
-        _shopping_cart_div,
-        _shopping_cart_div_message) {
-
-        this.shopping_cart_div = _shopping_cart_div;
-        this.shopping_cart_div_message = _shopping_cart_div_message;
-
-        var self = this; //Needed for in-function helpers only (makeCall)
-
-        this.show = function() {
-            self.shopping_cart_div = sessionStorage.getItem(shoppingCart);
-
-            self.shopping_cart_div.style.display = 'block';
-        }
-
-        this.hide = function () {
-            self.shopping_cart_div.style.display = 'none';
-        }
-
-
-        this.update = function () {
-            //aggiungo il prodotto alla sessione
-            pageOrchestrator.showShoppingCart();
-        }
-
-        this.showFailure = function (_message) {
-
-            self.shopping_cart_div.style.display = 'block';
-            self.shopping_cart_div_message.innerHTML = _message;
-            self.shopping_cart_div_message.style.display = 'block';
-
-        }
-    }
 
     function ShoppingCartNew(
         _shopping_cart_div,
@@ -391,7 +374,22 @@
         }
 
         this.show = function() {
-            self.shopping_cart_div.appendChild(createCartTable(self, userInfo))
+
+            let cartTables = self.shopping_cart_div.getElementsByClassName("cart-table");
+
+            for (const table of cartTables) {
+                self.shopping_cart_div.removeChild(table);
+            }
+
+            //show empty cart
+            if (self.prods.size === 0) {
+                self.shopping_cart_div_message.innerHTML = "Your cart is empty";
+                self.shopping_cart_div_message.style.display = "block";
+            } else { //show cart
+                self.shopping_cart_div_message.innerHTML = "";
+                self.shopping_cart_div_message.style.display = "none";
+                self.shopping_cart_div.appendChild(createCartTable(self, userInfo))
+            }
 
             self.shopping_cart_div.style.display = 'block';
         }
@@ -400,17 +398,27 @@
             self.shopping_cart_div.style.display = 'none';
 
         }
+
+        this.showFailure = function (_message) {
+
+            self.shopping_cart_div.style.display = 'block';
+            self.shopping_cart_div_message.innerHTML = _message;
+            self.shopping_cart_div_message.style.display = 'block';
+
+        }
     }
 
     // il products catalogue riceve come primo argomento il catalogo di prodotti da mostrare nella home
     // come secondo argomento invece sono i risultati ottenuti dalla ricerca
     function ProductsCatalogue(
         products_table_div,
-        products_table) {
+        products_table,
+        products_table_error_div) {
 
 
         this.products_table_div = products_table_div;
         this.products_table = products_table;
+        this.products_table_error_div = products_table_error_div;
 
         var self = this;
 
@@ -421,6 +429,7 @@
                     case 200: //ok
                         let products = JSON.parse(req.responseText);
                         self.updateHomeProducts(products);
+                        self.showCatalogue();
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
@@ -445,7 +454,9 @@
 
             //se errore allora mostra l'errore a schermo
             if (products == null) {
-                this.products_table_div.innerHTML = _error;
+                this.products_table_error_div.innerHTML = _error;
+                this.products_table_error_div.style.display = "block";
+                this.products_table_div.style.display = 'block';
                 return;
             }
 
@@ -457,7 +468,6 @@
             }
 
 
-            var self = this;
             let searchResultNum = 1;
             let resultsNum = prodsMap.size;
 
@@ -468,8 +478,7 @@
                 searchResultNum++;
             }));
 
-            self.products_table.appendChild(table_body);
-            self.products_table_div.style.display = 'block';
+            this.products_table.appendChild(table_body);
         };
 
 
@@ -546,15 +555,15 @@
 
             }));
 
-
-            self.products_table_div.style.display = 'block';
-
         };
 
         this.hide = function () {
-            //FIXME
             this.products_table_div.style.display = 'none';
         };
+
+        this.showCatalogue = function () {
+            this.products_table_div.style.display = 'block';
+        }
 
     }
 
@@ -574,6 +583,7 @@
                     case 200: //ok
                         let ordersFromReq = JSON.parse(req.responseText);
                         self.updateOrdersList(ordersFromReq);
+
                         self.orders_div.style.display = 'block';
                         break;
                     case 400: // bad request
@@ -595,7 +605,6 @@
                 this.orders_div.removeChild(_orders_div.getElementsByTagName("table")[0]);
             }
 
-            // self visible here, not this
             //iterazione per ogni ordine
             orders.forEach( (function(order) {
                 let orderTable, tbody1;
@@ -616,14 +625,14 @@
 
 
         this.showFailure = function (_message) {
-
-            self.orders_div.style.display = 'block';
-            self.orders_error_div.innerHTML = _message;
-            self.orders_error_div.style.display = 'block';
-
+            this.orders_error_div.innerHTML = _message;
+            this.orders_error_div.style.display = 'block';
+            this.orders_div.style.display = 'block';
         }
 
         this.hide = function () {
+            this.orders_error_div.innerHTML = "";
+            this.orders_error_div.style.display = 'none';
             this.orders_div.style.display = 'none';
         };
     }
