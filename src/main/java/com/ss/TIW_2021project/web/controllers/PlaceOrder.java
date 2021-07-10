@@ -43,6 +43,14 @@ public class PlaceOrder extends HttpServlet {
             return;
         }
 
+        //no products for selected supplierId
+        if (jsonElement.toString().equals("\"undefined\"")) {
+            String errorMessage = "You have no products in cart for the requested supplier";
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(errorMessage);
+            return;
+        }
+
         int uniqueProds = jsonElement.getAsJsonArray().size();
 
         Integer supplId = new Gson().fromJson(((JsonArray) jsonElement).get(0), ShoppingCartProduct.class).getSupplierId();
@@ -56,6 +64,19 @@ public class PlaceOrder extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().println(errorMessage);
             return;
+        }
+
+        try {
+            SupplierService supplierService = new SupplierService();
+
+            if (supplierService.getSupplierById(supplId) == null) {
+                String errorMessage = "Supplier not found";
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().println(errorMessage);
+                return;
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
 
 
@@ -81,7 +102,14 @@ public class PlaceOrder extends HttpServlet {
 
 
         ShippingAddress shippingAddress = user.getShippingAddresses().stream()
-                .filter(x -> x.getShippingAddressId().equals(userShippingAddressId)).findFirst().orElse(null);
+                    .filter(x -> x.getShippingAddressId().equals(userShippingAddressId)).findFirst().orElse(null);
+
+        if (shippingAddress == null) {
+            String errorMessage = "You have selected an invalid address";
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println(errorMessage);
+            return;
+        }
 
         SupplierService supplierService = new SupplierService();
         OrderService orderService = new OrderService();
