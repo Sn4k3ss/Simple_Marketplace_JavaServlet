@@ -1,12 +1,8 @@
 package com.ss.TIW_2021project.web.controllers;
 
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
-import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

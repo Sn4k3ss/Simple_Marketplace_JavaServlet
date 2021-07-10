@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.entities.User;
-import com.ss.TIW_2021project.business.services.CartService;
 import com.ss.TIW_2021project.business.services.ProductService;
 
 import javax.servlet.annotation.WebServlet;
@@ -26,7 +25,6 @@ public class GetHomeProducts extends HttpServlet {
         User user = (User) req.getSession(false).getAttribute("user");
 
         ProductService productService = new ProductService();
-
         ProductsCatalogue retrievedProducts = null;
 
         try {

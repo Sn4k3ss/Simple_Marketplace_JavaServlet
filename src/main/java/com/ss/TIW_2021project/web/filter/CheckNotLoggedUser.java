@@ -39,8 +39,6 @@ public class CheckNotLoggedUser implements Filter {
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
-
-
     }
 
 }

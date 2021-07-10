@@ -56,11 +56,12 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
                     //deve far comparire la tabella con le info sugli altri venditori
                     // e chiudere tutti gli altri prima
                     for (let i = 1; i <= resultsNum ; i++) {
-                        //document.getElementById("tr-search-result-num-" + i).removeAttribute("style");
-                        document.getElementById("tr-search-result-num-" + i).style.display = 'none';
+                        if (document.getElementById("tr-search-result-num-" + i) != null)
+                            document.getElementById("tr-search-result-num-" + i).style.display = 'none';
                     }
 
-                    document.getElementById("tr-search-result-num-" + searchResultNum).removeAttribute("style");
+                    if (document.getElementById("tr-search-result-num-" + searchResultNum) != null)
+                        document.getElementById("tr-search-result-num-" + searchResultNum).removeAttribute("style");
                     break;
                 case 400: // bad request
                 case 401: // unauthorized
@@ -86,7 +87,7 @@ function createProductsRow(supplierProduct, shoppingCart, searchResultNum, resul
 
     //td costo prodotto
     td = document.createElement("td");
-    td.innerHTML = Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
+    td.innerHTML = "€ " + Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
     row.appendChild(td);
 
     //td immagine venditore
@@ -217,7 +218,7 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
 
     //td costo prodotto
     td = document.createElement("td");
-    td.innerHTML = Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
+    td.innerHTML = "€ " + Number.parseFloat(supplierProduct.supplierProductCost).toFixed(2);
     row.appendChild(td);
 
     //td rating
@@ -228,7 +229,7 @@ function createSupplierProductsRow(supplierProduct, shoppingCart) {
     //td costo minimo spedizione gratuita
     td = document.createElement("td");
     if (supplierProduct.supplier.hasFreeShipping)
-        td.innerHTML = Number.parseFloat(supplierProduct.supplier.freeShippingMinAmount).toFixed(2);
+        td.innerHTML = "€ " + Number.parseFloat(supplierProduct.supplier.freeShippingMinAmount).toFixed(2);
     else
         td.innerHTML = "No";
 
@@ -368,7 +369,7 @@ function createSupplierRangesTable(supplierShippingPolicy) {
         tr.appendChild(td);
 
         td = document.createElement("td");
-        td.innerHTML = supplierShippingPolicy.ranges[i].cost;
+        td.innerHTML = "€ " + supplierShippingPolicy.ranges[i].cost;
         tr.appendChild(td);
 
         tbody.appendChild(tr);
@@ -720,9 +721,9 @@ function createCartTable(shoppingCart, userInfo, modal, modalSupplierId) {
                 makeCall("POST", 'PlaceOrder', formData, function(req){
                     switch(req.status){ //Get status code
                         case 200: //order filled
+                            shoppingCart.hideModal();
                             shoppingCart.emptyShoppingCart(supplierId);
-                            shoppingCart.shopping_cart_div_message.innerHTML = "Order filled successfully";
-                            shoppingCart.shopping_cart_div_message.style.display = 'block';
+                            shoppingCart.showMessage("Order filled successfully")
                             break;
                         case 400: // bad request
                         case 401: // unauthorized
@@ -747,7 +748,7 @@ function createCartTable(shoppingCart, userInfo, modal, modalSupplierId) {
         table.appendChild(tbody);
 
 
-    } else { //altrimenti si crea tutt
+    } else { //altrimenti si crea tutto
         shoppingCart.prods.forEach( (function(products) {
             let supplier = products[0].supplier;
             let totalAmount = shoppingCart.totalAmountBySupplier.get(supplier.supplierId);
@@ -889,8 +890,7 @@ function createCartTable(shoppingCart, userInfo, modal, modalSupplierId) {
                         switch(req.status){ //Get status code
                             case 200: //order filled
                                 shoppingCart.emptyShoppingCart(supplierId);
-                                shoppingCart.shopping_cart_div_message.innerHTML = "Order filled successfully";
-                                shoppingCart.shopping_cart_div_message.style.display = 'block';
+                                shoppingCart.showMessage("Order filled successfully")
                                 break;
                             case 400: // bad request
                             case 401: // unauthorized

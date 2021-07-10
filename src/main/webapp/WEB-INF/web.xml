@@ -46,7 +46,6 @@
         <url-pattern>/login.html</url-pattern>
         <url-pattern>/home.html</url-pattern>
     </filter-mapping>
-
     <filter-mapping>
         <filter-name>CheckNotLoggedUser</filter-name>
         <url-pattern>/login.html</url-pattern>
@@ -62,6 +61,12 @@
         <url-pattern>/SetProductDisplayed</url-pattern>
         <url-pattern>/PlaceOrder</url-pattern>
     </filter-mapping>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error</location>
+    </error-page>
+
 
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>

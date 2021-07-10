@@ -18,9 +18,6 @@
 
     setHeaderHrefs();
 
-    //this is the syntax needed to take the value from every <input> tag in the 'form' element with "name=password"
-    //var password_input = signup_button.closest("form").querySelector('input[name="password"]');
-
     //Attach to login button
     login_button.addEventListener("click", (e) => {
         e.preventDefault();
@@ -80,7 +77,7 @@
 
     function setHeaderHrefs(){
         var homepage_link_logo = document.getElementById("homepage-link-logo");
-        homepage_link_logo.setAttribute("href", "GoToHome");
+        homepage_link_logo.setAttribute("href", "home.html");
     }
 
 })();

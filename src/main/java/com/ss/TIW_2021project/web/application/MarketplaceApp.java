@@ -15,8 +15,6 @@ public class MarketplaceApp {
 
         super();
 
-        TemplateHandler.setupTemplateEngine(servletContext);
-
         try {
             ConnectionHandler.setupConnectionPool(servletContext);
         } catch (UtilityException e) {

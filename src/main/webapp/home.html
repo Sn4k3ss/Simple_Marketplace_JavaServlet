@@ -10,7 +10,6 @@
     <link rel="stylesheet" type="text/css" media="all" href="./css/global.css"/>
     <link rel="stylesheet" type="text/css" media="all" href="./css/orders.css" />
     <link rel="stylesheet" type="text/css" media="all" href="./css/loading.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="./css/error.css" />
 
     <link rel="icon" type="image/ico" th:href="@{/images/website-icon.ico}" href="./images/website-icon.ico"/>
     <script src="./js/utils.js" charset="utf-8" defer></script>
@@ -43,13 +42,14 @@
 
     <!-- SEARCH FORM -->
     <div id="search-form-div" class="search-form">
-        <form th:action="${#request.contextPath} + '/search/products'" method="GET">
+        <form>
             <div class="form-group">
-                <input th:placeholder="'Oasis latest album...'" name="keyword" id="keyword" >
+                <input placeholder="'Oasis latest album...'" name="keyword" id="keyword" >
                 <input id="search-form-div-button" class="button" type="submit" value="Go!">
             </div>
         </form>
         <div id="search-form-error" >Error!</div>
+        <div id="search-form-info" >Error!</div>
     </div>
 
 
@@ -74,91 +74,18 @@
         </div>
     </div>
 
-
-    <!-- SHOPPINC CART -->
-    <div id="shopping-cart-div-old" style="display: none">
-        <table class="styled-table" style="width:100%">
-            <caption style="lighting-color: #04aa6d">CART</caption>
-            <thead>
-            <tr>
-                <th colspan="2" scope="col">Product name</th>
-                <th scope="col">Product Description</th>
-                <th scope="col">Category</th>
-                <th scope="col">Cost</th>
-                <th scope="col">How many</th>
-            </tr>
-            </thead>
-                <tbody th:each="supplierId : ${session.shoppingCart.shoppingCartMap.keySet()}" th:with="supplierInfo=${session.shoppingCart.shoppingCartMap.get(supplierId)[0].supplier}" >
-
-                <tr th:each="product : ${session.shoppingCart.shoppingCartMap.get(supplierId)}" >
-                    <td class="table-product-img">
-                        <img th:src="'https://tiw21marketplace.s3.eu-south-1.amazonaws.com/images/products/'+ ${product.productImagePath}" alt="Product image" src="./images/prod-ex.jpeg"/>
-                    </td>
-                    <td th:text="${product.productName}">Prod1</td>
-                    <td th:text="${product.productDescription}">Desc1</td>
-                    <td th:text="${product.productCategory}">Cat1</td>
-                    <td>&euro; <span th:text="${#numbers.formatDecimal(product.supplierProductCost, 1, 2, 'COMMA')}">10.00</span> </td>
-                    <td th:text="${product.howMany}">5</td>
-                </tr>
-                <tr class="active-row" th:with="totalamount=${session.shoppingCart.totalAmountBySupplier.get(supplierId)}">
-
-                    <td>Total amount on <span th:text="${supplierInfo.supplierName}">Suppl1</span> &euro; <span th:text="${#numbers.formatDecimal(totalamount, 1, 2, 'COMMA')}">10.00</span></td>
-
-                    <td th:if="${ !supplierInfo.hasFreeShipping }"> <span th:text=" ${supplierInfo.supplierName}">Suppl1</span> doesn't offer free shipping </td>
-
-                    <td th:if="${ totalamount < supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}">Free shipping on<span th:text="${supplierInfo.supplierName}">Suppl1</span>: &euro;<span th:text="${#numbers.formatDecimal(supplierInfo.freeShippingMinAmount, 1, 2, 'COMMA')}">10.00</span></td>
-
-                    <td th:if="${ totalamount >= supplierInfo.freeShippingMinAmount && supplierInfo.hasFreeShipping}" th:text="'You\'re getting free shipping'"> Spesa minima per spedizione gratuita </td>
-                    <td colspan="6">
-                        <form  th:action="${#request.contextPath} + '/PlaceOrder'" method="POST">
-                            <label th:for="addreesId">Select an address
-                                <select th:name="userShippingAddressId">
-                                    <option th:each="address : ${shoppingAddresses}" th:value="${address.shippingAddressId}"
-                                            th:text="${address.recipient} + ' ' + ${address.address} +  ' ' + ${address.city} +  ' ' + ${address.state} +  ' ' + ${address.phone}"
-                                            th:selected="${address.shippingAddressId == 1}">
-                                    </option>
-                                </select>
-                            </label>
-                            <input type="hidden"  name="supplierId" th:value="${supplierId}" >
-                            <input type="submit" class="clickable-link clickable-link-large" value="Place order">
-                        </form>
-                    </td>
-                </tr>
-
-
-                </tbody>
-            </table>
-        <div id="shopping-cart-div-message-old"> Prodotto aggiunto nel carrello con successo</div>
-    </div>
-
+    <!-- SHOPPING CART -->
     <div id="shopping-cart-div" style="display: none">
         <div id="shopping-cart-div-message"> Prodotto aggiunto nel carrello con successo</div>
     </div>
-
 
     <!-- ORDERS -->
     <div id="orders-div" >
         <div id="orders-error-div" >Error!</div>
     </div>
 
-
-    <!-- ERROR LOADING PRODUCTS -->
-    <div class="error-div">
-        <img class="error-image" src="./images/error.jpg" alt="error-image"/>
-
-        <div class="error-title">An error occured</div>
-        <div class="error-reason">
-            Your error is: <strong><span th:text="${errorMessage}">sample error</span></strong>
-        </div>
-        <div th:if="${session.user == null}">
-            <hr>
-            <a th:href="@{/}">Press here to go back to the login page</a>
-        </div>
-    </div>
-
-
-<div class="loading-div">
-    <img class="loading-img" src="./images/loading.gif" alt="loading-gif"/>
+    <div class="loading-div">
+        <img class="loading-img" src="./images/loading.gif" alt="loading-gif"/>
     <div id="loading_msg" class="loading-message">Communicating with Server ...</div>
 </div>
 

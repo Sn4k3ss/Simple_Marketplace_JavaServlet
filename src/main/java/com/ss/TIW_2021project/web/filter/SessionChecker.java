@@ -2,8 +2,6 @@ package com.ss.TIW_2021project.web.filter;
 
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.MarketplaceApp;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

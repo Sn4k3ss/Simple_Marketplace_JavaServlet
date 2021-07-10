@@ -2,7 +2,6 @@
  * Marketplace
  */
 
-
 (function(){
 
     //Vars
@@ -11,21 +10,14 @@
     var pageOrchestrator = new PageOrchestrator();
 
     window.addEventListener("load", () => {
-        pageOrchestrator.start(); // initialize the components
-        pageOrchestrator.showHomePage(); // display initial content
+        pageOrchestrator.start();
+        pageOrchestrator.showHomePage();
         setHeaderHrefs();
     });
 
-    /**
-     * Notes:
-     * - excludeContacts parameter in PageOrchestrator.refresh(..) is used to avoid requesting
-     *   address book to server when it's not needed (i.e. always but at first loading).
-     *   Others refreshes will be managed by AddressBook object itself.
-     */
     function PageOrchestrator(){
         this.start = function() {
 
-            //Init components
             userInfo = new UserInfo(
                 JSON.parse(sessionStorage.getItem('userdata')),
                 [document.getElementById("title-username")]
@@ -35,6 +27,7 @@
                 document.getElementById("search-form-div"),
                 document.getElementById("search-form-div-button"),
                 document.getElementById("search-form-error"),
+                document.getElementById("search-form-info")
             )
 
             shoppingCart = new ShoppingCartNew(
@@ -59,7 +52,8 @@
         this.showHomePage = function(){
             updateHeaderCss('HOME');
 
-            //nascondi tutto il resto
+            searchForm.clearError();
+            searchForm.clearSearchBox();
             shoppingCart.hide();
             orders.hide();
 
@@ -67,44 +61,38 @@
             productsCatalogue.showHomeProducts();
         };
 
-
-        //deve nascondermi tutti i div eccetto quelo del carrello
         this.showShoppingCart = function () {
             updateHeaderCss('CART');
 
+            searchForm.clearError();
+            searchForm.clearMessageInfo();
+            searchForm.clearSearchBox();
             productsCatalogue.hide();
             orders.hide();
 
-            //mostra carrello
             shoppingCart.show();
-
         }
 
-        //deve nascondermi tutti i div eccetto quelo degli ordini
         this.showOrders = function () {
             updateHeaderCss('ORDERS');
 
-            //nascondi tutto il resto
+            searchForm.clearError();
+            searchForm.clearMessageInfo();
+            searchForm.clearSearchBox();
             productsCatalogue.hide();
             shoppingCart.hide();
 
-
-            //mostra carrello
             orders.show();
-
         }
 
         this.showSearchPage = function () {
             updateHeaderCss('HOME');
 
-            //nascondi tutto il resto
+            searchForm.clearError();
             shoppingCart.hide();
             orders.hide();
 
-
-            //mostra ricerca
             productsCatalogue.showCatalogue();
-
         }
 
         this.updatePage = function () {
@@ -114,7 +102,6 @@
                 return;
             }
 
-            //fake a click on the button
             searchForm.search_form_button.click();
         }
     }
@@ -140,11 +127,13 @@
     function SearchForm(
         _search_form_div,
         _search_form_button,
-        _search_form_error) {
+        _search_form_error,
+        _search_form_info) {
 
         this.search_form_div = _search_form_div;
         this.search_form_button = _search_form_button;
         this.search_form_error = _search_form_error;
+        this.search_form_info = _search_form_info;
         this.lastKeywordSearch = null;
 
         var self = this; //Necessary only for in-function helpers (makeCall)
@@ -152,8 +141,6 @@
         //search button
         this.search_form_button.addEventListener('click', (e) =>{
             e.preventDefault()
-
-            self.search_form_error.style.display = 'none';
 
             pageOrchestrator.showSearchPage();
 
@@ -169,49 +156,77 @@
                 switch(req.status){
                     case 200:
                         let products = JSON.parse(req.responseText);
-                        productsCatalogue.updateSearchProducts(products);
-                        productsCatalogue.showCatalogue();
+
+                        if (self.noProdsRetrieved(products)){
+                            self.showError("No products have been found, please try something else");
+                        } else {
+                            productsCatalogue.updateSearchProducts(products);
+                            productsCatalogue.showCatalogue();
+                        }
                         break;
                     case 400: // bad request
                     case 401: // unauthorized
                     case 500: // server error
-                        self.search_form_error.textContent = req.responseText;
-                        self.search_form_error.style.display = 'block';
+                        self.showError(req.responseText);
                         break;
                     default: //Error
-                        self.search_form_error.textContent = "Request reported status " + req.status;
-                        self.search_form_error.style.display = 'block';
+                        self.showError("Request reported status " + req.status);
                 }
             });
 
         });
 
+        this.noProdsRetrieved = function (productsRetrieved) {
+            let numOfProds = 0;
+            for (const prodId in productsRetrieved.supplierProductMap) {
+                numOfProds++;
+            }
+
+            if (numOfProds === 0)
+                return true;
+        }
+
         this.show = function() {
-            self.search_form_div.style.display = 'block';
+            this.search_form_div.style.display = 'block';
         };
 
-        this.update = function() {
-            self.search_form_div.style.display = 'none';
-        };
+        this.showError = function (message) {
+            this.search_form_error.textContent = message;
+            this.search_form_error.style.display = 'block';
+        }
+
+        this.clearError = function () {
+            this.search_form_error.textContent = "";
+            this.search_form_error.style.display = 'none';
+        }
+
+        this.clearSearchBox = function () {
+            this.search_form_button.closest('form')['keyword'].value = "";
+        }
+
+        this.showMessageInfo = function (message) {
+            this.search_form_info.textContent = message;
+            this.search_form_info.style.display = 'block';
+
+            //da implementare che il
+            setTimeout(this.clearMessageInfo, 5000);
+
+        }
+
+        this.clearMessageInfo = function () {
+            self.search_form_info.textContent = "";
+            self.search_form_info.style.display = 'none';
+        }
+
     }
 
 
     function ShoppingCartNew(
         _shopping_cart_div,
-        _shopping_cart_div_message
-    ) {
-
-        /*
-
-        This line get all the elements with class ".buy-btn" in the document
-        const buyBtns = document.querySelectorAll(".buy-btn");
-
-         */
+        _shopping_cart_div_message)
+    {
         this.shopping_cart_div = _shopping_cart_div;
         this.shopping_cart_div_message = _shopping_cart_div_message;
-
-        this.KEY = 'asc';
-        this.contents = [];
 
         this.prods = new Map();
 
@@ -280,90 +295,24 @@
             this.totalItemsBySupplier.set(product.supplierId, totalItems);
 
             //bisogna riaggiornare la pagina
+            searchForm.showMessageInfo("Product added to cart!");
             pageOrchestrator.updatePage();
 
         };
 
         this.emptyShoppingCart = function (supplierId) {
             //update variables
-            this.prods.delete(supplierId);
-            this.totalAmountBySupplier.delete(supplierId);
-            this.totalItemsBySupplier.delete(supplierId);
+            self.prods.delete(supplierId);
+            self.totalAmountBySupplier.delete(supplierId);
+            self.totalItemsBySupplier.delete(supplierId);
 
             //update table
             document.getElementById("sup" + supplierId + "-cart-body").remove();
+
+            //ricarico il carrello
+            pageOrchestrator.showShoppingCart();
         }
 
-
-        this.sync = async function  (){
-            let _cart = JSON.stringify(self.contents);
-            await localStorage.setItem(self.KEY, _cart);
-        };
-
-        this.find = function (id){
-            //find an item in the cart by it's id
-            let match = self.contents.filter(item=>{
-                if(item.id == id)
-                    return true;
-            });
-            if(match && match[0])
-                return match[0];
-        };
-
-
-        this.increase = function (id, qty=1){
-            //increase the quantity of an item in the cart
-            self.contents = self.contents.map(item=>{
-                if(item.id === id)
-                    item.qty = item.qty + qty;
-                return item;
-            });
-            //update localStorage
-            self.sync()
-        };
-
-        this.reduce = function (id, qty=1){
-            //reduce the quantity of an item in the cart
-            self.contents = self.contents.map(item=>{
-                if(item.id === id)
-                    item.qty = item.qty - qty;
-                return item;
-            });
-            self.contents.forEach(async item=>{
-                if(item.id === id && item.qty === 0)
-                    await self.remove(id);
-            });
-            //update localStorage
-            self.sync()
-        };
-
-
-        this.empty = function (){
-            //empty whole cart
-            self.contents = [];
-            //update localStorage
-            self.sync()
-        };
-
-        this.sort = function (field='title'){
-            //sort by field - title, price
-            //return a sorted shallow copy of the CART.contents array
-            let sorted = self.contents.sort( (a, b)=>{
-                if(a[field] > b[field]){
-                    return 1;
-                }else if(a[field] < a[field]){
-                    return -1;
-                }else{
-                    return 0;
-                }
-            });
-            return sorted;
-
-        };
-
-        this.logContents = function (prefix){
-            console.log(prefix, self.contents)
-        }
 
         this.show = function() {
 
@@ -373,13 +322,11 @@
                 self.shopping_cart_div.removeChild(table);
             }
 
-            //show empty cart
+
             if (self.prods.size === 0) {
-                self.shopping_cart_div_message.innerHTML = "Your cart is empty";
-                self.shopping_cart_div_message.style.display = "block";
-            } else { //show cart
-                self.shopping_cart_div_message.innerHTML = "";
-                self.shopping_cart_div_message.style.display = "none";
+                self.showMessage("Your cart is empty");
+            } else {
+                self.clearMessage();
                 self.shopping_cart_div.appendChild(createCartTable(self, userInfo))
             }
 
@@ -391,18 +338,32 @@
 
         }
 
+        this.showMessage = function (_message) {
+            self.shopping_cart_div_message.innerHTML = _message;
+            self.shopping_cart_div_message.style.display = 'block';
+
+            setTimeout(self.clearMessage, 3000);
+        }
+
+        this.clearMessage = function () {
+            self.shopping_cart_div_message.innerHTML = "";
+            self.shopping_cart_div_message.style.display = "none";
+        }
+
         this.showFailure = function (_message) {
 
-            this.shopping_cart_div.style.display = 'block';
-            this.shopping_cart_div_message.innerHTML = _message;
-            this.shopping_cart_div_message.style.display = 'block';
+            self.shopping_cart_div.style.display = 'block';
+            self.shopping_cart_div_message.innerHTML = _message;
+            self.shopping_cart_div_message.style.display = 'block';
 
         }
 
         this.updateAndShowModal = function (supplierId) {
-            //creo la table con i prodotti presi dal carrello per il supplId e la passo al catalogo che la metterà nel div con id modal-window-items
-
             productsCatalogue.updateAndShowModalCatalogue(createCartTable(self, userInfo, true, supplierId));
+        }
+
+        this.hideModal = function () {
+            productsCatalogue.hideModalCatalogue();
         }
     }
 
@@ -504,7 +465,6 @@
             //asc sort
             let sortedProds = sortAscCost(prodsMap);
 
-            var self = this;
             let firstIteration = true;
             let searchResultNum = 1;
             let resultsNum = sortedProds.size;
@@ -579,12 +539,22 @@
 
         }
 
-        //hide modal windows
+        //hide modal windows on mouse leave
         this.modal_window_content_div.onmouseleave = function () {
 
             //remove all tables tags in modal-window-content-div
             while (this.childElementCount > 0) {
                 this.removeChild(this.children[0]);
+            }
+
+            self.modal_window_div.style.display = 'none';
+        }
+
+        //hide modal windows explicitly
+        this.hideModalCatalogue = function () {
+            //remove all tables tags in modal-window-content-div
+            while (self.modal_window_div.childElementCount > 0) {
+                self.modal_window_div.removeChild(self.modal_window_div.children[0]);
             }
 
             self.modal_window_div.style.display = 'none';

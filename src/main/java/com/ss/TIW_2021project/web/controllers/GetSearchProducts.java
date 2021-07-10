@@ -4,9 +4,6 @@ import com.google.gson.Gson;
 import com.ss.TIW_2021project.business.Exceptions.ServiceException;
 import com.ss.TIW_2021project.business.entities.ProductsCatalogue;
 import com.ss.TIW_2021project.business.services.ProductService;
-import com.ss.TIW_2021project.business.utils.PathUtils;
-import com.ss.TIW_2021project.web.application.TemplateHandler;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,10 +21,7 @@ public class GetSearchProducts extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        Integer selectedProductId = 0;
-
         ProductService productService = new ProductService();
-
         ProductsCatalogue retrievedProducts = null;
 
         try {
@@ -63,21 +57,12 @@ public class GetSearchProducts extends HttpServlet {
             return;
         }
 
-
-        //req.getSession().setAttribute("products_from_query", retrievedProducts);
-
-        //req.setAttribute("products", retrievedProducts);
-        //req.setAttribute("selectedProductId", selectedProductId);
-
-
         String products = new Gson().toJson(retrievedProducts);
 
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().println(products);
-
-
     }
 
     @Override

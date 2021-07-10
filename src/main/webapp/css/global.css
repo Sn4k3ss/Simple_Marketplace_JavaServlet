@@ -353,29 +353,13 @@ fieldset{
     width: 75%;
 }
 
-#products-table-div {
-    display: none;
-}
-
-#search-products-table-div {
-    display: none;
-}
-
-#shopping-cart-div {
-    display: none;
-}
-
-#shopping-cart-div-message {
-    display: none;
-}
-
-#orders-div {
-    display: none;
-}
-#orders-error-div{
-    display: none;
-}
-
+#products-table-div,
+#search-products-table-div,
+#shopping-cart-div,
+#shopping-cart-div-message,
+#orders-div,
+#orders-error-div,
+#search-form-info,
 #search-form-error {
     display: none;
 }
