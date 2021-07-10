@@ -151,4 +151,14 @@ public class SupplierService {
         }
 
     }
+
+    public void setSupplierToProducts(List<SupplierProduct> products) throws ServiceException {
+
+        for(SupplierProduct product : products) {
+            Integer supplierId = product.getSupplierId();
+            Supplier orderSupplier = getSupplierById(supplierId);
+            product.setSupplier(orderSupplier);
+        }
+
+    }
 }

@@ -52,4 +52,7 @@ public class ProductsCatalogue {
         return supplierProductMap.size() >= num;
     }
 
+    public SupplierProduct getProdFromSuppl(Integer supplierIdFromCart, Integer productId) {
+        return this.supplierProductMap.get(supplierIdFromCart).stream().filter( a -> a.getProductId().equals(productId)).findFirst().orElse(null);
+    }
 }
