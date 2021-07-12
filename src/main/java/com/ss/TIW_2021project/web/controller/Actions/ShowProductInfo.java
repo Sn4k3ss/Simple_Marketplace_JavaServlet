@@ -22,7 +22,7 @@ import java.io.IOException;
 public class ShowProductInfo extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         Integer productId = Integer.parseInt(req.getParameter("productId"));
         ProductService productService = new ProductService();
@@ -54,11 +54,6 @@ public class ShowProductInfo extends HttpServlet {
         req.setAttribute("selectedProductId", productId);
 
         forward(req, resp, null);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        doGet(req, resp);
     }
 
     private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {

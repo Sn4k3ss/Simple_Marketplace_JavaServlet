@@ -104,15 +104,6 @@ public class ProductService {
     }
 
 
-        //Data una lista conntenente diversi prodotti venduti da diversi venditori, raggruppa per prodotti lasciando il venditore col prezzo più basso
-    private List<SupplierProduct> getMinPriceProducts(List<SupplierProduct> productsList) {
-        return new ArrayList<>(productsList.stream()
-                .collect(Collectors.toMap(Product::getProductId,
-                                            Function.identity(),
-                                            (p1, p2) -> p1.getOriginalProductCost()<= p2.getOriginalProductCost()? p1 : p2))
-                .values());
-    }
-
 
     /**
      * This method takes a list of {@link ProductsCatalogue catalogues} and a {@link SupplierProduct supplierProduct} and look for
@@ -122,7 +113,7 @@ public class ProductService {
      * @param paramProd the product we're looking for
      * @return the product if is found in the catalogues, null otherwise
      */
-    public SupplierProduct lookForProduct(List<ProductsCatalogue> catalogues, SupplierProduct paramProd) {
+    public SupplierProduct searchProductInCatalogue(List<ProductsCatalogue> catalogues, SupplierProduct paramProd) {
 
         for (ProductsCatalogue catalogue : catalogues) {
             for(Integer productId : catalogue.getSupplierProductMap().keySet())

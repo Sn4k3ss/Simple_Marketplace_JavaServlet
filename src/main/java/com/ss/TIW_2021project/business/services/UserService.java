@@ -149,4 +149,8 @@ public class UserService {
         }
 
     }
+
+    public boolean checkUserAddressValidity(User user) {
+        return !user.getShippingAddresses().isEmpty();
+    }
 }

@@ -2,6 +2,7 @@ package com.ss.TIW_2021project.web.controller.GoToPage;
 
 import com.ss.TIW_2021project.business.entities.User;
 import com.ss.TIW_2021project.business.services.CartService;
+import com.ss.TIW_2021project.business.services.UserService;
 import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
@@ -23,12 +24,12 @@ public class GoToShoppingCart extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        
-        CartService cartService = new CartService();
+
+        UserService userService = new UserService();
 
         User user = (User) req.getSession().getAttribute("user");
 
-        if (user.getShippingAddresses().isEmpty()) {
+        if (!userService.checkUserAddressValidity(user)) {
             String errorMessage = "User has no shipping address, that shouldn't be allowed";
             req.setAttribute("errorMessage", errorMessage);
             forward(req, resp, errorMessage);

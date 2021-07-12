@@ -11,15 +11,6 @@ import java.io.IOException;
 
 public class CheckNotLoggedUser implements Filter {
 
-    private MarketplaceApp marketplaceApp;
-
-    /**
-     * @see Filter#init(FilterConfig)
-     */
-    public void init(FilterConfig filterConfig) {
-        this.marketplaceApp = MarketplaceApp.getInstance(filterConfig.getServletContext());
-    }
-
 
     /**
      * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)

@@ -67,7 +67,7 @@ public class AddToCart extends HttpServlet {
         }
 
         ProductService productService = new ProductService();
-        SupplierProduct product = productService.lookForProduct(catalogues, supplierProduct);
+        SupplierProduct product = productService.searchProductInCatalogue(catalogues, supplierProduct);
 
         if(product == null) {
             forwardToErrorPage(req, resp, "Where did you get that product?");

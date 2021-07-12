@@ -58,7 +58,7 @@ public class SupplierService {
 
         try {
             SuppliersDAO suppliersDAO = new SuppliersDAO();
-            suppliers = suppliersDAO.retrieveSuppliersInfo();
+            suppliers = suppliersDAO.getAllSuppliers();
 
         } catch (DAOException e) {
             throw new ServiceException(ServiceException._FAILED_TO_RETRIEVE_SUPPLIERS_INFO);

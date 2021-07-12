@@ -90,7 +90,7 @@ public class SuppliersDAO {
      * This method simply returns a list containg all the {@link Supplier suppliers} with their respective infos
      *
      */
-    public List<Supplier> retrieveSuppliersInfo() throws DAOException {
+    public List<Supplier> getAllSuppliers() throws DAOException {
 
         try {
             conn = ConnectionHandler.getConnectionFromPool();
