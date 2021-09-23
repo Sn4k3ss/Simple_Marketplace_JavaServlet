@@ -8,6 +8,7 @@ import com.ss.TIW_2021project.business.utils.PathUtils;
 import com.ss.TIW_2021project.web.application.TemplateHandler;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +55,11 @@ public class ShowProductInfo extends HttpServlet {
         req.setAttribute("selectedProductId", productId);
 
         forward(req, resp, null);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPost(req, resp);
     }
 
     private void forward(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {

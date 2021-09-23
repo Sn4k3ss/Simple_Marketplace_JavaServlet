@@ -64,7 +64,7 @@ public class PlaceOrder extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        forwardToErrorPage(req, resp, "Mast send POST request!");
+        forwardToErrorPage(req, resp, "Must send POST request!");
     }
 
     private void forwardToErrorPage(HttpServletRequest req, HttpServletResponse resp, String errorMessage) throws IOException {

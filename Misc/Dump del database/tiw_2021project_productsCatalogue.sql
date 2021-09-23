@@ -1,0 +1,66 @@
+-- MySQL dump 10.13  Distrib 8.0.23, for Win64 (x86_64)
+--
+-- Host: aws-db1.cq19dtt44nal.eu-south-1.rds.amazonaws.com    Database: tiw_2021project
+-- ------------------------------------------------------
+-- Server version	8.0.20
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+
+--
+-- GTID state at the beginning of the backup 
+--
+
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '';
+
+--
+-- Table structure for table `productsCatalogue`
+--
+
+DROP TABLE IF EXISTS `productsCatalogue`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productsCatalogue` (
+  `productId` int NOT NULL,
+  `supplierId` int NOT NULL,
+  `productCost` float NOT NULL,
+  `onDiscount` tinyint DEFAULT '0',
+  `originalProductCost` float DEFAULT NULL,
+  PRIMARY KEY (`productId`,`supplierId`),
+  KEY `fk_idSupplier_productsCatalogue_idx` (`supplierId`),
+  CONSTRAINT `fk_productId_productsCatalogue` FOREIGN KEY (`productId`) REFERENCES `products` (`productId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_supplierId_productsCatalogue` FOREIGN KEY (`supplierId`) REFERENCES `suppliers` (`supplierId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `productsCatalogue`
+--
+
+LOCK TABLES `productsCatalogue` WRITE;
+/*!40000 ALTER TABLE `productsCatalogue` DISABLE KEYS */;
+INSERT INTO `productsCatalogue` VALUES (1,1,109.99,0,NULL),(1,2,109.99,1,119.99),(14,1,9.99,0,NULL),(14,2,8.99,0,NULL),(14,3,13.99,0,NULL),(14,5,14.99,0,NULL),(19,1,9.99,0,NULL),(19,2,7.99,0,NULL),(19,5,6.99,0,NULL),(20,1,449.99,1,499.99),(20,2,449.99,0,NULL),(20,3,529.99,1,549.99),(20,4,429.99,0,NULL),(21,1,699.989,1,699.99),(21,2,694.99,1,723.99),(21,4,749.99,0,NULL),(22,1,19.99,0,NULL),(22,2,19.99,1,22.99),(22,5,18.99,0,NULL),(23,1,14.99,1,19.99),(23,2,19.99,1,22.99),(23,5,18.99,0,NULL),(24,1,14.99,1,19.99),(24,2,19.99,1,22.99),(24,5,18.99,0,NULL),(25,1,14.99,1,19.99),(25,2,19.99,1,22.99),(25,5,18.99,0,NULL),(26,1,14.99,1,19.99),(26,2,19.99,1,22.99),(26,5,18.99,0,NULL),(27,1,24.99,0,NULL),(27,2,24.99,0,NULL),(27,5,23.99,1,29.99),(28,1,24.99,1,29.99),(28,2,27.99,1,34.99),(28,5,29.99,0,NULL),(29,1,29.9,0,NULL),(29,6,24.99,1,27.99),(30,2,27.99,1,29.99),(30,6,23.99,1,27.99),(31,1,19.99,1,24.99),(31,6,24.99,0,NULL),(32,1,19.99,0,NULL),(32,2,19.98,1,19.99),(33,1,8.99,1,11.99),(33,2,9.99,0,NULL),(33,4,9.99,0,NULL),(34,1,9.99,0,NULL),(34,2,7.99,1,12.99),(34,4,10.99,0,NULL),(35,1,9.99,1,11.99),(35,2,9.99,0,NULL),(35,5,14.99,0,NULL),(38,1,7.99,1,9.99),(39,1,9.49,0,NULL),(39,2,9.99,0,NULL),(39,4,8.99,1,9.99);
+/*!40000 ALTER TABLE `productsCatalogue` ENABLE KEYS */;
+UNLOCK TABLES;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2021-05-27 20:27:01

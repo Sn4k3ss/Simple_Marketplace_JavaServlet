@@ -9,7 +9,7 @@
 
     <context-param>
         <param-name>dbUrl</param-name>
-        <param-value>jdbc:mysql://aws-db1.cq19dtt44nal.eu-south-1.rds.amazonaws.com:3306/tiw_2021project?useSSL=false</param-value>
+        <param-value>jdbc:mysql://aws-db1.cq19dtt44nal.eu-south-1.rds.amazonaws.com:3306/tiw_2021project?useSSL=false</param-value>  <!-- DB url goes here -->
     </context-param>
     <context-param>
         <param-name>dbUser</param-name>
@@ -25,7 +25,7 @@
     </context-param>
     <context-param>
         <param-name>s3tiwBucket</param-name>
-        <param-value>https://tiw21marketplace.s3.eu-south-1.amazonaws.com/</param-value>
+        <param-value>https://tiw21marketplace.s3.eu-south-1.amazonaws.com/</param-value>   <!-- Link to media goes here -->
     </context-param>
 
 
